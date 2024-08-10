@@ -1,4 +1,4 @@
-﻿//2024-08-09 19:30
+﻿//2024-08-10 12:20
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -2175,7 +2175,7 @@ namespace System//Windows系统
     //-----------------------------------------------------------------------------------------------------------------------------
     int Get_DefaultLanguage() noexcept//获取系统默认语言 https://blog.csdn.net/duke56/article/details/103847999
     {//System::Get_DefaultLanguage();
-        return GetSystemDefaultLangID();
+        return GetUserDefaultLangID();
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------

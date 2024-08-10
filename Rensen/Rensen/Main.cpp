@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.41;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-09 19:30]";//程序发布日期时间
+const float Rensen_Version = 4.43;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-10 12:20]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -447,7 +447,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 {
 	System::Log("Load Thread: Thread_Menu()");
 	GUI_VAR.Window_Create(1200, 1000, "Rensen", true);//创建置顶GUI绘制窗口
-	if (!System::Judge_File("CN"))//中文菜单判断
+	if (System::Get_DefaultLanguage() != 0x804 || System::Judge_File("EN") || System::Judge_File("en"))//中文菜单判断
 	{
 		while (true)
 		{
@@ -465,7 +465,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 				}
 				else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-				GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(37, 35, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color().Min_Bri(200), "Verdana", 25);
+				GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color().Min_Bri(200), "Verdana", 25);
 				GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);
 				if (UI_Panel == 0)//Legit
 				{
@@ -593,7 +593,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_7>(Block_Misc, 9, UI_Misc_AutoTaser_Key);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 10, "Water mark", UI_Misc_Watermark);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 11, "Sniper crosshair", UI_Misc_SniperCrosshair);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_8>(Block_Misc, 12, "Size", 10, 60, UI_Misc_SniperCrosshair_Size, "px");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_8>(Block_Misc, 12, "Size", 10, 80, UI_Misc_SniperCrosshair_Size, "px");
 					GUI_VAR.GUI_Checkbox(Block_Misc, 13, "Anti AFK kick", UI_Misc_AntiAFKKick);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 14, "Lock game window", UI_Misc_LockGameWindow);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 15, "Hide from OBS", UI_Misc_ByPassOBS);
@@ -872,7 +872,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 				}
 				else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-				GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(37, 35, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color().Min_Bri(200), "Verdana", 25);
+				GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color().Min_Bri(200), "Verdana", 25);
 				GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 20);
 				if (UI_Panel == 0)//Legit
 				{
@@ -883,11 +883,11 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 20,Block_Aimbot.y }, 3, "自动压枪UTT", UI_Legit_Aimbot_RemoveRecoil);
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 20,Block_Aimbot.y }, 4, "瞄准时触发UTT", UI_Legit_Aimbot_TriggerOnAim);
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 20,Block_Aimbot.y }, 5, "自动开火UTT", UI_Legit_Aimbot_AutoShoot, { 255,150,150 });
-					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 40,Block_Aimbot.y }, 6, "自动停止移动UTT", UI_Legit_Aimbot_AutoStop, { 255,150,150 });
-					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 40,Block_Aimbot.y }, 7, "狙击枪自动开镜UTT", UI_Legit_Aimbot_AutoScope, { 255,150,150 });
+					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 40,Block_Aimbot.y }, 6, "自动急停UTT", UI_Legit_Aimbot_AutoStop, { 255,150,150 });
+					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 40,Block_Aimbot.y }, 7, "自动开镜UTT", UI_Legit_Aimbot_AutoScope, { 255,150,150 });
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Aimbot_2>({ Block_Aimbot.x + 20,Block_Aimbot.y }, 8, "自动开火延迟UTT", 0, 500, UI_Legit_Aimbot_AutoShootDelay, "ms", { 255,150,150 });
 					GUI_VAR.GUI_Checkbox(Block_Aimbot, 9, "自适应自瞄UTT", UI_Legit_AdaptiveAimbot, { 200,200,150 });
-					GUI_VAR.GUI_Slider<float, class CLASS_Block_Aimbot_3>(Block_Aimbot, 10, "平滑度UTT", 0, 20, UI_Legit_AdaptiveAimbot_InitialSmooth, "", { 200,200,150 });
+					GUI_VAR.GUI_Slider<float, class CLASS_Block_Aimbot_3>(Block_Aimbot, 10, "初始平滑度UTT", 0, 20, UI_Legit_AdaptiveAimbot_InitialSmooth, "", { 200,200,150 });
 					const auto Block_Armory = GUI_VAR.GUI_Block(150, 390, 490, "武器库UTT");
 					GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 1, "显示范围圆圈UTT", UI_Legit_Armory_ShowAimbotRange);
 					GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 2, "打击点解析器UTT", UI_Legit_Armory_HitSiteParser);
@@ -907,8 +907,8 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					const auto Block_Triggerbot = GUI_VAR.GUI_Block(580, 30, 190, "自动扳机UTT");
 					GUI_VAR.GUI_Checkbox(Block_Triggerbot, 1, "启用UTT", UI_Legit_Triggerbot);
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Triggerbot_1>(Block_Triggerbot, 1, UI_Legit_Triggerbot_Key);
-					GUI_VAR.GUI_Checkbox({ Block_Triggerbot.x + 20,Block_Triggerbot.y }, 2, "任何目标 (包括掉落的武器)UTT", UI_Legit_Triggerbot_AnyTarget);
-					GUI_VAR.GUI_Checkbox({ Block_Triggerbot.x + 20,Block_Triggerbot.y }, 3, "精准时触发UTT", UI_Legit_Triggerbot_ShootWhenAccurate);
+					GUI_VAR.GUI_Checkbox({ Block_Triggerbot.x + 20,Block_Triggerbot.y }, 2, "任何目标 (包括掉落的武器和实体)UTT", UI_Legit_Triggerbot_AnyTarget);
+					GUI_VAR.GUI_Checkbox({ Block_Triggerbot.x + 20,Block_Triggerbot.y }, 3, "精准时开火UTT", UI_Legit_Triggerbot_ShootWhenAccurate);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Triggerbot_2>(Block_Triggerbot, 4, "开火延迟UTT", 1, 500, UI_Legit_Triggerbot_ShootDelay, "ms");
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Triggerbot_3>(Block_Triggerbot, 5, "开火时长UTT", 1, 1000, UI_Legit_Triggerbot_ShootDuration, "ms");
 					const auto Block_PreciseAim = GUI_VAR.GUI_Block(580, 240, 130, "精确瞄准UTT");
@@ -918,7 +918,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					const auto Block_RemoveRecoil = GUI_VAR.GUI_Block(580, 390, 160, "自动压枪UTT");
 					GUI_VAR.GUI_Checkbox(Block_RemoveRecoil, 1, "启用UTT", UI_Legit_RemoveRecoil);
 					GUI_VAR.GUI_Checkbox({ Block_RemoveRecoil.x + 20,Block_RemoveRecoil.y }, 2, "水平修复UTT", UI_Legit_RemoveRecoil_LateralRepair);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_1>(Block_RemoveRecoil, 3, "触发子弹量UTT", 1, 10, UI_Legit_RemoveRecoil_StartBullet);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_1>(Block_RemoveRecoil, 3, "开始子弹UTT", 1, 10, UI_Legit_RemoveRecoil_StartBullet);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_2>(Block_RemoveRecoil, 4, "灵敏度UTT", 0, 100, UI_Legit_RemoveRecoil_Sensitive, "%");
 					const auto Block_MagnetAim = GUI_VAR.GUI_Block(580, 570, 130, "磁吸瞄准UTT");
 					GUI_VAR.GUI_Checkbox(Block_MagnetAim, 1, "启用UTT", UI_Legit_MagnetAim);
@@ -956,7 +956,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_ColorSelector(Block_ESP, 15, UI_Visual_ESP_CustomColor_Color);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_5>(Block_ESP, 16, "透明度UTT", 20, 255, UI_Visual_ESP_DrawAlpha);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_6>(Block_ESP, 17, "绘制延迟UTT", 1, 30, UI_Visual_ESP_DrawDelay, "ms");
-					const auto Block_Hitmark = GUI_VAR.GUI_Block(580, 30, 280, "打击指针UTT");
+					const auto Block_Hitmark = GUI_VAR.GUI_Block(580, 30, 280, "命中标记UTT");
 					GUI_VAR.GUI_Checkbox(Block_Hitmark, 1, "启用UTT", UI_Visual_HitMark);
 					GUI_VAR.GUI_ColorSelector(Block_Hitmark, 1, UI_Visual_HitMark_Color);
 					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 2, "显示伤害UTT", UI_Visual_HitMark_Damage);
@@ -969,7 +969,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					const auto Block_Radar = GUI_VAR.GUI_Block(580, 330, 190, "雷达UTT");
 					GUI_VAR.GUI_Checkbox(Block_Radar, 1, "启用UTT", UI_Visual_Radar);
 					GUI_VAR.GUI_Button_Small({ Block_Radar.x + 10,Block_Radar.y }, 2, UI_Visual_Radar_Show);
-					GUI_VAR.GUI_Checkbox({ Block_Radar.x + 20,Block_Radar.y }, 2, "跟随朝向角度UTT", UI_Visual_Radar_FollowAngle);
+					GUI_VAR.GUI_Checkbox({ Block_Radar.x + 20,Block_Radar.y }, 2, "固定朝向角度UTT", UI_Visual_Radar_FollowAngle);
 					GUI_VAR.GUI_Slider<float, class CLASS_Block_Radar_1>(Block_Radar, 3, "范围UTT", 0.2, 40, UI_Visual_Radar_Range);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_2>(Block_Radar, 4, "大小UTT", 150, 500, UI_Visual_Radar_Size, "px");
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_3>(Block_Radar, 5, "透明度UTT", 0, 255, UI_Visual_Radar_Alpha);
@@ -981,10 +981,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				else if (UI_Panel == 2)//Misc
 				{
 					const auto Block_Misc = GUI_VAR.GUI_Block(150, 30, 720, "杂项UTT");
-					GUI_VAR.GUI_Checkbox(Block_Misc, 1, "兔子跳UTT", UI_Misc_BunnyHop);
-					GUI_VAR.GUI_Checkbox(Block_Misc, 2, "击打音效UTT", UI_Misc_HitSound);
+					GUI_VAR.GUI_Checkbox(Block_Misc, 1, "连跳UTT", UI_Misc_BunnyHop);
+					GUI_VAR.GUI_Checkbox(Block_Misc, 2, "命中音效UTT", UI_Misc_HitSound);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_1>(Block_Misc, 3, "音调UTT", 10, 5000, UI_Misc_HitSound_Tone);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_2>(Block_Misc, 4, "长度UTT", 10, 80, UI_Misc_HitSound_Length);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_2>(Block_Misc, 4, "音长UTT", 10, 80, UI_Misc_HitSound_Length);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 5, "声呐UTT", UI_Misc_Sonar);
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_3>(Block_Misc, 5, UI_Misc_Sonar_Key);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_4>(Block_Misc, 6, "远UTT", 500, 1000, UI_Misc_Sonar_Range_Far);
@@ -995,7 +995,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_7>(Block_Misc, 9, UI_Misc_AutoTaser_Key);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 10, "水印UTT", UI_Misc_Watermark);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 11, "狙击枪准星UTT", UI_Misc_SniperCrosshair);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_8>(Block_Misc, 12, "大小UTT", 10, 60, UI_Misc_SniperCrosshair_Size, "px");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_8>(Block_Misc, 12, "大小UTT", 10, 80, UI_Misc_SniperCrosshair_Size, "px");
 					GUI_VAR.GUI_Checkbox(Block_Misc, 13, "防止挂机踢出UTT", UI_Misc_AntiAFKKick);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 14, "锁定游戏窗口最前端UTT", UI_Misc_LockGameWindow);
 					GUI_VAR.GUI_Checkbox(Block_Misc, 15, "绕过OBS捕捉UTT", UI_Misc_ByPassOBS);
@@ -1015,7 +1015,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Button(Block_Resolution, 3, "1280 * 1024", UI_Visual_Res_1280, 78);
 					GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", UI_Visual_Res_960, 83);
 					const auto Block_CloudConfig = GUI_VAR.GUI_Block(580, 210, 150, "云端配置UTT");
-					GUI_VAR.GUI_Button(Block_CloudConfig, 1, "加载配置UTT", UI_Misc_LoadCloudConfig, 20);
+					GUI_VAR.GUI_Button(Block_CloudConfig, 1, "加载选定配置UTT", UI_Misc_LoadCloudConfig, 75);
 					GUI_VAR.GUI_List(Block_CloudConfig, 2, { "Legit","Rage","Legit - no visual" }, UI_Misc_SelectedConfig);
 					auto Block_Spoof = GUI_VAR.GUI_Block(580, 380, 370, "恶搞功能UTT");
 					GUI_VAR.GUI_Checkbox(Block_Spoof, 1, "开启UTT", UI_Spoof_Spoof, { 200,200,150 });
@@ -1059,14 +1059,14 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				{
 					const auto Block_About = GUI_VAR.GUI_Block(150, 30, 160, "关于UTT");
 					GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color());
-					GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (免费外部)UTT", { 100,100,100 });
+					GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (开源免费外部)UTT", { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 2, "版本: UTT" + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 3, "发布日期: UTT" + Rensen_ReleaseDate, { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 4, "作者: https://github.com/CosllyUTT", { 100,100,100 });
 					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OPENLINKAuthor);
 					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_VAR.Global_Get_EasyGUI_Color());
 					const auto Block_Menu = GUI_VAR.GUI_Block(150, 210, 340, "菜单UTT");
-					GUI_VAR.GUI_Text(Block_Menu, 1, "菜单开关UTT");
+					GUI_VAR.GUI_Text(Block_Menu, 1, "菜单按键UTT");
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
 					GUI_VAR.GUI_Checkbox(Block_Menu, 2, "自定义菜单主题色UTT", UI_Setting_CustomColor);
 					GUI_VAR.GUI_ColorSelector_a(Block_Menu, 2, UI_Setting_MainColor);
@@ -1074,12 +1074,12 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "菜单动画速度UTT", 1.2, 10, UI_Setting_MenuAnimation);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Menu_3>(Block_Menu, 4, "菜单字体大小UTT", 0, 30, UI_Setting_MenuFontSize, "px");
 					GUI_VAR.GUI_InputText<class CLASS_Block_Menu_4>(Block_Menu, 5, UI_Setting_MenuFont, "自定义菜单字体UTT");
-					GUI_VAR.GUI_Button(Block_Menu, 6, "保存配置UTT", UI_Setting_SaveLocalConfig, 20);
-					if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 7, "关闭 CSUTT", UI_Setting_QuitCS, 20);
-					else GUI_VAR.GUI_Button(Block_Menu, 7, "打开 CSUTT", UI_Setting_StartCS, 20);
-					GUI_VAR.GUI_Button(Block_Menu, 8, "Github 项目链接UTT", UI_Setting_GithubRepositories, 20);
-					GUI_VAR.GUI_Button(Block_Menu, 9, "重启菜单UTT", UI_Setting_RestartMenu, 20);
-					GUI_VAR.GUI_Button(Block_Menu, 10, "关闭菜单UTT", UI_Setting_Unload, 20);
+					GUI_VAR.GUI_Button(Block_Menu, 6, "保存本地配置UTT", UI_Setting_SaveLocalConfig, 75);
+					if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 7, "关闭 CSUTT", UI_Setting_QuitCS, 90);
+					else GUI_VAR.GUI_Button(Block_Menu, 7, "打开 CSUTT", UI_Setting_StartCS, 90);
+					GUI_VAR.GUI_Button(Block_Menu, 8, "Github 项目链接UTT", UI_Setting_GithubRepositories, 75);
+					GUI_VAR.GUI_Button(Block_Menu, 9, "重启菜单UTT", UI_Setting_RestartMenu, 90);
+					GUI_VAR.GUI_Button(Block_Menu, 10, "关闭菜单UTT", UI_Setting_Unload, 90);
 					GUI_VAR.GUI_Tips({ Block_Menu.x + 10,Block_Menu.y }, 6, "If you want to reset the default config you can delete Rensen.cfg in the same folder.");
 					GUI_WindowSize = { 580,580 };
 				}
