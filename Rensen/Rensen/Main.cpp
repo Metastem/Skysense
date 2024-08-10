@@ -1,12 +1,12 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.43;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-10 12:20]";//程序发布日期时间
+const float Rensen_Version = 4.45;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-10 15:00]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
 	const string UI_LocalConfigPath = "Rensen.cfg";
-	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n";//默认参数
+	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n0\n";//默认参数
 	//----------------------------------------------------------------------------------------------
 	BOOL UI_Visual_Res_2560, UI_Visual_Res_1920, UI_Visual_Res_1280, UI_Visual_Res_960;
 	BOOL UI_Visual_Radar_Show;
@@ -148,6 +148,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	int UI_Legit_MagnetAim_Range = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 137));
 	int UI_Legit_Backtracking_MinimumTime = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 138));
 	int UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 139));
+	BOOL UI_Visual_HitMark_CustomColor = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 140));
 	//----------------------------------------------------------------------------------------------
 	void SaveLocalConfig() noexcept//保存本地参数
 	{
@@ -290,7 +291,8 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			to_string(UI_Legit_Armory_TriggerDistance_SHOTGUN) + "\n" +
 			to_string(UI_Legit_MagnetAim_Range) + "\n" +
 			to_string(UI_Legit_Backtracking_MinimumTime) + "\n" +
-			to_string(UI_Legit_RemoveRecoil_Sensitive) + "\n"
+			to_string(UI_Legit_RemoveRecoil_Sensitive) + "\n" +
+			to_string(UI_Visual_HitMark_CustomColor) + "\n"
 		);
 	}
 	void LoadCloudConfig(string FileName = "", string NormalURL = "https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/") noexcept//加载Github云参数
@@ -428,6 +430,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			UI_Legit_MagnetAim_Range = Variable::string_int_(URL_CONFIG.Read(137));
 			UI_Legit_Backtracking_MinimumTime = Variable::string_int_(URL_CONFIG.Read(138));
 			UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(URL_CONFIG.Read(139));
+			UI_Visual_HitMark_CustomColor = Variable::string_int_(URL_CONFIG.Read(140));
 			URL_CONFIG.Release();
 		}
 	}
@@ -465,7 +468,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 				}
 				else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-				GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color().Min_Bri(200), "Verdana", 25);
+				GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);
 				GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);
 				if (UI_Panel == 0)//Legit
 				{
@@ -554,17 +557,18 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_ColorSelector(Block_ESP, 15, UI_Visual_ESP_CustomColor_Color);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_5>(Block_ESP, 16, "Draw alpha", 20, 255, UI_Visual_ESP_DrawAlpha);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_6>(Block_ESP, 17, "Draw delay", 1, 30, UI_Visual_ESP_DrawDelay, "ms");
-					const auto Block_Hitmark = GUI_VAR.GUI_Block(580, 30, 280, "Hit mark");
+					const auto Block_Hitmark = GUI_VAR.GUI_Block(580, 30, 310, "Hit mark");
 					GUI_VAR.GUI_Checkbox(Block_Hitmark, 1, "Enabled", UI_Visual_HitMark);
-					GUI_VAR.GUI_ColorSelector(Block_Hitmark, 1, UI_Visual_HitMark_Color);
-					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 2, "Show damage", UI_Visual_HitMark_Damage);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_1>(Block_Hitmark, 3, "Range", 3, 100, UI_Visual_HitMark_Range, "px");
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_2>(Block_Hitmark, 4, "Length", 3, 100, UI_Visual_HitMark_Length, "px");
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_3>(Block_Hitmark, 5, "Thickness", 1, 10, UI_Visual_HitMark_Thickness, "px");
-					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 6, "Lightning effect", UI_Visual_HitMark_KillEffect);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_4>(Block_Hitmark, 7, "Quantity", 10, 500, UI_Visual_HitMark_KillEffect_Quantity);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_5>(Block_Hitmark, 8, "Range", 10, 500, UI_Visual_HitMark_KillEffect_Range);
-					const auto Block_Radar = GUI_VAR.GUI_Block(580, 330, 190, "Radar");
+					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 2, "Custom color", UI_Visual_HitMark_CustomColor);
+					GUI_VAR.GUI_ColorSelector(Block_Hitmark, 2, UI_Visual_HitMark_Color);
+					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 3, "Show damage", UI_Visual_HitMark_Damage);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_1>(Block_Hitmark, 4, "Range", 3, 100, UI_Visual_HitMark_Range, "px");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_2>(Block_Hitmark, 5, "Length", 3, 100, UI_Visual_HitMark_Length, "px");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_3>(Block_Hitmark, 6, "Thickness", 1, 10, UI_Visual_HitMark_Thickness, "px");
+					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 7, "Lightning effect", UI_Visual_HitMark_KillEffect);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_4>(Block_Hitmark, 8, "Quantity", 10, 500, UI_Visual_HitMark_KillEffect_Quantity);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_5>(Block_Hitmark, 9, "Range", 10, 500, UI_Visual_HitMark_KillEffect_Range);
+					const auto Block_Radar = GUI_VAR.GUI_Block(580, 360, 190, "Radar");
 					GUI_VAR.GUI_Checkbox(Block_Radar, 1, "Enabled", UI_Visual_Radar);
 					GUI_VAR.GUI_Button_Small({ Block_Radar.x + 10,Block_Radar.y }, 2, UI_Visual_Radar_Show);
 					GUI_VAR.GUI_Checkbox({ Block_Radar.x + 20,Block_Radar.y }, 2, "Follow angle", UI_Visual_Radar_FollowAngle);
@@ -758,13 +762,13 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				else if (UI_Panel == 4)//Setting
 				{
 					const auto Block_About = GUI_VAR.GUI_Block(150, 30, 160, "About");
-					GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color());
+					GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
 					GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (External Free)", { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 2, "Version: " + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 3, "Release date: " + Rensen_ReleaseDate, { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 4, "Author: https://github.com/Coslly", { 100,100,100 });
 					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OPENLINKAuthor);
-					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_VAR.Global_Get_EasyGUI_Color());
+					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
 					const auto Block_Menu = GUI_VAR.GUI_Block(150, 210, 340, "Menu");
 					GUI_VAR.GUI_Text(Block_Menu, 1, "Menu key");
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
@@ -872,7 +876,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 				}
 				else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-				GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color().Min_Bri(200), "Verdana", 25);
+				GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);
 				GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 20);
 				if (UI_Panel == 0)//Legit
 				{
@@ -956,17 +960,18 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_ColorSelector(Block_ESP, 15, UI_Visual_ESP_CustomColor_Color);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_5>(Block_ESP, 16, "透明度UTT", 20, 255, UI_Visual_ESP_DrawAlpha);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_6>(Block_ESP, 17, "绘制延迟UTT", 1, 30, UI_Visual_ESP_DrawDelay, "ms");
-					const auto Block_Hitmark = GUI_VAR.GUI_Block(580, 30, 280, "命中标记UTT");
+					const auto Block_Hitmark = GUI_VAR.GUI_Block(580, 30, 310, "命中标记UTT");
 					GUI_VAR.GUI_Checkbox(Block_Hitmark, 1, "启用UTT", UI_Visual_HitMark);
-					GUI_VAR.GUI_ColorSelector(Block_Hitmark, 1, UI_Visual_HitMark_Color);
-					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 2, "显示伤害UTT", UI_Visual_HitMark_Damage);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_1>(Block_Hitmark, 3, "范围UTT", 3, 100, UI_Visual_HitMark_Range, "px");
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_2>(Block_Hitmark, 4, "长度UTT", 3, 100, UI_Visual_HitMark_Length, "px");
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_3>(Block_Hitmark, 5, "粗细UTT", 1, 10, UI_Visual_HitMark_Thickness, "px");
-					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 6, "3D闪电效果UTT", UI_Visual_HitMark_KillEffect);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_4>(Block_Hitmark, 7, "数量UTT", 10, 500, UI_Visual_HitMark_KillEffect_Quantity);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_5>(Block_Hitmark, 8, "范围UTT", 10, 500, UI_Visual_HitMark_KillEffect_Range);
-					const auto Block_Radar = GUI_VAR.GUI_Block(580, 330, 190, "雷达UTT");
+					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 2, "自定义颜色UTT", UI_Visual_HitMark_CustomColor);
+					GUI_VAR.GUI_ColorSelector(Block_Hitmark, 2, UI_Visual_HitMark_Color);
+					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 3, "显示伤害UTT", UI_Visual_HitMark_Damage);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_1>(Block_Hitmark, 4, "范围UTT", 3, 100, UI_Visual_HitMark_Range, "px");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_2>(Block_Hitmark, 5, "长度UTT", 3, 100, UI_Visual_HitMark_Length, "px");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_3>(Block_Hitmark, 6, "粗细UTT", 1, 10, UI_Visual_HitMark_Thickness, "px");
+					GUI_VAR.GUI_Checkbox({ Block_Hitmark.x + 20,Block_Hitmark.y }, 7, "3D闪电效果UTT", UI_Visual_HitMark_KillEffect);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_4>(Block_Hitmark, 8, "数量UTT", 10, 500, UI_Visual_HitMark_KillEffect_Quantity);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_5>(Block_Hitmark, 9, "范围UTT", 10, 500, UI_Visual_HitMark_KillEffect_Range);
+					const auto Block_Radar = GUI_VAR.GUI_Block(580, 360, 190, "雷达UTT");
 					GUI_VAR.GUI_Checkbox(Block_Radar, 1, "启用UTT", UI_Visual_Radar);
 					GUI_VAR.GUI_Button_Small({ Block_Radar.x + 10,Block_Radar.y }, 2, UI_Visual_Radar_Show);
 					GUI_VAR.GUI_Checkbox({ Block_Radar.x + 20,Block_Radar.y }, 2, "固定朝向角度UTT", UI_Visual_Radar_FollowAngle);
@@ -1058,13 +1063,13 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				else if (UI_Panel == 3)//Setting
 				{
 					const auto Block_About = GUI_VAR.GUI_Block(150, 30, 160, "关于UTT");
-					GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_VAR.Global_Get_EasyGUI_Color());
+					GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
 					GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (开源免费外部)UTT", { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 2, "版本: UTT" + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 3, "发布日期: UTT" + Rensen_ReleaseDate, { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 4, "作者: https://github.com/CosllyUTT", { 100,100,100 });
 					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OPENLINKAuthor);
-					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_VAR.Global_Get_EasyGUI_Color());
+					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
 					const auto Block_Menu = GUI_VAR.GUI_Block(150, 210, 340, "菜单UTT");
 					GUI_VAR.GUI_Text(Block_Menu, 1, "菜单按键UTT");
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
@@ -1480,7 +1485,7 @@ void Thread_Funtion_Aimbot() noexcept//功能线程: 瞄准机器人
 				const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
 				if (!Advanced::Check_Enemy(PlayerPawn) || (UI_Legit_Aimbot_TriggerOnAim && !CrosshairId) || (UI_Legit_Aimbot_JudgingWall && !PlayerPawn.Spotted()))continue;
 				if (LocalPlayer_ActiveWeapon_Type == 4 && Variable::Coor_Dis_3D(PlayerPawn.Origin(), Global_LocalPlayer.Origin()) > UI_Legit_Armory_TriggerDistance_SHOTGUN)continue;//霰弹枪最大触发范围
-				if (UI_Legit_Armory_HitSiteParser && PlayerPawn.Health() <= 30)Aim_Parts = 4;//部位解析器 (粗制滥造)
+				if (UI_Legit_Armory_HitSiteParser && PlayerPawn.Health() <= Global_LocalPlayer.ActiveWeaponDamage())Aim_Parts = 4;//部位解析器
 				const auto NeedAngle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(Aim_Parts), Recoil_Angle);//最终瞄准角度
 				const auto Fov = hypot(NeedAngle.x, NeedAngle.y);//准星与角度的距离
 				if (Fov < EligiblePlayers.MinFov)//范围判断
@@ -1490,7 +1495,7 @@ void Thread_Funtion_Aimbot() noexcept//功能线程: 瞄准机器人
 					EligiblePlayers.AimAngle = NeedAngle;//刷新最终瞄准的Angle
 				}
 			}
-			if (EligiblePlayers.MinFov != 0 && EligiblePlayers.MinFov <= Aim_Range)//如果玩家在范围内则触发
+			if (EligiblePlayers.MinFov <= Aim_Range)//如果玩家在范围内则触发
 			{
 				if (Global_LocalPlayer.Scoped() && LocalPlayer_ActiveWeapon_Type == 3)System::Mouse_Move(-EligiblePlayers.AimAngle.y * Aim_Smooth * 3.5, EligiblePlayers.AimAngle.x * Aim_Smooth * 3.5);//加快开镜时灵敏度
 				else System::Mouse_Move(-EligiblePlayers.AimAngle.y * Aim_Smooth, EligiblePlayers.AimAngle.x * Aim_Smooth);
@@ -1508,10 +1513,9 @@ void Thread_Funtion_Aimbot() noexcept//功能线程: 瞄准机器人
 						}
 					}
 					ExecuteCommand("+attack");//开枪!!!
-					if (LocalPlayer_ActiveWeapon_ID == 64)Sleep(250);//R8左轮无法开枪修复
+					if (LocalPlayer_ActiveWeapon_ID == 64)Sleep(250);//R8左轮无法开枪修复 (无法跟紧目标点)
 					else Sleep(1);
 					ExecuteCommand("-attack");
-					if (UI_Legit_Aimbot_Key == 2 && LocalPlayer_ActiveWeapon_Type == 1)System::Mouse_Con(2, false);//自瞄按键在右键且是手枪则脚本持续开火状态 (可有可无)
 					if (Global_LocalPlayer.ShotsFired() != 0)Sleep(UI_Legit_Aimbot_AutoShootDelay);//自动开枪延迟 (缓解后座力)
 				}
 			}
@@ -1755,8 +1759,9 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 					const auto IDEnt_Pos = Global_LocalPlayer.IDEntIndex_Pawn().BonePos(5); static auto Target_Pos = IDEnt_Pos;//特效目标坐标
 					if (Damage > OldDamage || Damage < OldDamage)//当伤害变化
 					{
-						if (Kill > OldKill && Global_LocalPlayer.ShotsFired()) { EffectColor = UI_Visual_HitMark_Color; }//Kill
-						if (Damage > OldDamage) { Mark_Color = UI_Visual_HitMark_Color; Mark_DMG = Damage - OldDamage; }//Hit
+						auto Draw_Color = GUI_IO.GUIColor; if (UI_Visual_HitMark_CustomColor)Draw_Color = UI_Visual_HitMark_Color;//自定义颜色
+						if (Kill > OldKill && Global_LocalPlayer.ShotsFired()) { EffectColor = Draw_Color; }//Kill
+						if (Damage > OldDamage) { Mark_Color = Draw_Color; Mark_DMG = Damage - OldDamage; }//Hit
 						OldDamage = Damage; OldKill = Kill;//刷新
 					}
 					if (UI_Visual_HitMark_KillEffect)//闪电击杀效果

@@ -133,6 +133,48 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 				   }
 				   else return ClippingWeapon;
 			   }
+			   short ActiveWeaponDamage() const noexcept//人物手持武器命中胸部时预计伤害值 (如果目标只剩些返回值那些血量那么打身体一击毙命)
+			   {
+				   const auto ClippingWeapon = CS2_MEM.Read<short>(CS2_MEM.Read<uintptr_t>(m_PlayerPawn + CS2_Offsets::m_pClippingWeapon) + CS2_Offsets::m_iItemDefinitionIndex);
+				   switch (ClippingWeapon)
+				   {
+				   case 1: return 35;
+				   case 2: return 12;
+				   case 3: return 20;
+				   case 4: return 10;
+				   case 7: return 25;
+				   case 8: return 21;
+				   case 9: return 80;
+				   case 10: return 16;
+				   case 11: return 50;
+				   case 13: return 20;
+				   case 14: return 23;
+				   case 16: return 22;
+				   case 17: return 11;
+				   case 19: return 11;
+				   case 23: return 11;
+				   case 24: return 15;
+				   case 25: return 30;
+				   case 26: return 11;
+				   case 27: return 30;
+				   case 28: return 15;
+				   case 29: return 15;
+				   case 30: return 16;
+				   case 32: return 13;
+				   case 33: return 11;
+				   case 34: return 12;
+				   case 35: return 30;
+				   case 36: return 15;
+				   case 38: return 50;
+				   case 39: return 20;
+				   case 40: return 60;
+				   case 60: return 17;
+				   case 61: return 15;
+				   case 63: return 6;
+				   case 64: return 30;
+				   default: return 20;
+				   }
+			   }
 			   float MoveSpeed() const noexcept { const auto Velocity = CS2_MEM.Read<Variable::Vector3>(m_PlayerPawn + CS2_Offsets::m_vecVelocity); return hypot(Velocity.x, Velocity.y); }//人物移动速度
 			   string ActiveWeaponName(BOOL Use_WeaponBase = false, uintptr_t WeaponBase = 0) const noexcept//人物手持武器名称
 			   {
