@@ -26,6 +26,9 @@ Video: https://youtu.be/a0h4ZhxQP2A
 
 ![image](https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/ShowImage.png?raw=true)
 ![image](https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/ShowImage_CN.png?raw=true)
+## 🔥Contributors List
+- [M3351AN](https://github.com/M3351AN)
+Provides Aimbot algorithm and bypass OBS repair method
 # 💀Disclaimer
 I am not responsible for anything that happens when you use this software.
 
@@ -34,6 +37,3 @@ This project is the original Rensen address. If you find it at other addresses, 
 使用该软件所产生的任何后果本人概不负责。
 
 Rensen程序的原版本只在这一个地址由作者发布。
-# 🔥Contributors List
-- [M3351AN](https://github.com/M3351AN)
-Provides Aimbot algorithm and bypass OBS repair method
