@@ -34,6 +34,6 @@ This project is the original Rensen address. If you find it at other addresses, 
 使用该软件所产生的任何后果本人概不负责。
 
 Rensen程序的原版本只在这一个地址由作者发布。
-# 🔥Supporters List
+# 🔥Contributors List
 - [M3351AN](https://github.com/M3351AN)
 Provides Aimbot algorithm and bypass OBS repair method
