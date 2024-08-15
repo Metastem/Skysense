@@ -11,11 +11,11 @@
 //dwViewMatrix
 0x19CB4D0
 //m_hPlayerPawn
-0x7DC
+0x7EC
 //m_iTeamNum
 0x3C3
 //m_ArmorValue
-0x22D0
+0x22D4
 //m_iHealth
 0x324
 //m_iIDEntIndex
@@ -43,9 +43,9 @@
 //m_modelState + 0x80
 0x1F0
 //m_iszPlayerName
-0x630
+0x640
 //m_pActionTrackingServices
-0x700
+0x710
 //m_iNumRoundKills
 0x110
 //m_unTotalRoundDamageDealt
