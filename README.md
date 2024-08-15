@@ -27,7 +27,7 @@ Video: https://youtu.be/a0h4ZhxQP2A
 ![image](https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/ShowImage.png?raw=true)
 ![image](https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/ShowImage_CN.png?raw=true)
 ## 🔥Contributors List
-- [M3351AN](https://github.com/M3351AN)
+- [@M3351AN](https://github.com/M3351AN)
 Provides Aimbot algorithm and bypass OBS repair method
 # 💀Disclaimer
 I am not responsible for anything that happens when you use this software.
