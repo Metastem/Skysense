@@ -38,14 +38,14 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 	namespace CS2_Offsets//CS2固定偏移量 (游戏更新时需要同时更新 https://github.com/a2x/cs2-dumper.git)
 	{
 		string Offsets_Date = "[0000-00-00 00:00]";
-		uintptr_t dwLocalPlayerController = 0x19B3DE8;
-		uintptr_t dwLocalPlayerPawn = 0x17CF698;
-		uintptr_t dwEntityList = 0x1964198;
-		uintptr_t dwViewAngles = 0x19D40F8;
-		uintptr_t dwViewMatrix = 0x19C6250;
-		uintptr_t m_hPlayerPawn = 0x7DC;
+		uintptr_t dwLocalPlayerController = 0x19B91A8;
+		uintptr_t dwLocalPlayerPawn = 0x17D47E0;
+		uintptr_t dwEntityList = 0x1969668;
+		uintptr_t dwViewAngles = 0x19DA928;
+		uintptr_t dwViewMatrix = 0x19CB4D0;
+		uintptr_t m_hPlayerPawn = 0x7EC;
 		uintptr_t m_iTeamNum = 0x3C3;
-		uintptr_t m_ArmorValue = 0x22D0;
+		uintptr_t m_ArmorValue = 0x22D4;
 		uintptr_t m_iHealth = 0x324;
 		uintptr_t m_iIDEntIndex = 0x13A8;
 		uintptr_t m_fFlags = 0x3CC;
@@ -59,8 +59,8 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 		uintptr_t m_aimPunchCache = 0x14F0;
 		uintptr_t m_vecViewOffset = 0xC50;
 		uintptr_t m_dwBoneMatrix = 0x1F0;//m_modelState + 0x80
-		uintptr_t m_iszPlayerName = 0x630;
-		uintptr_t m_pActionTrackingServices = 0x700;
+		uintptr_t m_iszPlayerName = 0x640;
+		uintptr_t m_pActionTrackingServices = 0x710;
 		uintptr_t m_iNumRoundKills = 0x110;
 		uintptr_t m_unTotalRoundDamageDealt = 0x118;
 		uintptr_t m_iItemDefinitionIndex = 0x129A;//m_AttributeManager + m_Item + m_iItemDefinitionIndex
