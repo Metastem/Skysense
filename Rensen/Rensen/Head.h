@@ -1,4 +1,4 @@
-﻿//2024-08-10 12:20
+﻿//2024-08-16 19:30
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -568,8 +568,7 @@ namespace Window//窗口
     class Windows//更加方便的 窗口创建
     {
     private:
-        HWND Window_Hwnd = 0;//GUI Window HWND
-        int BKX = 0; int BKY = 0;
+        int BKX, BKY; HWND Window_Hwnd = 0;//GUI Window HWND
     public:
         //----------------------------------------------------------------------------------------
         HWND Create_Window(int Size_X, int Size_Y, string WindowName, BOOL IfTop, HWND hWndParent = 0) noexcept//创建窗口

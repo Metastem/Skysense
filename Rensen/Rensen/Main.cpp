@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.47;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-15 11:00]";//程序发布日期时间
+const float Rensen_Version = 4.48;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-16 19:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -450,7 +450,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 {
 	System::Log("Load Thread: Thread_Menu()");
 	GUI_VAR.Window_Create(1200, 1000, "Rensen", true);//创建置顶GUI绘制窗口
-	if (System::Get_DefaultLanguage() != 0x804 || System::Judge_File("EN") || System::Judge_File("en"))//中文菜单判断
+	if (System::Get_DefaultLanguage() != 0x804 || System::Judge_File("EN"))//中文菜单判断 (系统语言)
 	{
 		while (true)
 		{
@@ -1630,7 +1630,7 @@ void Thread_Funtion_RemoveRecoil() noexcept//功能线程: 移除后坐力
 void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂项
 {
 	System::Log("Load Thread: Thread_Funtion_PlayerESP()");
-	auto Rensen_ESP_RenderWindow = Window::NVIDIA_Overlay({ 0,0 }, false);//初始化英伟达覆盖
+	auto Rensen_ESP_RenderWindow = Window::NVIDIA_Overlay({ 0,0 });//初始化英伟达覆盖
 	Window::Windows SpareRenderWindow;
 	if (!Rensen_ESP_RenderWindow)//当没有找到英伟达覆盖时 (不是英伟达显卡)
 	{
@@ -2034,10 +2034,10 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 		if (!Attest)for (short i = 0; i <= 50000; i++) { if (System::Get_UserName() == UserID_READ.Read(i) || Variable::String_Upper(UserID_READ.Read(i)) == "BYPASS") { Attest = true; break; } }//遍历检测并修改认证
 		UserID_READ.Release();//释放缓存
 	}
-	Attest = true;//通过验证
+	Attest = true;//通过验证 (公开版)
 	if (!Attest) { Window::Message_Box("Rensen Attest - " + System::Get_UserName(), "Your identity cannot be passed.\n\nUnable to access from Chinese IP.\n\nAuthor: https://github.com/Coslly\n", MB_ICONSTOP); exit(0); }//未被认证则直接退出
 	//----------------------------------------------------------------------------------------------------------------------------------
-	System::URL_READ AutoUpdate = { "Cache_Update" };//自动更新系统
+	System::URL_READ AutoUpdate = { "Cache_Update" };//自动更新系统 (中国IP用户需要挂梯子)
 	if (AutoUpdate.StoreMem("https://github.com/Coslly/Rensen/blob/main/Rensen/Rensen/Main.cpp?raw=true"))//版本号更新检查
 	{
 		auto Version = AutoUpdate.Read(3); if (Version != "") { Version.erase(0, 29); Version.erase(Version.size() - 15, 100); }//擦除无用字符只获取版本号
