@@ -28,6 +28,7 @@ Video: https://youtu.be/a0h4ZhxQP2A
 
 ![image](https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/ShowImage.png?raw=true)
 ![image](https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/ShowImage_CN.png?raw=true)
+打开英文菜单需要在同目录下添加命名为'EN'的文件夹 (前提是默认中文菜单)
 ## 🔥Contributors List
 - [@M3351AN](https://github.com/M3351AN)
 Provides Aimbot algorithm and bypass OBS repair method
