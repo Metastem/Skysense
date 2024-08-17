@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.48;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-16 19:30]";//程序发布日期时间
+const float Rensen_Version = 4.49;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-17 11:00]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -11,7 +11,8 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	BOOL UI_Visual_Res_2560, UI_Visual_Res_1920, UI_Visual_Res_1280, UI_Visual_Res_960;
 	BOOL UI_Visual_Radar_Show;
 	BOOL UI_Misc_LoadCloudConfig;
-	BOOL UI_Setting_OPENLINKAuthor;
+	BOOL UI_Setting_OpenLinkAuthor;
+	BOOL UI_Setting_AddQQGroupChat;
 	BOOL UI_Setting_SaveLocalConfig;
 	BOOL UI_Setting_StartCS, UI_Setting_QuitCS;
 	BOOL UI_Setting_GithubRepositories;
@@ -767,7 +768,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Text(Block_About, 2, "Version: " + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 3, "Release date: " + Rensen_ReleaseDate, { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 4, "Author: https://github.com/Coslly", { 100,100,100 });
-					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OPENLINKAuthor);
+					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OpenLinkAuthor);
 					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
 					const auto Block_Menu = GUI_VAR.GUI_Block(150, 210, 340, "Menu");
 					GUI_VAR.GUI_Text(Block_Menu, 1, "Menu key");
@@ -818,7 +819,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 						else if (UI_Misc_SelectedConfig == 2)LoadCloudConfig("Legit No Visual");
 						System::Log("Misc: LoadCloudConfig [" + to_string(Config_ID) + "]");
 					}
-					if (UI_Setting_OPENLINKAuthor)//打开作者Github主题页面
+					if (UI_Setting_OpenLinkAuthor)//打开作者Github主题页面
 					{
 						System::Open_Website("https://github.com/Coslly");
 						System::Log("Setting: OpenGithubURL");
@@ -1062,15 +1063,17 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				}
 				else if (UI_Panel == 3)//Setting
 				{
-					const auto Block_About = GUI_VAR.GUI_Block(150, 30, 160, "关于UTT");
+					const auto Block_About = GUI_VAR.GUI_Block(150, 30, 190, "关于UTT");
 					GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
 					GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (开源免费外部)UTT", { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 2, "版本: UTT" + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 3, "发布日期: UTT" + Rensen_ReleaseDate, { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 4, "作者: https://github.com/CosllyUTT", { 100,100,100 });
-					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OPENLINKAuthor);
+					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OpenLinkAuthor);
+					GUI_VAR.GUI_Text(Block_About, 5, "交流QQ群: 486214313 UTT", { 100,100,100 });
+					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 5, UI_Setting_AddQQGroupChat);
 					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
-					const auto Block_Menu = GUI_VAR.GUI_Block(150, 210, 340, "菜单UTT");
+					const auto Block_Menu = GUI_VAR.GUI_Block(150, 240, 340, "菜单UTT");
 					GUI_VAR.GUI_Text(Block_Menu, 1, "菜单按键UTT");
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
 					GUI_VAR.GUI_Checkbox(Block_Menu, 2, "自定义菜单主题色UTT", UI_Setting_CustomColor);
@@ -1086,7 +1089,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Button(Block_Menu, 9, "重启菜单UTT", UI_Setting_RestartMenu, 90);
 					GUI_VAR.GUI_Button(Block_Menu, 10, "关闭菜单UTT", UI_Setting_Unload, 90);
 					GUI_VAR.GUI_Tips({ Block_Menu.x + 10,Block_Menu.y }, 6, "If you want to reset the default config you can delete Rensen.cfg in the same folder.");
-					GUI_WindowSize = { 580,580 };
+					GUI_WindowSize = { 580,610 };
 				}
 				GUI_VAR.Draw_GUI(Debug_Control_Var::Checkbox_2);//最终绘制GUI画板
 				if (UI_Misc_SavePerformance)Sleep(5);//节省电脑占用性能
@@ -1104,10 +1107,15 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 						else if (UI_Misc_SelectedConfig == 2)LoadCloudConfig("Legit No Visual");
 						System::Log("Misc: LoadCloudConfig [" + to_string(Config_ID) + "]");
 					}
-					if (UI_Setting_OPENLINKAuthor)//打开作者Github主题页面
+					if (UI_Setting_OpenLinkAuthor)//打开作者Github主题页面
 					{
 						System::Open_Website("https://github.com/Coslly");
 						System::Log("Setting: OpenGithubURL");
+					}
+					if (UI_Setting_AddQQGroupChat)//加入QQ群聊
+					{
+						System::Open_Website("https://qm.qq.com/q/67Ed5be1tS");
+						System::Log("Setting: AddQQGroupChat");
 					}
 					if (UI_Setting_SaveLocalConfig || (System::Get_Key(VK_LCONTROL) && System::Get_Key_Onest(0x53)))//保存当前所设置的参数
 					{
