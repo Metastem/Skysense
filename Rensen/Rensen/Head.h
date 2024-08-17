@@ -1,4 +1,4 @@
-﻿//2024-08-16 19:30
+﻿//2024-08-17 18:40
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -875,6 +875,8 @@ namespace Window//窗口
             Gdiplus::GdiplusStartupInput gdiplusstartupinput; ULONG_PTR gdiplusToken;
             Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusstartupinput, nullptr);
             //---------------------------------------------------------------------
+            if (XX == GetSystemMetrics(SM_CXSCREEN))XX = XX * 2;
+            if (YY == GetSystemMetrics(SM_CYSCREEN))YY = YY * 2;//修复白屏BUG (像素缩放引起)
             StartPos = { X,Y };
             EndPos = { XX,YY };
             HdcWind = GetWindowDC(WindowHWND);
@@ -1412,7 +1414,7 @@ namespace Window//窗口
             MARGINS margin; margin.cyBottomHeight = margin.cyTopHeight = margin.cxLeftWidth = margin.cxRightWidth = -1;
             DwmExtendFrameIntoClientArea(Window_HWND, &margin);
             SetLayeredWindowAttributes(Window_HWND, RGB(0, 0, 0), 255, LWA_ALPHA);
-            for (short i = 0; i <= 5; ++i)SetWindowPos(Window_HWND, HWND_TOPMOST, 0, 0, InitialSize.x, InitialSize.y, 0x0002 | 0x0001);
+            for (short i = 0; i <= 8; ++i)SetWindowPos(Window_HWND, HWND_TOPMOST, 0, 0, InitialSize.x, InitialSize.y, 0x0002 | 0x0001);
             MoveWindow(Window_HWND, 0, 0, InitialSize.x, InitialSize.y, true);
             ShowWindow(Window_HWND, SW_SHOW);
         }

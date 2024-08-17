@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.49;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-17 11:00]";//程序发布日期时间
+const float Rensen_Version = 4.50;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-17 18:40]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -1638,7 +1638,7 @@ void Thread_Funtion_RemoveRecoil() noexcept//功能线程: 移除后坐力
 void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂项
 {
 	System::Log("Load Thread: Thread_Funtion_PlayerESP()");
-	auto Rensen_ESP_RenderWindow = Window::NVIDIA_Overlay({ 0,0 });//初始化英伟达覆盖
+	auto Rensen_ESP_RenderWindow = Window::NVIDIA_Overlay();//初始化英伟达覆盖
 	Window::Windows SpareRenderWindow;
 	if (!Rensen_ESP_RenderWindow)//当没有找到英伟达覆盖时 (不是英伟达显卡)
 	{
@@ -1855,14 +1855,14 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 				}
 				if (UI_Misc_SniperCrosshair && Global_LocalPlayer.ActiveWeapon(true) == 3 && !Global_LocalPlayer.Scoped())ESP_Paint.RenderA_GradientCircle(CS_Scr_Res.r / 2, CS_Scr_Res.g / 2, UI_Misc_SniperCrosshair_Size, GUI_IO.GUIColor.D_Alpha(150), { 0,0,0,0 }, 0.3);//狙击枪准星
 			}
-			else {//性能节省
-				ESP_Paint.RenderA_SmpStr(0, 0, "Render Performance Saving... 10ms", GUI_IO.GUIColor.D_Alpha(255));
+			else {//死亡时节省性能
+				ESP_Paint.RenderA_SmpStr(0, 0, "Render Performance Saving... 10ms", GUI_IO.GUIColor.D_Alpha(200));
 				Sleep(10);
 			}
 		}
 		else Sleep(20);
-		ESP_Paint.DrawPaint();//最终绘制画板
 		if (CS2_HWND && Menu_Open)Sleep(20);//菜单打开时降低绘制速度以降低CPU使用率
+		ESP_Paint.DrawPaint();//最终绘制画板
 	}
 }
 void Thread_Funtion_EntityESP() noexcept//功能线程: 实体透视
