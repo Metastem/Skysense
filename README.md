@@ -11,7 +11,6 @@ Just a multifunction cheat software developed for the game Counter-Strike 2.
 ## 🙁 It doesn't work
 - When compiling the file, select `Release | X64`
 - Make sure you have access to Github.
-- Check if the display scaling is at 100%
 ## 🤓Features
 - External menu
 - Saveable system
