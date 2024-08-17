@@ -1,4 +1,4 @@
-﻿//2024-08-17 19:30
+﻿//2024-08-17 22:00
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -417,10 +417,17 @@ namespace Window//窗口
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
-    Variable::Vector4 Get_WindowResolution(HWND WindowHWND) noexcept//获取窗口分辨率（窗口模式不精准，全屏精准）
+    Variable::Vector4 Get_WindowResolution(HWND WindowHWND) noexcept//获取窗口分辨率
     {//Window::Get_WindowResolution(FindWindow(NULL, L"WindowName")).r;
-        RECT rect; GetWindowRect(WindowHWND, &rect);
-        return{ rect.right - rect.left ,rect.bottom - rect.top,  rect.left, rect.top };//[0]==X [1]==Y
+        RECT Window_Rect; GetWindowRect(WindowHWND, &Window_Rect);//窗口坐标 (包括标题栏)
+        RECT Client_Rect; GetClientRect(WindowHWND, &Client_Rect);//显示区域坐标
+        /* 打印坐标信息
+        string Str_Win = "Window_Rect[" + to_string(Window_Rect.left) + ", " + to_string(Window_Rect.top) + ", " + to_string(Window_Rect.right) + ", " + to_string(Window_Rect.bottom) + "]\n";
+        string Str_Cli = "Client_Rect[" + to_string(Client_Rect.left) + ", " + to_string(Client_Rect.top) + ", " + to_string(Client_Rect.right) + ", " + to_string(Client_Rect.bottom) + "]\n";
+        printf(Str_Win.c_str());printf(Str_Cli.c_str());
+        */
+        if ((Window_Rect.bottom - Window_Rect.top) != Client_Rect.bottom)return { Client_Rect.right, Client_Rect.bottom,  Window_Rect.left + 8, Window_Rect.bottom - Client_Rect.bottom - 8 };//窗口状态时 (带有标题栏)
+        else return { Window_Rect.right - Window_Rect.left, Window_Rect.bottom - Window_Rect.top, Window_Rect.left, Window_Rect.top };//全屏窗口时
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.51;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-17 19:30]";//程序发布日期时间
+const float Rensen_Version = 4.53;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-17 22:00]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -846,6 +846,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					if (UI_Setting_RestartMenu)//重启菜单
 					{
 						System::Log("Setting: RestartMenu");
+						GUI_VAR.Window_SetTitle("Rensen ");//防止被防多开检测到
 						System::Self_Restart();
 					}
 					if (UI_Setting_Unload)//关闭菜单
@@ -1138,6 +1139,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					if (UI_Setting_RestartMenu)//重启菜单
 					{
 						System::Log("Setting: RestartMenu");
+						GUI_VAR.Window_SetTitle("Rensen ");//防止被防多开检测到
 						System::Self_Restart();
 					}
 					if (UI_Setting_Unload)//关闭菜单
@@ -1197,8 +1199,8 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 				Window_Watermark_Render.Render_String_UTT(Watermark_Pos.x + 4, Watermark_Pos.y + 2, WaterMark_String, "Small Fonts", 12, { 255,255,255 }, false);
 				if (Menu_Open)//菜单开启时
 				{
-					Window_Watermark_Render.RenderA_SmpStr(2, 2, "Release " + Rensen_ReleaseDate, GUI_IO.GUIColor.D_Alpha(200), { 1,0,0,130 });//编译日期绘制
-					Window_Watermark_Render.RenderA_SmpStr(2, 2 + 14, "Offsets " + CS2_Offsets::Offsets_Date, GUI_IO.GUIColor.D_Alpha(200), { 1,0,0,130 });//云偏移更新日期绘制
+					Window_Watermark_Render.RenderA_SmpStr(2, 2, "Release " + Rensen_ReleaseDate, GUI_IO.GUIColor.D_Alpha(150), { 1,0,0,130 });//编译日期绘制
+					Window_Watermark_Render.RenderA_SmpStr(2, 2 + 14, "Offsets " + CS2_Offsets::Offsets_Date, GUI_IO.GUIColor.D_Alpha(150), { 1,0,0,130 });//云偏移更新日期绘制
 				}
 				Window_Watermark_Render.DrawPaint(true);
 			}
@@ -1854,7 +1856,7 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 				if (UI_Misc_SniperCrosshair && Global_LocalPlayer.ActiveWeapon(true) == 3 && !Global_LocalPlayer.Scoped())ESP_Paint.RenderA_GradientCircle(CS_Scr_Res.r / 2, CS_Scr_Res.g / 2, UI_Misc_SniperCrosshair_Size, GUI_IO.GUIColor.D_Alpha(150), { 0,0,0,0 }, 0.3);//狙击枪准星
 			}
 			else {//死亡时节省性能
-				ESP_Paint.RenderA_SmpStr(0, 0, "Render Performance Saving... 10ms", GUI_IO.GUIColor.D_Alpha(200));
+				ESP_Paint.RenderA_SmpStr(0, 0, "Render Performance Saving... 10ms", GUI_IO.GUIColor.D_Alpha(100));
 				Sleep(10);
 			}
 		}
