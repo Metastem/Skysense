@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.50;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-17 18:40]";//程序发布日期时间
+const float Rensen_Version = 4.51;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-17 19:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -453,9 +453,8 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 	GUI_VAR.Window_Create(1200, 1000, "Rensen", true);//创建置顶GUI绘制窗口
 	if (System::Get_DefaultLanguage() != 0x804 || System::Judge_File("EN"))//中文菜单判断 (系统语言)
 	{
-		while (true)
+		while (true)//进入死循环
 		{
-			GUI_VAR.Window_SetTitle(System::Rand_String(10));//随机菜单窗口标题
 			Window::Set_LimitWindowShow(GUI_VAR.Window_HWND(), UI_Misc_ByPassOBS);//绕过OBS
 			static int UI_Panel = 0;//大区块选择
 			static Variable::Vector2 GUI_WindowSize = { 0,0 };//窗体大小(用于开关动画)
@@ -860,9 +859,8 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 		}
 	}
 	else {
-		while (true)
+		while (true)//进入死循环
 		{
-			GUI_VAR.Window_SetTitle(System::Rand_String(10));//随机菜单窗口标题
 			Window::Set_LimitWindowShow(GUI_VAR.Window_HWND(), UI_Misc_ByPassOBS);//绕过OBS
 			UI_Setting_MenuFont = "等线";//中文字体
 			static int UI_Panel = 0;//大区块选择
@@ -2036,6 +2034,8 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 {
 	System::Anti_Debugger("Debugging is disabled after compilation is completed.");//防止逆向破解
 	//----------------------------------------------------------------------------------------------------------------------------------
+	if (FindWindow(0, L"Rensen")) { Window::Message_Box("Rensen Error", "The program is already running.", MB_ICONSTOP); exit(0); }//防止多开程序
+	//----------------------------------------------------------------------------------------------------------------------------------
 	System::URL_READ UserID_READ = { "Cache_UserID" }; BOOL Attest = false;//认证变量
 	if (UserID_READ.StoreMem("https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/UserID.uid?raw=true"))//Github读取有效用户ID
 	{
@@ -2062,7 +2062,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	printf("Welcome to Rensen for Counter-Strike 2 cheat.\nThe Rensen project is a version converted from FreeCS.\nNo team author By: https://github.com/Coslly\nThe following information returned is debugging information.\n");//作者留言
 	System::Log("Load Thread: main()");
 	Sleep(100);//修复重启进程冲突
-	if (!System::Judge_File(UI_LocalConfigPath)) { System::Create_File(UI_LocalConfigPath, UI_DefaultConfig); System::Self_Restart(); }//创建默认参数文件 (当未找到参数文件时, 第一次启动时)
+	if (!System::Judge_File(UI_LocalConfigPath)) { System::Create_File(UI_LocalConfigPath, UI_DefaultConfig); System::Self_Restart(); }//创建默认参数文件并且重启套用参数 (当未找到参数文件时, 第一次启动时)
 	thread Thread_Menu_ = thread(Thread_Menu);
 	thread Thread_Misc_ = thread(Thread_Misc);
 	Sleep(50);//防止重启卡线程 (以下为功能函数线程)

@@ -10,7 +10,7 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 	vector<short> Global_ValidClassID = { NULL };//有效实体
 	BOOL Global_IsShowWindow = false;//窗口显示
 	BOOL Global_TeamCheck = false;//团队过滤
-	void ExecuteCommand(string Command_Str) noexcept//发送指令到CS控制台
+	void ExecuteCommand(string Command_Str, BOOL SendLog = false) noexcept//发送指令到CS控制台
 	{
 		COPYDATASTRUCT m_cData; m_cData.cbData = strlen(Command_Str.c_str()) + 1; m_cData.dwData = 0; m_cData.lpData = (void*)Command_Str.c_str();
 		SendMessage(CS2_MEM.Get_ProcessHWND(), WM_COPYDATA, 0, (LPARAM)&m_cData);//发送命令
@@ -34,6 +34,8 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 		else if (Command_Str == "-left")System::Key_Con_HWND(CS2_HWND, 0x41, false);
 		if (Command_Str == "+right")System::Key_Con_HWND(CS2_HWND, 0x44, true);//D
 		else if (Command_Str == "-right")System::Key_Con_HWND(CS2_HWND, 0x44, false);
+		//-----------------------------------------------------------------------------------
+		if (SendLog)System::Log("ExecuteCommand: " + Command_Str);//打印执行的命令
 	}
 	namespace CS2_Offsets//CS2固定偏移量 (游戏更新时需要同时更新 https://github.com/a2x/cs2-dumper.git)
 	{
