@@ -9,7 +9,7 @@ Just a multifunction cheat software developed for the game Counter-Strike 2.
 
 交流QQ群: 486214313
 ## 🙁 It doesn't work
-- When compiling the file, select Release | X64
+- When compiling the file, select `Release | X64`
 - Make sure you have access to Github.
 - Check if the display scaling is at 100%
 ## 🤓Features
@@ -19,7 +19,7 @@ Just a multifunction cheat software developed for the game Counter-Strike 2.
 - Do not write memory!!!
 - Bypass Valve-Anti-Cheat(VAC)
 - Auto update
-- C++ Build in Release | x64
+- C++ Build in `Release | x64`
 - GUI project: [EasyGUI-Lightweight](https://github.com/Coslly/EasyGUI-Lightweight.git)
 - Cloud update: https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/Offsets.ofs
 - Authentication: https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/UserID.uid
@@ -28,7 +28,7 @@ Video: https://youtu.be/a0h4ZhxQP2A
 
 ![image](https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/ShowImage.png?raw=true)
 ![image](https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/ShowImage_CN.png?raw=true)
-打开英文菜单需要在同目录下添加命名为'EN'的文件夹 (前提是默认中文菜单)
+打开英文菜单需要在同目录下添加命名为`EN`的文件夹 (前提是默认中文菜单)
 ## 🔥Contributors List
 - [@M3351AN](https://github.com/M3351AN)
 Provides Aimbot algorithm and bypass OBS repair method
