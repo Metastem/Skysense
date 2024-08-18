@@ -1,12 +1,12 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.53;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-17 22:00]";//程序发布日期时间
+const float Rensen_Version = 4.55;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-18 11:40]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
 	const string UI_LocalConfigPath = "Rensen.cfg";
-	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n0\n";//默认参数
+	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n0\n50\n";//默认参数
 	//----------------------------------------------------------------------------------------------
 	BOOL UI_Visual_Res_2560, UI_Visual_Res_1920, UI_Visual_Res_1280, UI_Visual_Res_960;
 	BOOL UI_Visual_Radar_Show;
@@ -150,6 +150,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	int UI_Legit_Backtracking_MinimumTime = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 138));
 	int UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 139));
 	BOOL UI_Visual_HitMark_CustomColor = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 140));
+	int UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 141));
 	//----------------------------------------------------------------------------------------------
 	void SaveLocalConfig() noexcept//保存本地参数
 	{
@@ -293,7 +294,8 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			to_string(UI_Legit_MagnetAim_Range) + "\n" +
 			to_string(UI_Legit_Backtracking_MinimumTime) + "\n" +
 			to_string(UI_Legit_RemoveRecoil_Sensitive) + "\n" +
-			to_string(UI_Visual_HitMark_CustomColor) + "\n"
+			to_string(UI_Visual_HitMark_CustomColor) + "\n" +
+			to_string(UI_Legit_Aimbot_AutoShootHitChance) + "\n"
 		);
 	}
 	void LoadCloudConfig(string FileName = "", string NormalURL = "https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/") noexcept//加载Github云参数
@@ -432,6 +434,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			UI_Legit_Backtracking_MinimumTime = Variable::string_int_(URL_CONFIG.Read(138));
 			UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(URL_CONFIG.Read(139));
 			UI_Visual_HitMark_CustomColor = Variable::string_int_(URL_CONFIG.Read(140));
+			UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(URL_CONFIG.Read(141));
 			URL_CONFIG.Release();
 		}
 	}
@@ -472,7 +475,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);
 				if (UI_Panel == 0)//Legit
 				{
-					const auto Block_Aimbot = GUI_VAR.GUI_Block(150, 30, 340, "Aim bot");
+					const auto Block_Aimbot = GUI_VAR.GUI_Block(150, 30, 370, "Aim bot");
 					GUI_VAR.GUI_Checkbox(Block_Aimbot, 1, "Enabled", UI_Legit_Aimbot);
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Aimbot_1>(Block_Aimbot, 1, UI_Legit_Aimbot_Key);
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 20,Block_Aimbot.y }, 2, "Judging wall", UI_Legit_Aimbot_JudgingWall);
@@ -482,9 +485,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 40,Block_Aimbot.y }, 6, "Auto stop", UI_Legit_Aimbot_AutoStop, { 255,150,150 });
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 40,Block_Aimbot.y }, 7, "Auto scope", UI_Legit_Aimbot_AutoScope, { 255,150,150 });
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Aimbot_2>({ Block_Aimbot.x + 20,Block_Aimbot.y }, 8, "Auto shoot delay", 0, 500, UI_Legit_Aimbot_AutoShootDelay, "ms", { 255,150,150 });
-					GUI_VAR.GUI_Checkbox(Block_Aimbot, 9, "Adaptive aimbot", UI_Legit_AdaptiveAimbot, { 200,200,150 });
-					GUI_VAR.GUI_Slider<float, class CLASS_Block_Aimbot_3>(Block_Aimbot, 10, "Initial smooth", 0, 20, UI_Legit_AdaptiveAimbot_InitialSmooth, "", { 200,200,150 });
-					const auto Block_Armory = GUI_VAR.GUI_Block(150, 390, 490, "Armory");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Aimbot_3>({ Block_Aimbot.x + 20,Block_Aimbot.y }, 9, "Auto shoot hit chance", 0, 100, UI_Legit_Aimbot_AutoShootHitChance, "%", { 255,150,150 });
+					GUI_VAR.GUI_Checkbox(Block_Aimbot, 10, "Adaptive aimbot", UI_Legit_AdaptiveAimbot, { 200,200,150 });
+					GUI_VAR.GUI_Slider<float, class CLASS_Block_Aimbot_4>(Block_Aimbot, 11, "Initial smooth", 0, 20, UI_Legit_AdaptiveAimbot_InitialSmooth, "", { 200,200,150 });
+					const auto Block_Armory = GUI_VAR.GUI_Block(150, 420, 490, "Armory");
 					GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 1, "Show range", UI_Legit_Armory_ShowAimbotRange);
 					GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 2, "Hit site parser", UI_Legit_Armory_HitSiteParser);
 					GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 3, "PISTOL Body aim (else head)", UI_Legit_Armory_BodyAim_PISTOL);
@@ -526,14 +530,15 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_2>(Block_Backtracking, 3, "Maximum time", UI_Legit_Backtracking_MinimumTime, 1000, UI_Legit_Backtracking_MaximumTime, "ms");
 					GUI_VAR.GUI_Tips(Block_Aimbot, 1, "Help you quickly aim at the target.");
 					GUI_VAR.GUI_Tips({ Block_Aimbot.x + 10,Block_Aimbot.y }, 5, "Prefer Ragebot.", 0, { 255,150,150 });
-					GUI_VAR.GUI_Tips(Block_Aimbot, 9, "More biological than normal aimbot.", 0, { 200,200,150 });
+					GUI_VAR.GUI_Tips({ Block_Aimbot.x + 20,Block_Aimbot.y }, 9, "Chance of hitting the target. (Affects shooting speed)", 0, { 255,150,150 });
+					GUI_VAR.GUI_Tips(Block_Aimbot, 10, "More biological than normal aimbot.", 0, { 200,200,150 });
 					GUI_VAR.GUI_Tips(Block_Triggerbot, 1, "Shoot when aiming at the enemy.");
 					GUI_VAR.GUI_Tips(Block_PreciseAim, 1, "Reduce the sensitivity of the reticle when aiming at the enemy.");
 					GUI_VAR.GUI_Tips({ Block_RemoveRecoil.x + 10,Block_RemoveRecoil.y }, 2, "Operations that only return landscape.");
 					GUI_VAR.GUI_Tips({ Block_RemoveRecoil.x + 10,Block_RemoveRecoil.y }, 4, "Corresponding game sensitivity value.");
 					GUI_VAR.GUI_Tips(Block_MagnetAim, 1, "Slow aiming without triggering key conditions. (Hard to see)");
 					GUI_VAR.GUI_Tips(Block_Backtracking, 1, "Take advantage of network latency to have a bigger hitbox.");
-					GUI_WindowSize = { 1010,910 };
+					GUI_WindowSize = { 1010,940 };
 				}
 				else if (UI_Panel == 1)//Visual
 				{
@@ -880,7 +885,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 20);
 				if (UI_Panel == 0)//Legit
 				{
-					const auto Block_Aimbot = GUI_VAR.GUI_Block(150, 30, 340, "瞄准机器人UTT");
+					const auto Block_Aimbot = GUI_VAR.GUI_Block(150, 30, 370, "瞄准机器人UTT");
 					GUI_VAR.GUI_Checkbox(Block_Aimbot, 1, "启用UTT", UI_Legit_Aimbot);
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Aimbot_1>(Block_Aimbot, 1, UI_Legit_Aimbot_Key);
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 20,Block_Aimbot.y }, 2, "判断墙体UTT", UI_Legit_Aimbot_JudgingWall);
@@ -890,9 +895,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 40,Block_Aimbot.y }, 6, "自动急停UTT", UI_Legit_Aimbot_AutoStop, { 255,150,150 });
 					GUI_VAR.GUI_Checkbox({ Block_Aimbot.x + 40,Block_Aimbot.y }, 7, "自动开镜UTT", UI_Legit_Aimbot_AutoScope, { 255,150,150 });
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Aimbot_2>({ Block_Aimbot.x + 20,Block_Aimbot.y }, 8, "自动开火延迟UTT", 0, 500, UI_Legit_Aimbot_AutoShootDelay, "ms", { 255,150,150 });
-					GUI_VAR.GUI_Checkbox(Block_Aimbot, 9, "自适应自瞄UTT", UI_Legit_AdaptiveAimbot, { 200,200,150 });
-					GUI_VAR.GUI_Slider<float, class CLASS_Block_Aimbot_3>(Block_Aimbot, 10, "初始平滑度UTT", 0, 20, UI_Legit_AdaptiveAimbot_InitialSmooth, "", { 200,200,150 });
-					const auto Block_Armory = GUI_VAR.GUI_Block(150, 390, 490, "武器库UTT");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Aimbot_3>({ Block_Aimbot.x + 20,Block_Aimbot.y }, 9, "自动开火命中几率UTT", 0, 100, UI_Legit_Aimbot_AutoShootHitChance, "%", { 255,150,150 });
+					GUI_VAR.GUI_Checkbox(Block_Aimbot, 10, "自适应自瞄UTT", UI_Legit_AdaptiveAimbot, { 200,200,150 });
+					GUI_VAR.GUI_Slider<float, class CLASS_Block_Aimbot_4>(Block_Aimbot, 11, "初始平滑度UTT", 0, 20, UI_Legit_AdaptiveAimbot_InitialSmooth, "", { 200,200,150 });
+					const auto Block_Armory = GUI_VAR.GUI_Block(150, 420, 490, "武器库UTT");
 					GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 1, "显示范围圆圈UTT", UI_Legit_Armory_ShowAimbotRange);
 					GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 2, "打击点解析器UTT", UI_Legit_Armory_HitSiteParser);
 					GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 3, "[手枪] 只打胸部 (反之头部)UTT", UI_Legit_Armory_BodyAim_PISTOL);
@@ -928,15 +934,21 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Checkbox(Block_MagnetAim, 1, "启用UTT", UI_Legit_MagnetAim);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_MagnetAim_1>(Block_MagnetAim, 2, "范围UTT", 0, 100, UI_Legit_MagnetAim_Range, "%");
 					GUI_VAR.GUI_Slider<float, class CLASS_Block_MagnetAim_2>(Block_MagnetAim, 3, "平滑度UTT", 0.5, 6.6666, UI_Legit_MagnetAim_Smooth);
+					const auto Block_Backtracking = GUI_VAR.GUI_Block(580, 720, 130, "回溯UTT");
+					GUI_VAR.GUI_Checkbox(Block_Backtracking, 1, "开启UTT", UI_Legit_Backtracking);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_1>(Block_Backtracking, 2, "最小延迟UTT", 0, 500, UI_Legit_Backtracking_MinimumTime, "ms");
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_2>(Block_Backtracking, 3, "最大延迟UTT", UI_Legit_Backtracking_MinimumTime, 1000, UI_Legit_Backtracking_MaximumTime, "ms");
 					GUI_VAR.GUI_Tips(Block_Aimbot, 1, "Help you quickly aim at the target.");
 					GUI_VAR.GUI_Tips({ Block_Aimbot.x + 10,Block_Aimbot.y }, 5, "Prefer Ragebot.", 0, { 255,150,150 });
-					GUI_VAR.GUI_Tips(Block_Aimbot, 9, "More biological than normal aimbot.", 0, { 200,200,150 });
+					GUI_VAR.GUI_Tips({ Block_Aimbot.x + 20,Block_Aimbot.y }, 9, "Chance of hitting the target. (Affects shooting speed)", 0, { 255,150,150 });
+					GUI_VAR.GUI_Tips(Block_Aimbot, 10, "More biological than normal aimbot.", 0, { 200,200,150 });
 					GUI_VAR.GUI_Tips(Block_Triggerbot, 1, "Shoot when aiming at the enemy.");
 					GUI_VAR.GUI_Tips(Block_PreciseAim, 1, "Reduce the sensitivity of the reticle when aiming at the enemy.");
 					GUI_VAR.GUI_Tips({ Block_RemoveRecoil.x + 10,Block_RemoveRecoil.y }, 2, "Operations that only return landscape.");
 					GUI_VAR.GUI_Tips({ Block_RemoveRecoil.x + 10,Block_RemoveRecoil.y }, 4, "Corresponding game sensitivity value.");
 					GUI_VAR.GUI_Tips(Block_MagnetAim, 1, "Slow aiming without triggering key conditions. (Hard to see)");
-					GUI_WindowSize = { 1010,910 };
+					GUI_VAR.GUI_Tips(Block_Backtracking, 1, "Take advantage of network latency to have a bigger hitbox.");
+					GUI_WindowSize = { 1010,940 };
 				}
 				else if (UI_Panel == 1)//Visual
 				{
@@ -1507,7 +1519,7 @@ void Thread_Funtion_Aimbot() noexcept//功能线程: 瞄准机器人
 			{
 				if (Global_LocalPlayer.Scoped() && LocalPlayer_ActiveWeapon_Type == 3)System::Mouse_Move(-EligiblePlayers.AimAngle.y * Aim_Smooth * 3.5, EligiblePlayers.AimAngle.x * Aim_Smooth * 3.5);//加快开镜时灵敏度
 				else System::Mouse_Move(-EligiblePlayers.AimAngle.y * Aim_Smooth, EligiblePlayers.AimAngle.x * Aim_Smooth);
-				if (UI_Legit_Aimbot_AutoShoot && CrosshairId && (!UI_Legit_Aimbot_AutoStop || LocalPlayer_ActiveWeapon_Type == 4 || Advanced::Stop_Move()))//AutoShoot & AutoStop
+				if (UI_Legit_Aimbot_AutoShoot && CrosshairId && (!UI_Legit_Aimbot_AutoStop || LocalPlayer_ActiveWeapon_Type == 4 || Advanced::Stop_Move()))//AutoShoot & CrosshairId & AutoStop
 				{
 					if (LocalPlayer_ActiveWeapon_Type == 3)//手持狙击枪时
 					{
@@ -1520,11 +1532,14 @@ void Thread_Funtion_Aimbot() noexcept//功能线程: 瞄准机器人
 							Sleep(100);//待扩散稳定
 						}
 					}
-					ExecuteCommand("+attack");//开枪!!!
-					if (LocalPlayer_ActiveWeapon_ID == 64)Sleep(250);//R8左轮无法开枪修复 (无法跟紧目标点)
-					else Sleep(1);
-					ExecuteCommand("-attack");
-					if (Global_LocalPlayer.ShotsFired() != 0)Sleep(UI_Legit_Aimbot_AutoShootDelay);//自动开枪延迟 (缓解后座力)
+					if (EligiblePlayers.MinFov <= (101 - UI_Legit_Aimbot_AutoShootHitChance) * 0.01 || UI_Legit_Aimbot_AutoShootHitChance == 0)//最大边缘点 (为了更加精准的瞄准到目标部位)
+					{
+						ExecuteCommand("+attack");//开枪!!!
+						if (LocalPlayer_ActiveWeapon_ID == 64)Sleep(250);//R8左轮无法开枪修复 (无法跟紧目标点)
+						else Sleep(1);
+						ExecuteCommand("-attack");
+						if (Global_LocalPlayer.ShotsFired() != 0)Sleep(UI_Legit_Aimbot_AutoShootDelay);//自动开枪延迟 (缓解后座力)
+					}
 				}
 			}
 		}

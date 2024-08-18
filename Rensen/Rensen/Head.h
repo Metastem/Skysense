@@ -1,4 +1,4 @@
-﻿//2024-08-17 22:00
+﻿//2024-08-18 11:40
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -426,8 +426,10 @@ namespace Window//窗口
         string Str_Cli = "Client_Rect[" + to_string(Client_Rect.left) + ", " + to_string(Client_Rect.top) + ", " + to_string(Client_Rect.right) + ", " + to_string(Client_Rect.bottom) + "]\n";
         printf(Str_Win.c_str());printf(Str_Cli.c_str());
         */
-        if ((Window_Rect.bottom - Window_Rect.top) != Client_Rect.bottom)return { Client_Rect.right, Client_Rect.bottom,  Window_Rect.left + 8, Window_Rect.bottom - Client_Rect.bottom - 8 };//窗口状态时 (带有标题栏)
-        else return { Window_Rect.right - Window_Rect.left, Window_Rect.bottom - Window_Rect.top, Window_Rect.left, Window_Rect.top };//全屏窗口时
+        const auto WindowDPI = GetDpiForWindow(WindowHWND); float WindowZoom = 1;//计算屏幕缩放对齐
+        if (WindowDPI == 120)WindowZoom = 1.25; else if (WindowDPI == 144)WindowZoom = 1.5; else if (WindowDPI == 192)WindowZoom = 2;
+        if ((Window_Rect.bottom - Window_Rect.top) != Client_Rect.bottom)return { (int)(Client_Rect.right * WindowZoom), (int)(Client_Rect.bottom * WindowZoom),  Window_Rect.left + 8, Window_Rect.bottom - Client_Rect.bottom - 8 };//窗口状态时 (带有标题栏)
+        else return { (int)((Window_Rect.right - Window_Rect.left) * WindowZoom), (int)((Window_Rect.bottom - Window_Rect.top) * WindowZoom), Window_Rect.left, Window_Rect.top };//全屏窗口时
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -882,10 +884,7 @@ namespace Window//窗口
             Gdiplus::GdiplusStartupInput gdiplusstartupinput; ULONG_PTR gdiplusToken;
             Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusstartupinput, nullptr);
             //---------------------------------------------------------------------
-            if (XX == GetSystemMetrics(SM_CXSCREEN))XX = XX * 2;
-            if (YY == GetSystemMetrics(SM_CYSCREEN))YY = YY * 2;//修复白屏BUG (像素缩放引起)
-            StartPos = { X,Y };
-            EndPos = { XX,YY };
+            StartPos = { X,Y }; EndPos = { XX,YY };
             HdcWind = GetWindowDC(WindowHWND);
             hMenDC = CreateCompatibleDC(HdcWind);
             SelectObject(hMenDC, CreateCompatibleBitmap(HdcWind, EndPos.x, EndPos.y));
