@@ -1,4 +1,4 @@
-﻿//2024-08-18 11:40
+﻿//2024-08-18 15:30
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -884,6 +884,10 @@ namespace Window//窗口
             Gdiplus::GdiplusStartupInput gdiplusstartupinput; ULONG_PTR gdiplusToken;
             Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusstartupinput, nullptr);
             //---------------------------------------------------------------------
+            const auto WindowDPI = GetDpiForWindow(WindowHWND); float WindowZoom = 1;//计算屏幕缩放对齐
+            if (WindowDPI == 120)WindowZoom = 1.25; else if (WindowDPI == 144)WindowZoom = 1.5; else if (WindowDPI == 192)WindowZoom = 2;
+            if (XX == GetSystemMetrics(SM_CXSCREEN))XX = (int)(XX * WindowZoom);
+            if (YY == GetSystemMetrics(SM_CYSCREEN))YY = (int)(YY * WindowZoom);//修复白屏BUG (像素缩放引起)
             StartPos = { X,Y }; EndPos = { XX,YY };
             HdcWind = GetWindowDC(WindowHWND);
             hMenDC = CreateCompatibleDC(HdcWind);
