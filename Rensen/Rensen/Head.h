@@ -1,4 +1,4 @@
-﻿//2024-08-19 18:00
+﻿//2024-08-19 18:50
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -428,7 +428,7 @@ namespace Window//窗口
         */
         const auto WindowDPI = GetDpiForWindow(WindowHWND); float WindowZoom = 1;//计算屏幕缩放对齐
         if (WindowDPI == 120)WindowZoom = 1.25; else if (WindowDPI == 144)WindowZoom = 1.5; else if (WindowDPI == 192)WindowZoom = 2;
-        if ((Window_Rect.bottom - Window_Rect.top) != Client_Rect.bottom)return { (int)(Client_Rect.right * WindowZoom), (int)(Client_Rect.bottom * WindowZoom),  Window_Rect.left + 8, Window_Rect.bottom - Client_Rect.bottom - 8 };//窗口状态时 (带有标题栏)
+        if ((Window_Rect.bottom - Window_Rect.top) != Client_Rect.bottom)return { Client_Rect.right, Client_Rect.bottom,  Window_Rect.left + 8, Window_Rect.bottom - Client_Rect.bottom - 8 };//窗口状态时 (带有标题栏)
         else return { (int)((Window_Rect.right - Window_Rect.left) * WindowZoom), (int)((Window_Rect.bottom - Window_Rect.top) * WindowZoom), Window_Rect.left, Window_Rect.top };//全屏窗口时
     }
     //-----------------------------------------------------------------------------------------------------------------------------
