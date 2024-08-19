@@ -1,4 +1,4 @@
-﻿//2024-08-18 15:30
+﻿//2024-08-19 18:00
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -1415,19 +1415,16 @@ namespace Window//窗口
     };
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
-    HWND NVIDIA_Overlay(Variable::Vector2 InitialSize = { 0,0 }, BOOL Revise = true) noexcept//英伟达覆盖绘制初始化(在上绘制不会导致背后窗口掉帧) 详细可查看: https://github.com/iraizo/nvidia-overlay-hijack/blob/master/src/overlay.cpp
+    HWND NVIDIA_Overlay(Variable::Vector2 InitialSize = { 0,0 }) noexcept//英伟达覆盖绘制初始化(在上绘制不会导致背后窗口掉帧) 详细可查看: https://github.com/iraizo/nvidia-overlay-hijack/blob/master/src/overlay.cpp
     {//const auto Window_Render = Window::NVIDIA_Overlay();
         const auto Window_HWND = FindWindowW(L"CEF-OSC-WIDGET", L"NVIDIA GeForce Overlay");
-        if (Revise)//修改窗口属性
-        {
-            SetWindowLongPtrA(Window_HWND, -20, (LONG_PTR)(GetWindowLongA(Window_HWND, -20) | 0x20));
-            MARGINS margin; margin.cyBottomHeight = margin.cyTopHeight = margin.cxLeftWidth = margin.cxRightWidth = -1;
-            DwmExtendFrameIntoClientArea(Window_HWND, &margin);
-            SetLayeredWindowAttributes(Window_HWND, RGB(0, 0, 0), 255, LWA_ALPHA);
-            for (short i = 0; i <= 8; ++i)SetWindowPos(Window_HWND, HWND_TOPMOST, 0, 0, InitialSize.x, InitialSize.y, 0x0002 | 0x0001);
-            MoveWindow(Window_HWND, 0, 0, InitialSize.x, InitialSize.y, true);
-            ShowWindow(Window_HWND, SW_SHOW);
-        }
+        SetWindowLongPtrA(Window_HWND, -20, (LONG_PTR)(GetWindowLongA(Window_HWND, -20) | 0x20));
+        MARGINS margin; margin.cyBottomHeight = margin.cyTopHeight = margin.cxLeftWidth = margin.cxRightWidth = -1;
+        DwmExtendFrameIntoClientArea(Window_HWND, &margin);
+        SetLayeredWindowAttributes(Window_HWND, RGB(0, 0, 0), 255, LWA_ALPHA);
+        for (short i = 0; i <= 8; ++i)SetWindowPos(Window_HWND, HWND_TOPMOST, 0, 0, InitialSize.x, InitialSize.y, 0x0002 | 0x0001);
+        MoveWindow(Window_HWND, 0, 0, InitialSize.x, InitialSize.y, true);
+        ShowWindow(Window_HWND, SW_SHOW);
         return Window_HWND;
     }
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -2607,7 +2604,7 @@ namespace EasyGUI
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
         int Window_FPS() noexcept { return EasyGUI_FPS; }//获取GUI绘制帧数
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
-        BOOL Window_Move(short Draw_Delay = 3) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
+        BOOL Window_Move(short Draw_Delay = 5) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
         {
             //--------------------------------消息循环
             MSG msg = { 0 }; if (GetMessage(&msg, 0, 0, 0)) { TranslateMessage(&msg); DispatchMessage(&msg); }
