@@ -40,11 +40,11 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 	namespace CS2_Offsets//CS2固定偏移量 (游戏更新时需要同时更新 https://github.com/a2x/cs2-dumper.git)
 	{
 		string Offsets_Date = "[0000-00-00 00:00]";
-		uintptr_t dwLocalPlayerController = 0x19B91A8;
-		uintptr_t dwLocalPlayerPawn = 0x17D47E0;
-		uintptr_t dwEntityList = 0x1969668;
-		uintptr_t dwViewAngles = 0x19DA928;
-		uintptr_t dwViewMatrix = 0x19CB4D0;
+		uintptr_t dwLocalPlayerController = 0x19B9178;
+		uintptr_t dwLocalPlayerPawn = 0x17D4810;
+		uintptr_t dwEntityList = 0x1969518;
+		uintptr_t dwViewAngles = 0x19DA8F8;
+		uintptr_t dwViewMatrix = 0x19CB4A0;
 		uintptr_t m_hPlayerPawn = 0x7EC;
 		uintptr_t m_iTeamNum = 0x3C3;
 		uintptr_t m_ArmorValue = 0x22D4;
