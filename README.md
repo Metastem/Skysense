@@ -8,9 +8,6 @@ Just a multifunction cheat software developed for the game Counter-Strike 2.
 专为CS2定制的多功能外部作弊。
 
 交流QQ群: 486214313 (反馈BUG, 最新版提前发布)
-## 🙁 It doesn't work
-- When compiling the file, select `Release | X64`
-- Make sure you have access to Github.
 ## 🤓Features
 - External menu
 - Saveable system
