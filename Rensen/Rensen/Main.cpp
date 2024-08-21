@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.62;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-21 17:50]";//程序发布日期时间
+const float Rensen_Version = 4.63;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-21 20:50]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -454,7 +454,8 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 {
 	System::Log("Load Thread: Thread_Menu()");
 	GUI_VAR.Window_Create(1200, 1000, "Rensen", true);//创建置顶GUI绘制窗口
-	if (System::Get_DefaultLanguage() != 0x804 || System::Judge_File("EN"))//中文菜单判断 (系统语言)
+	const auto LanguageID = System::Get_DefaultLanguage();
+	if (!((LanguageID == 0x804 || LanguageID == 0x404 || LanguageID == 0xC04) && !System::Judge_File("EN")))//中文菜单判断 (系统语言)
 	{
 		while (true)//进入死循环
 		{
@@ -938,16 +939,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Checkbox(Block_Backtracking, 1, "开启UTT", UI_Legit_Backtracking);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_1>(Block_Backtracking, 2, "最小延迟UTT", 0, 500, UI_Legit_Backtracking_MinimumTime, "ms");
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_2>(Block_Backtracking, 3, "最大延迟UTT", UI_Legit_Backtracking_MinimumTime, 1000, UI_Legit_Backtracking_MaximumTime, "ms");
-					GUI_VAR.GUI_Tips(Block_Aimbot, 1, "Help you quickly aim at the target.");
-					GUI_VAR.GUI_Tips({ Block_Aimbot.x + 10,Block_Aimbot.y }, 5, "Prefer Ragebot.", 0, { 255,150,150 });
-					GUI_VAR.GUI_Tips({ Block_Aimbot.x + 20,Block_Aimbot.y }, 9, "Chance of hitting the target. (Affects shooting speed)", 0, { 255,150,150 });
-					GUI_VAR.GUI_Tips(Block_Aimbot, 10, "More biological than normal aimbot.", 0, { 200,200,150 });
-					GUI_VAR.GUI_Tips(Block_Triggerbot, 1, "Shoot when aiming at the enemy.");
-					GUI_VAR.GUI_Tips(Block_PreciseAim, 1, "Reduce the sensitivity of the reticle when aiming at the enemy.");
-					GUI_VAR.GUI_Tips({ Block_RemoveRecoil.x + 10,Block_RemoveRecoil.y }, 2, "Operations that only return landscape.");
-					GUI_VAR.GUI_Tips({ Block_RemoveRecoil.x + 10,Block_RemoveRecoil.y }, 4, "Corresponding game sensitivity value.");
-					GUI_VAR.GUI_Tips(Block_MagnetAim, 1, "Slow aiming without triggering key conditions. (Hard to see)");
-					GUI_VAR.GUI_Tips(Block_Backtracking, 1, "Take advantage of network latency to have a bigger hitbox.");
 					GUI_WindowSize = { 1010,940 };
 				}
 				else if (UI_Panel == 1)//Visual
@@ -990,9 +981,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Slider<float, class CLASS_Block_Radar_1>(Block_Radar, 3, "范围UTT", 0.2, 40, UI_Visual_Radar_Range);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_2>(Block_Radar, 4, "大小UTT", 150, 500, UI_Visual_Radar_Size, "px");
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_3>(Block_Radar, 5, "透明度UTT", 0, 255, UI_Visual_Radar_Alpha);
-					GUI_VAR.GUI_Tips(Block_ESP, 1, "Learn enemy coordinates through walls. (Full screen cannot be used)");
-					GUI_VAR.GUI_Tips(Block_Hitmark, 1, "Effect that triggers when hitting the player.");
-					GUI_VAR.GUI_Tips(Block_Radar, 1, "Exterior window radar. (Full screen cannot be used)");
 					GUI_WindowSize = { 1010,610 };
 				}
 				else if (UI_Panel == 2)//Misc
@@ -1052,24 +1040,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					auto FakeRageBot_SliderString = "目标: UTT" + Advanced::Player_Name(UI_Spoof_FakeRageBot_Target);
 					if (!UI_Spoof_FakeRageBot_Target)FakeRageBot_SliderString = "目标: 任何目标UTT";
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Spoof_7>({ Block_Spoof.x + 20,Block_Spoof.y }, 11, FakeRageBot_SliderString, 0, 64, UI_Spoof_FakeRageBot_Target);
-					GUI_VAR.GUI_Tips(Block_Misc, 2, "Play Beep when hitting player.");
-					GUI_VAR.GUI_Tips(Block_Misc, 5, "Makes a subtle sound when approaching an enemy.");
-					GUI_VAR.GUI_Tips(Block_Misc, 8, "Auto attack when conditions such as distance and blood volume are met.");
-					GUI_VAR.GUI_Tips(Block_Misc, 14, "Lock the game window to the front.");
-					GUI_VAR.GUI_Tips(Block_Misc, 16, "Reduce the load on the CPU.", 0, { 255,150,150 });
-					GUI_VAR.GUI_Tips(Block_Misc, 17, "Reduce screen brightness.");
-					GUI_VAR.GUI_Tips(Block_Misc, 19, "Return to coordinates when shooting.");
-					GUI_VAR.GUI_Tips(Block_Misc, 22, "Implement ESP by modifying cursor coordinates.");
-					GUI_VAR.GUI_Tips({ Block_Resolution.x + 10,Block_Resolution.y }, 1, "Flexible switching of window resolution. (Do not use screen zoom!!!)");
-					GUI_VAR.GUI_Tips({ Block_CloudConfig.x + 10,Block_CloudConfig.y }, 1, "Load parameter files stored in Github.");
-					GUI_VAR.GUI_Tips(Block_Spoof, 1, "Prank local player. (global switch)");
-					GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 2, "Aimbot for teammate.");
-					GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 4, "Enhanced upward deflection of firearms.");
-					GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 6, "Drop it when picking up C4.");
-					GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 7, "Rotate view......");
-					GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 8, "Drop the weapon when killing an enemy with a sniper rifle.");
-					GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 9, "Learn recent player actions.");
-					GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 10, "Mimic Ragebot silent aim.");
 					GUI_WindowSize = { 1010,780 };
 				}
 				else if (UI_Panel == 3)//Setting
@@ -1099,7 +1069,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Button(Block_Menu, 8, "Github 项目链接UTT", UI_Setting_GithubRepositories, 75);
 					GUI_VAR.GUI_Button(Block_Menu, 9, "重启菜单UTT", UI_Setting_RestartMenu, 90);
 					GUI_VAR.GUI_Button(Block_Menu, 10, "关闭菜单UTT", UI_Setting_Unload, 90);
-					GUI_VAR.GUI_Tips({ Block_Menu.x + 10,Block_Menu.y }, 6, "If you want to reset the default config you can delete Rensen.cfg in the same folder.");
 					GUI_WindowSize = { 580,610 };
 				}
 				GUI_VAR.Draw_GUI(Debug_Control_Var::Checkbox_2);//最终绘制GUI画板
@@ -1659,7 +1628,7 @@ void Thread_Funtion_RemoveRecoil() noexcept//功能线程: 移除后坐力
 void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂项
 {
 	System::Log("Load Thread: Thread_Funtion_PlayerESP()");
-	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock_Alpha(0, 0, "Rensen - PlayerESP");//创建绘制覆盖窗口
+	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock_Alpha(Window::Get_Resolution().x, Window::Get_Resolution().y, "Rensen - PlayerESP");//创建绘制覆盖窗口
 	Window::Render ESP_Paint; ESP_Paint.CreatePaint(RenderWindow.Get_HWND(), 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y);//创建内存画板
 	while (true)
 	{
@@ -1883,7 +1852,7 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 void Thread_Funtion_EntityESP() noexcept//功能线程: 实体透视
 {
 	System::Log("Load Thread: Thread_Funtion_EntityESP()");
-	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock(0, 0, "Rensen - EntityESP");
+	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock(Window::Get_Resolution().x, Window::Get_Resolution().y, "Rensen - EntityESP");
 	Window::Render WEP_Render; WEP_Render.CreatePaint(RenderWindow.Get_HWND(), 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y);
 	while (true)
 	{

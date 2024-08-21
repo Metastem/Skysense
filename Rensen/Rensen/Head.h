@@ -1,4 +1,4 @@
-﻿//2024-08-21 17:50
+﻿//2024-08-21 20:30
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -570,7 +570,7 @@ namespace Window//窗口
     class Windows//更加方便的 窗口创建
     {
     private:
-        int BKX, BKY; HWND Window_Hwnd = 0;//GUI Window HWND
+        int BKX, BKY; HWND Window_Hwnd;//GUI Window HWND
     public:
         //----------------------------------------------------------------------------------------
         HWND Create_Window(int Size_X, int Size_Y, string WindowName, BOOL IfTop, HWND hWndParent = 0) noexcept//创建窗口
@@ -692,6 +692,7 @@ namespace Window//窗口
         }
         //----------------------------------------------------------------------------------------
         HWND Get_HWND() noexcept { return Window_Hwnd; }//获取窗口HWND
+        void Set_HWND(HWND WindowHWND) noexcept { Window_Hwnd = WindowHWND; }//修改窗口HWND
         //----------------------------------------------------------------------------------------
         Variable::Vector2 Get_WindowPos() noexcept//获取窗口坐标
         {
@@ -881,7 +882,8 @@ namespace Window//窗口
             SelectObject(hMenDC, CreateCompatibleBitmap(HdcWind, EndPos.x, EndPos.y));
             return hMenDC;
         }
-        HDC Get_HDC() noexcept { return hMenDC; }//获取绘制DC
+        HDC Get_HDC() noexcept { return hMenDC; }//获取绘制HDC
+        void Set_HDC(HDC WindowHDC) noexcept { HdcWind = WindowHDC; }//修改绘制HDC
         void DrawPaint(BOOL MessageLoop = false) noexcept//绘制画布（如果单单绘制到屏幕NULL依然会闪烁但是不会出现上下图层闪烁*）
         {
             BitBlt(HdcWind, StartPos.x, StartPos.y, EndPos.x, EndPos.y, hMenDC, 0, 0, SRCCOPY);
@@ -1405,6 +1407,7 @@ namespace Window//窗口
     HWND NVIDIA_Overlay(Variable::Vector2 InitialSize = { 0,0 }) noexcept//英伟达覆盖绘制初始化(在上绘制不会导致背后窗口掉帧) 详细可查看: https://github.com/iraizo/nvidia-overlay-hijack/blob/master/src/overlay.cpp
     {//const auto Window_Render = Window::NVIDIA_Overlay();
         const auto Window_HWND = FindWindowW(L"CEF-OSC-WIDGET", L"NVIDIA GeForce Overlay");
+        if (!Window_HWND)return 0;
         SetWindowLongPtrA(Window_HWND, -20, (LONG_PTR)(GetWindowLongA(Window_HWND, -20) | 0x20));
         MARGINS margin; margin.cyBottomHeight = margin.cyTopHeight = margin.cxLeftWidth = margin.cxRightWidth = -1;
         DwmExtendFrameIntoClientArea(Window_HWND, &margin);
