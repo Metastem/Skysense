@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.60;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-20 16:20]";//程序发布日期时间
+const float Rensen_Version = 4.62;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-21 17:50]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -1349,21 +1349,22 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 				//--------------------------------------
 				if (UI_Spoof_AimbotTeam && System::Get_Key(UI_Spoof_AimbotTeam_Key))//瞄准队友
 				{
-					float Aim_Range = 10;//瞄准范围
-					for (short i = 0; i < Global_ValidClassID.size(); ++i)//人物ID遍历
+					struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV Target = {};//记录变量和变量结构体
+					for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历所有实体 找到符合条件的人物Pawn 并且找到2D准星距离最近的实体
 					{
 						const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
 						if (PlayerPawn.Pawn() == Global_LocalPlayer.Pawn() || !PlayerPawn.Health() || PlayerPawn.TeamNumber() != Global_LocalPlayer.TeamNumber())continue;//检查是否队友
-						const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(6), Base::ViewAngles() + Global_LocalPlayer.AimPunchAngle() * 2);
-						const auto Fov = hypot(Angle.x, Angle.y);
-						if (!Angle.IsZero() && Fov <= Aim_Range) { Aim_Range = Fov; System::Mouse_Move(-Angle.y * (30 - UI_Spoof_AimbotTeam_Smooth), Angle.x * (30 - UI_Spoof_AimbotTeam_Smooth)); }
+
+						const auto NeedAngle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(6), Base::ViewAngles() + Global_LocalPlayer.AimPunchAngle() * 2);
+						const auto Fov = hypot(NeedAngle.x, NeedAngle.y);//圆圈范围计算
+						if (Fov < Target.MinFov)//范围判断
+						{
+							Target.Pawn = PlayerPawn;//刷新PlayerPawn
+							Target.MinFov = Fov;//刷新最短Fov
+							Target.AimAngle = NeedAngle;//刷新最终瞄准的Angle
+						}
 					}
-					const auto TargetPawn = Global_LocalPlayer.IDEntIndex_Pawn();//瞄准到的人物Pawn //防止瞄准到敌人
-					if (Advanced::Check_Enemy(TargetPawn))//基础人物判断
-					{
-						const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), TargetPawn.BonePos(0), Base::ViewAngles() + Global_LocalPlayer.AimPunchAngle() * 2);
-						if (hypot(Angle.x, Angle.y) <= Aim_Range)System::Mouse_Move(Angle.y * 10, 0);
-					}
+					if (Target.MinFov <= 10)System::Mouse_Move(-Target.AimAngle.y * (30 - UI_Spoof_AimbotTeam_Smooth), Target.AimAngle.x * (30 - UI_Spoof_AimbotTeam_Smooth));//触发瞄准目标
 				}
 				//--------------------------------------
 				if (UI_Spoof_IncreaseRecoil && System::Get_ValueBigger<int, class CLASS_MISC_Spoof_IncreaseRecoil_>(Global_LocalPlayer.ShotsFired()))System::Mouse_Move(0, -1 * UI_Spoof_IncreaseRecoil_Value);//加强后坐力
@@ -1382,7 +1383,7 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 				static BOOL IS_LearnPlayer = false;//释放按键判断变量
 				if (UI_Spoof_LearnPlayer && System::Get_Key(UI_Spoof_LearnPlayer_Key))//模仿最近玩家
 				{
-					IS_LearnPlayer = true; struct RecPla { Base::PlayerPawn Pawn = { 0 }; int Dis = 99999; }; RecPla RecentPlayer;//最近的玩家结构体变量
+					IS_LearnPlayer = true; struct RecPla { Base::PlayerPawn Pawn = 0; int Dis = 99999; }; RecPla RecentPlayer;//最近的玩家结构体变量
 					for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历计算最近玩家
 					{
 						const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
@@ -1553,22 +1554,28 @@ void Thread_Funtion_AdaptiveAimbot() noexcept//功能线程: 生物瞄准机器�
 	{
 		if (CS2_HWND && Global_IsShowWindow && Global_LocalPlayer.Health() && UI_Legit_AdaptiveAimbot && System::Get_Key(VK_LBUTTON) && Global_LocalPlayer.ActiveWeapon(true) == 2)//当CS窗口在最前端 && 本地人物活着 && 按键按下 && 步枪
 		{
-			System::Sleep_ns(2000);//比Sleep更快的函数为了更加自然平滑
-			float Aim_Range = 3; int Aim_Bone = 6; const auto PunchAngle = Global_LocalPlayer.AimPunchAngle();
+			System::Sleep_ns(1500);//比Sleep更快的函数为了更加自然平滑
+			float Aim_Range = 5; int Aim_Bone = 6; const auto PunchAngle = Global_LocalPlayer.AimPunchAngle();
 			if (abs(PunchAngle.x) * 2 >= Aim_Range)Aim_Range = abs(PunchAngle.x) * 1.5;//计算开枪之后附加后坐力的范围
-			for (short i = 0; i < Global_ValidClassID.size(); ++i)//人物ID遍历
+			struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV Target = {};//记录变量和变量结构体
+			for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历所有实体 找到符合条件的人物Pawn 并且找到2D准星距离最近的实体
 			{
 				const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
 				if (!Advanced::Check_Enemy(PlayerPawn) || !PlayerPawn.Spotted())continue;//当没有被发现则重新来过
-				if (PlayerPawn.Health() <= 60)Aim_Bone = 4;//低血时瞄准躯干 (降低爆头率)
-				const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(Aim_Bone), Base::ViewAngles() + PunchAngle * 2);//最终瞄准角度 (6: 头部)
-				const auto FovG = hypot(Angle.x, Angle.y);//圆圈范围计算
-				if (!Angle.IsZero() && FovG <= Aim_Range)//范围判断
+				if (PlayerPawn.Health() <= 50)Aim_Bone = 4;//低血时瞄准躯干 (降低爆头率)
+				const auto NeedAngle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(Aim_Bone), Base::ViewAngles() + PunchAngle * 2);//最终瞄准角度 (6: 头部)
+				const auto Fov = hypot(NeedAngle.x, NeedAngle.y);//圆圈范围计算
+				if (Fov < Target.MinFov)//范围判断
 				{
-					Aim_Range = FovG;//防止锁住两个或多个人
-					if (Global_LocalPlayer.ShotsFired() > 1 && FovG <= Aim_Range / 2 && PlayerPawn.MoveSpeed() <= 150)System::Mouse_Move(-Angle.y * 30, Angle.x * 30);
-					else System::Mouse_Move(-Angle.y * (20 - UI_Legit_AdaptiveAimbot_InitialSmooth), Angle.x * (20 - UI_Legit_AdaptiveAimbot_InitialSmooth));
+					Target.Pawn = PlayerPawn;//刷新PlayerPawn
+					Target.MinFov = Fov;//刷新最短Fov
+					Target.AimAngle = NeedAngle;//刷新最终瞄准的Angle
 				}
+			}
+			if (Target.MinFov <= Aim_Range)//如果玩家在范围内则触发
+			{
+				if (Global_LocalPlayer.ShotsFired() > 1 && Target.MinFov <= Aim_Range / 2 && Target.Pawn.MoveSpeed() <= 150)System::Mouse_Move(-Target.AimAngle.y * 30, Target.AimAngle.x * 30);
+				else System::Mouse_Move(-Target.AimAngle.y * (20 - UI_Legit_AdaptiveAimbot_InitialSmooth), Target.AimAngle.x * (20 - UI_Legit_AdaptiveAimbot_InitialSmooth));
 			}
 		}
 		else Sleep(20);
@@ -1602,8 +1609,7 @@ void Thread_Funtion_AssisteAim() noexcept//功能线程: 精确瞄准
 	{
 		if (CS2_HWND && Global_IsShowWindow && Global_LocalPlayer.Health())//当CS窗口在最前端 && 本地人物活着
 		{
-			//System::Sleep_ns(5000);//纳秒级延时 (加快循环速度)
-			Sleep(1);//降低CPU占用
+			System::Sleep_ns(5000);//纳秒级延时 (加快循环速度)
 			if (UI_Legit_PreciseAim)//精确瞄准
 			{
 				const auto Local_ActiveWeaponID = Global_LocalPlayer.ActiveWeapon();//本地人物手持武器ID
@@ -1619,7 +1625,6 @@ void Thread_Funtion_AssisteAim() noexcept//功能线程: 精确瞄准
 				{
 					const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
 					if (!Advanced::Check_Enemy(PlayerPawn) || !PlayerPawn.Spotted())continue;//简单的实体判断
-					if (!(Variable::String_Find(UI_LocalConfigPath, "Re") && Variable::String_Find(UI_LocalConfigPath, "ens")))CS2_Offsets::dwLocalPlayerPawn = 0;
 					const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(6), Base::ViewAngles());
 					const auto Fov = hypot(Angle.x, Angle.y);
 					if (!Angle.IsZero() && Fov <= Aim_Range && Fov >= 1.5) { Aim_Range = Fov; System::Mouse_Move(-Angle.y * (7.f - UI_Legit_MagnetAim_Smooth), Angle.x * (7.f - UI_Legit_MagnetAim_Smooth)); }
@@ -1654,26 +1659,20 @@ void Thread_Funtion_RemoveRecoil() noexcept//功能线程: 移除后坐力
 void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂项
 {
 	System::Log("Load Thread: Thread_Funtion_PlayerESP()");
-	auto Rensen_ESP_RenderWindow = Window::NVIDIA_Overlay();//初始化英伟达覆盖
-	Window::Windows SpareRenderWindow;
-	if (!Rensen_ESP_RenderWindow)//当没有找到英伟达覆盖时 (不是英伟达显卡)
-	{
-		System::Log("Error: NVIDIA overlay window not found (Used Generate Alternative Window instead)", true);//未找到英伟达覆盖时报错
-		Rensen_ESP_RenderWindow = SpareRenderWindow.Create_RenderBlock_Alpha(0, 0, "NVIDIA Overlay");//创建代替覆盖窗口
-	}
-	Window::Render ESP_Paint; ESP_Paint.CreatePaint(Rensen_ESP_RenderWindow, 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y);//创建内存画板
+	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock_Alpha(0, 0, "Rensen - PlayerESP");//创建绘制覆盖窗口
+	Window::Render ESP_Paint; ESP_Paint.CreatePaint(RenderWindow.Get_HWND(), 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y);//创建内存画板
 	while (true)
 	{
 		Sleep(UI_Visual_ESP_DrawDelay);//降低CPU占用
-		if (SpareRenderWindow.Get_HWND())SpareRenderWindow.Fix_inWhile();//当已创建窗口时进入消息循环
+		RenderWindow.Set_WindowTitle(System::Rand_String(10));//随机实体透视窗口标题
 		const auto CS_Scr_Res = Window::Get_WindowResolution(CS2_HWND);
-		MoveWindow(Rensen_ESP_RenderWindow, CS_Scr_Res.b, CS_Scr_Res.a, CS_Scr_Res.r, CS_Scr_Res.g, true);//修改 Pos & Size
-		SetLayeredWindowAttributes(Rensen_ESP_RenderWindow, RGB(0, 0, 0), Variable::Animation<class CLASS_PlayerESP_Alpha_Animation_>(UI_Visual_ESP_DrawAlpha, 2), LWA_ALPHA);//窗口透明度设置
-		Window::Set_LimitWindowShow(Rensen_ESP_RenderWindow, UI_Misc_ByPassOBS);//绕过OBS
+		MoveWindow(RenderWindow.Get_HWND(), CS_Scr_Res.b, CS_Scr_Res.a, CS_Scr_Res.r, CS_Scr_Res.g, true);//修改 Pos & Size
+		SetLayeredWindowAttributes(RenderWindow.Get_HWND(), RGB(0, 0, 0), Variable::Animation<class CLASS_PlayerESP_Alpha_Animation_>(UI_Visual_ESP_DrawAlpha, 2), LWA_ALPHA);//窗口透明度设置
+		Window::Set_LimitWindowShow(RenderWindow.Get_HWND(), UI_Misc_ByPassOBS);//绕过OBS
 		ESP_Paint.Render_SolidRect(0, 0, 9999, 9999, { 0,0,0 });//清除画板
 		if (CS2_HWND && (Menu_Open || Global_IsShowWindow))//当CS窗口在最前端 && 菜单在最前端
 		{
-			Window::Set_Topmost_Status(Rensen_ESP_RenderWindow, Global_IsShowWindow);//修改窗口为最前端窗口 (覆盖一切的!!!)
+			Window::Set_Topmost_Status(RenderWindow.Get_HWND(), Global_IsShowWindow);//修改窗口为最前端窗口 (覆盖一切的!!!)
 			if (UI_Visual_ESP && (!UI_Visual_ESP_Key || System::Get_Key(UI_Visual_ESP_Key)))//ESP 透视
 			{
 				auto Draw_Color = GUI_IO.GUIColor;
@@ -1878,27 +1877,25 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 		}
 		else Sleep(20);
 		if (CS2_HWND && Menu_Open)Sleep(20);//菜单打开时降低绘制速度以降低CPU使用率
-		ESP_Paint.DrawPaint();//最终绘制画板
+		ESP_Paint.DrawPaint(true);//最终绘制画板
 	}
 }
 void Thread_Funtion_EntityESP() noexcept//功能线程: 实体透视
 {
 	System::Log("Load Thread: Thread_Funtion_EntityESP()");
-	Window::Windows RenderWindow; Window::Render WEP_Render;
-	const auto Render_Window_HWND = RenderWindow.Create_RenderBlock(Window::Get_Resolution().x, Window::Get_Resolution().y, "Rensen - EntityESP");
-	RenderWindow.Set_WindowAttributes({ 0,0,0 }, 180);//窗口过滤颜色和透明度
-	WEP_Render.CreatePaint(Render_Window_HWND, 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y);
+	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock(0, 0, "Rensen - EntityESP");
+	Window::Render WEP_Render; WEP_Render.CreatePaint(RenderWindow.Get_HWND(), 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y);
 	while (true)
 	{
 		Sleep(UI_Visual_ESP_DrawDelay);//降低CPU占用
 		RenderWindow.Set_WindowTitle(System::Rand_String(10));//随机实体透视窗口标题
-		const auto CS_Scr_Res = Window::Get_WindowResolution(CS2_HWND);
 		WEP_Render.Render_SolidRect(0, 0, 9999, 9999, { 0,0,0 });//刷新绘制画板
 		if (CS2_HWND && UI_Visual_ESP && (!UI_Visual_ESP_Key || System::Get_Key(UI_Visual_ESP_Key)) && UI_Visual_ESP_Drops && (Menu_Open || Global_IsShowWindow))//当CS窗口在最前端 && 本地人物活着
 		{
 			if (Menu_Open)Sleep(50);//节省CPU性能 (可有可无)
 			auto Draw_Color = GUI_IO.GUIColor; if (UI_Visual_ESP_CustomColor)Draw_Color = UI_Visual_ESP_CustomColor_Color;
-			MoveWindow(Render_Window_HWND, CS_Scr_Res.b, CS_Scr_Res.a, CS_Scr_Res.r, CS_Scr_Res.g, true);//Pos & Size
+			const auto CS_Scr_Res = Window::Get_WindowResolution(CS2_HWND);
+			MoveWindow(RenderWindow.Get_HWND(), CS_Scr_Res.b, CS_Scr_Res.a, CS_Scr_Res.r, CS_Scr_Res.g, true);//Pos & Size
 			RenderWindow.Set_WindowAttributes({ 0,0,0 }, Variable::Animation<class CLASS_EntityESP_Alpha_Animation_>(UI_Visual_ESP_DrawAlpha, 2));//窗口透明度设置
 			Window::Set_LimitWindowShow(RenderWindow.Get_HWND(), UI_Misc_ByPassOBS);//绕过OBS
 			const auto Entitylist = Base::EntityList(); const auto Local_Origin = Global_LocalPlayer.Origin(); const auto Local_ViewMatrix = Base::ViewMatrix();
@@ -1960,7 +1957,7 @@ void Thread_Funtion_EntityESP() noexcept//功能线程: 实体透视
 			}
 			else Sleep(100);
 		}
-		else { MoveWindow(Render_Window_HWND, 0, 0, 0, 0, true); Sleep(20); }
+		else { MoveWindow(RenderWindow.Get_HWND(), 0, 0, 0, 0, true); Sleep(20); }
 		WEP_Render.DrawPaint(true);
 	}
 }

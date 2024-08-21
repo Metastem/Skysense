@@ -1,4 +1,4 @@
-﻿//2024-08-19 18:50
+﻿//2024-08-21 17:50
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -421,15 +421,8 @@ namespace Window//窗口
     {//Window::Get_WindowResolution(FindWindow(NULL, L"WindowName")).r;
         RECT Window_Rect; GetWindowRect(WindowHWND, &Window_Rect);//窗口坐标 (包括标题栏)
         RECT Client_Rect; GetClientRect(WindowHWND, &Client_Rect);//显示区域坐标
-        /* 打印坐标信息
-        string Str_Win = "Window_Rect[" + to_string(Window_Rect.left) + ", " + to_string(Window_Rect.top) + ", " + to_string(Window_Rect.right) + ", " + to_string(Window_Rect.bottom) + "]\n";
-        string Str_Cli = "Client_Rect[" + to_string(Client_Rect.left) + ", " + to_string(Client_Rect.top) + ", " + to_string(Client_Rect.right) + ", " + to_string(Client_Rect.bottom) + "]\n";
-        printf(Str_Win.c_str());printf(Str_Cli.c_str());
-        */
-        const auto WindowDPI = GetDpiForWindow(WindowHWND); float WindowZoom = 1;//计算屏幕缩放对齐
-        if (WindowDPI == 120)WindowZoom = 1.25; else if (WindowDPI == 144)WindowZoom = 1.5; else if (WindowDPI == 192)WindowZoom = 2;
-        if ((Window_Rect.bottom - Window_Rect.top) != Client_Rect.bottom)return { Client_Rect.right, Client_Rect.bottom,  Window_Rect.left + 8, Window_Rect.bottom - Client_Rect.bottom - 8 };//窗口状态时 (带有标题栏)
-        else return { (int)((Window_Rect.right - Window_Rect.left) * WindowZoom), (int)((Window_Rect.bottom - Window_Rect.top) * WindowZoom), Window_Rect.left, Window_Rect.top };//全屏窗口时
+        if ((Window_Rect.bottom - Window_Rect.top) != Client_Rect.bottom)return { Client_Rect.right, Client_Rect.bottom,  Window_Rect.left + 7, Window_Rect.bottom - Client_Rect.bottom - 8 };//窗口状态时 (带有标题栏)
+        else return { Window_Rect.right - Window_Rect.left, Window_Rect.bottom - Window_Rect.top, Window_Rect.left, Window_Rect.top };//全屏窗口时
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -871,10 +864,8 @@ namespace Window//窗口
         }
         */
     private:
-        HDC HdcWind;
-        HDC hMenDC;
-        Variable::Vector2 StartPos;
-        Variable::Vector2 EndPos;
+        HDC HdcWind, hMenDC;
+        Variable::Vector2 StartPos, EndPos;
         int Draw_FPS;
     public:
         //--------------------------------------------------------------------------------------------------------
@@ -884,11 +875,7 @@ namespace Window//窗口
             Gdiplus::GdiplusStartupInput gdiplusstartupinput; ULONG_PTR gdiplusToken;
             Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusstartupinput, nullptr);
             //---------------------------------------------------------------------
-            const auto WindowDPI = GetDpiForWindow(WindowHWND); float WindowZoom = 1;//计算屏幕缩放对齐
-            if (WindowDPI == 120)WindowZoom = 1.25; else if (WindowDPI == 144)WindowZoom = 1.5; else if (WindowDPI == 192)WindowZoom = 2;
-            if (XX == GetSystemMetrics(SM_CXSCREEN))XX = (int)(XX * WindowZoom);
-            if (YY == GetSystemMetrics(SM_CYSCREEN))YY = (int)(YY * WindowZoom);//修复白屏BUG (像素缩放引起)
-            StartPos = { X,Y }; EndPos = { XX,YY };
+            StartPos = { X,Y }; EndPos = { XX * 2,YY * 2 };
             HdcWind = GetWindowDC(WindowHWND);
             hMenDC = CreateCompatibleDC(HdcWind);
             SelectObject(hMenDC, CreateCompatibleBitmap(HdcWind, EndPos.x, EndPos.y));
@@ -1070,7 +1057,7 @@ namespace Window//窗口
             const auto len = MultiByteToWideChar(CP_UTF8, 0, String.c_str(), -1, 0, 0);//转码 UTF-8 (为了显示中文)
             wchar_t* wide_text = new wchar_t[len];
             MultiByteToWideChar(CP_UTF8, 0, String.c_str(), -1, wide_text, len);//转码 UTF-8 (为了显示中文)
-            TextOutW(HMS, X, Y, wide_text, len-1);
+            TextOutW(HMS, X, Y, wide_text, len - 1);
             DeleteObject(FontPen);//About CreateFont(): https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createfonta
             delete[] wide_text;
             return strlen(String.c_str());
@@ -1270,7 +1257,7 @@ namespace Window//窗口
             Render_Factory->Release();
         }
         HWND HWND() noexcept { return Render_Window_HWND; }//返回窗口HWND
-        int FPS() noexcept{return Draw_FPS; }//返回绘制帧数
+        int FPS() noexcept { return Draw_FPS; }//返回绘制帧数
         void Draw(BOOL State = false) noexcept//绘制画板函数
         {
             if (State)//0:开始绘制 1:结束绘制
@@ -1438,7 +1425,7 @@ namespace Window//窗口
     //-----------------------------------------------------------------------------------------------------------------------------
     void Set_LimitWindowShow(HWND Window_HWND, BOOL Limit = false) noexcept//限制窗口显示 (绕过OBS捕捉)
     {//Window::Set_LimitWindowShow(WIndowHWND);
-        if(Limit)SetWindowDisplayAffinity(Window_HWND, WDA_EXCLUDEFROMCAPTURE);
+        if (Limit)SetWindowDisplayAffinity(Window_HWND, WDA_EXCLUDEFROMCAPTURE);
         else SetWindowDisplayAffinity(Window_HWND, WDA_NONE);
     }
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -2769,7 +2756,7 @@ namespace EasyGUI
                     In_DrawGradientRect(X + 2, Y + 16 + 30 * i, Width - 4, 23, Global_EasyGUIColor / 5, { 20,20,20 });
                     if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && In_KeyEvent(VK_LBUTTON, true))m_In_Block = i;
                 }
-                In_DrawString(X + TextPos_X +1, Y + 21 + 30 * i, BlockText_[i], { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize + 2);
+                In_DrawString(X + TextPos_X + 1, Y + 21 + 30 * i, BlockText_[i], { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize + 2);
                 In_DrawString(X + TextPos_X, Y + 20 + 30 * i, BlockText_[i], { 220,220,220 }, Global_EasyGUIFont, Global_EasyGUIFontSize + 2);
             }
             if ((EasyGUI_MousePos.x - EasyGUI_WindowPos.left >= X && EasyGUI_MousePos.x - EasyGUI_WindowPos.left <= X + Width && EasyGUI_MousePos.y - EasyGUI_WindowPos.top >= Y && EasyGUI_MousePos.y - EasyGUI_WindowPos.top <= Y + Length) || !(EasyGUI_MousePos.x >= EasyGUI_WindowPos.left && EasyGUI_MousePos.x <= EasyGUI_WindowPos.right && EasyGUI_MousePos.y >= EasyGUI_WindowPos.top && EasyGUI_MousePos.y <= EasyGUI_WindowPos.bottom))Mouse_Block_ = true;

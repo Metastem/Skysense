@@ -40,11 +40,11 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 	namespace CS2_Offsets//CS2固定偏移量 (游戏更新时需要同时更新 https://github.com/a2x/cs2-dumper.git)
 	{
 		string Offsets_Date = "[0000-00-00 00:00]";
-		uintptr_t dwLocalPlayerController = 0x19B9178;
-		uintptr_t dwLocalPlayerPawn = 0x17D4810;
-		uintptr_t dwEntityList = 0x1969518;
-		uintptr_t dwViewAngles = 0x19DA8F8;
-		uintptr_t dwViewMatrix = 0x19CB4A0;
+		uintptr_t dwLocalPlayerController = 0x19B8178;
+		uintptr_t dwLocalPlayerPawn = 0x17D3810;
+		uintptr_t dwEntityList = 0x1968518;
+		uintptr_t dwViewAngles = 0x19D98F8;
+		uintptr_t dwViewMatrix = 0x19CA4A0;
 		uintptr_t m_hPlayerPawn = 0x7EC;
 		uintptr_t m_iTeamNum = 0x3C3;
 		uintptr_t m_ArmorValue = 0x22D4;
@@ -293,7 +293,6 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 			}
 			return false;
 		}
-		Variable::Vector3 World_Screen(Variable::Vector3 Pos) noexcept { return WorldToScreen(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), Pos, Base::ViewMatrix()); }//世界坐标转换屏幕坐标
 		short Local_RoundDamage(BOOL Return_Kill = false) noexcept//回合伤害和击杀数
 		{
 			const auto Local_RoundValue = CS2_MEM.Read<uintptr_t>(Base::LocalPlayerController() + CS2_Offsets::m_pActionTrackingServices);
