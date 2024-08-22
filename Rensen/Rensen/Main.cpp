@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.64;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-22 18:30]";//程序发布日期时间
+const float Rensen_Version = 4.65;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-22 19:10]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -865,7 +865,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			}
 		}
 	}
-	else {
+	else {//汉化版菜单
 		while (true)//进入死循环
 		{
 			Window::Set_LimitWindowShow(GUI_VAR.Window_HWND(), UI_Misc_ByPassOBS);//绕过OBS
@@ -1046,7 +1046,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				{
 					const auto Block_About = GUI_VAR.GUI_Block(150, 30, 190, "关于UTT");
 					GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
-					GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (开源免费外部)UTT", { 100,100,100 });
+					GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (官匹开源免费外部)UTT", { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 2, "版本: UTT" + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 3, "发布日期: UTT" + Rensen_ReleaseDate, { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 4, "作者: https://github.com/CosllyUTT", { 100,100,100 });
@@ -1054,7 +1054,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Text(Block_About, 5, "交流QQ群: 486214313 UTT", { 100,100,100 });
 					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 5, UI_Setting_AddQQGroupChat);
 					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
-					const auto Block_Menu = GUI_VAR.GUI_Block(150, 240, 340, "菜单UTT");
+					const auto Block_Menu = GUI_VAR.GUI_Block(150, 240, 310, "菜单UTT");
 					GUI_VAR.GUI_Text(Block_Menu, 1, "菜单按键UTT");
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
 					GUI_VAR.GUI_Checkbox(Block_Menu, 2, "自定义菜单主题色UTT", UI_Setting_CustomColor);
@@ -1062,14 +1062,13 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					if (UI_Setting_MainColor.a < 100)UI_Setting_MainColor.a = 100;
 					GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "菜单动画速度UTT", 1.2, 10, UI_Setting_MenuAnimation);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Menu_3>(Block_Menu, 4, "菜单字体大小UTT", 0, 30, UI_Setting_MenuFontSize, "px");
-					GUI_VAR.GUI_InputText<class CLASS_Block_Menu_4>(Block_Menu, 5, UI_Setting_MenuFont, "自定义菜单字体UTT");
-					GUI_VAR.GUI_Button(Block_Menu, 6, "保存本地配置UTT", UI_Setting_SaveLocalConfig, 75);
-					if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 7, "关闭 CSUTT", UI_Setting_QuitCS, 90);
-					else GUI_VAR.GUI_Button(Block_Menu, 7, "打开 CSUTT", UI_Setting_StartCS, 90);
-					GUI_VAR.GUI_Button(Block_Menu, 8, "Github 项目链接UTT", UI_Setting_GithubRepositories, 75);
-					GUI_VAR.GUI_Button(Block_Menu, 9, "重启菜单UTT", UI_Setting_RestartMenu, 90);
-					GUI_VAR.GUI_Button(Block_Menu, 10, "关闭菜单UTT", UI_Setting_Unload, 90);
-					GUI_WindowSize = { 580,610 };
+					GUI_VAR.GUI_Button(Block_Menu, 5, "保存本地配置UTT", UI_Setting_SaveLocalConfig, 75);
+					if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 6, "关闭 CSUTT", UI_Setting_QuitCS, 90);
+					else GUI_VAR.GUI_Button(Block_Menu, 6, "打开 CSUTT", UI_Setting_StartCS, 90);
+					GUI_VAR.GUI_Button(Block_Menu, 7, "Github 项目链接UTT", UI_Setting_GithubRepositories, 75);
+					GUI_VAR.GUI_Button(Block_Menu, 8, "重启菜单UTT", UI_Setting_RestartMenu, 90);
+					GUI_VAR.GUI_Button(Block_Menu, 9, "关闭菜单UTT", UI_Setting_Unload, 90);
+					GUI_WindowSize = { 580,580 };
 				}
 				GUI_VAR.Draw_GUI(Debug_Control_Var::Checkbox_2);//最终绘制GUI画板
 				if (UI_Misc_SavePerformance)Sleep(5);//节省电脑占用性能
