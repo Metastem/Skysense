@@ -276,7 +276,7 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 			else return CS2_MEM.Read_str(PlayerController + CS2_Offsets::m_iszPlayerName);
 		}
 		BOOL Check_Enemy(Base::PlayerPawn PlayerPawn) noexcept { return (PlayerPawn.Pawn() != Global_LocalPlayer.Pawn() && PlayerPawn.Health() > 0 && (!Global_TeamCheck || Global_LocalPlayer.TeamNumber() != PlayerPawn.TeamNumber()) && PlayerPawn.TeamNumber() != 1); }//判断人物是否是敌人
-		BOOL Stop_Move(short TriggerValue = 85, BOOL Movement = true) noexcept//急停
+		BOOL Stop_Move(short TriggerValue = 65, BOOL Movement = true) noexcept//急停
 		{
 			const auto LocalVel = Global_LocalPlayer.Velocity();
 			if (hypot(LocalVel.x, LocalVel.y) <= TriggerValue)return true;//当精准则返回真
@@ -299,7 +299,7 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 			if (Return_Kill)return CS2_MEM.Read<short>(Local_RoundValue + CS2_Offsets::m_iNumRoundKills);
 			else return CS2_MEM.Read<short>(Local_RoundValue + CS2_Offsets::m_unTotalRoundDamageDealt);
 		}
-		void Move_to_Angle(Variable::Vector3 Target_Angles = { 0,0,0 }, float Smooth = 40, float Offset = 0.25, int Traversals_Mum = 100) noexcept//本地人物将视角移动到指定坐标
+		void Move_to_Angle(Variable::Vector3 Target_Angles = { 0,0,0 }, float Smooth = 40, float Offset = 0.3, short Traversals_Mum = 5) noexcept//本地人物将视角移动到指定坐标
 		{
 			for (int i = 0; i <= Traversals_Mum; ++i)
 			{
@@ -309,7 +309,7 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 				if (Traversals_Mum != 1)Sleep(1);
 			}
 		}
-		BOOL Move_to_Pos(Variable::Vector3 Target_Pos = { 0,0,0 }, float Edge = 5) noexcept//本地人物移动到指定世界坐标
+		BOOL Move_to_Pos(Variable::Vector3 Target_Pos = { 0,0,0 }, float Edge = 8) noexcept//本地人物移动到指定世界坐标
 		{
 			const auto LocalPlayer_Pos = Global_LocalPlayer.Origin();//本地人物所处世界坐标
 			const auto Target_Distance = hypot(LocalPlayer_Pos.x - Target_Pos.x, LocalPlayer_Pos.y - Target_Pos.y);//计算与目标坐标的距离

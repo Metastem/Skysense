@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.65;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-22 19:10]";//程序发布日期时间
+const float Rensen_Version = 4.66;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-23 22:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -453,8 +453,8 @@ using namespace Control_Var;
 void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义选项)
 {
 	System::Log("Load Thread: Thread_Menu()");
-	GUI_VAR.Window_Create(1200, 1000, "Rensen", true);//创建置顶GUI绘制窗口
-	const auto LanguageID = System::Get_DefaultLanguage();
+	GUI_VAR.Window_Create(1200, 1000, "Rensen - Menu", true);//创建置顶GUI绘制窗口
+	const auto LanguageID = System::Get_DefaultLanguage();//获取系统默认语言
 	if (!((LanguageID == 0x804 || LanguageID == 0x404 || LanguageID == 0xC04) && !System::Judge_File("EN")))//中文菜单判断 (系统语言)
 	{
 		while (true)//进入死循环
@@ -1022,14 +1022,14 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					const auto Block_CloudConfig = GUI_VAR.GUI_Block(580, 210, 150, "云端配置UTT");
 					GUI_VAR.GUI_Button(Block_CloudConfig, 1, "加载选定配置UTT", UI_Misc_LoadCloudConfig, 75);
 					GUI_VAR.GUI_List(Block_CloudConfig, 2, { "Legit","Rage","Legit - no visual" }, UI_Misc_SelectedConfig);
-					auto Block_Spoof = GUI_VAR.GUI_Block(580, 380, 370, "恶搞功能UTT");
+					auto Block_Spoof = GUI_VAR.GUI_Block(580, 380, 370, "恶搞UTT");
 					GUI_VAR.GUI_Checkbox(Block_Spoof, 1, "启用UTT", UI_Spoof_Spoof, { 200,200,150 });
 					GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 2, "瞄准队友UTT", UI_Spoof_AimbotTeam);
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Spoof_1>(Block_Spoof, 2, UI_Spoof_AimbotTeam_Key);
 					GUI_VAR.GUI_Slider<float, class CLASS_Block_Spoof_2>({ Block_Spoof.x + 20,Block_Spoof.y }, 3, "平滑度UTT", 0, 20, UI_Spoof_AimbotTeam_Smooth);
 					GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 4, "增大后坐力UTT", UI_Spoof_IncreaseRecoil);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Spoof_3>({ Block_Spoof.x + 20,Block_Spoof.y }, 5, "后座量UTT", 50, 1000, UI_Spoof_IncreaseRecoil_Value, "px");
-					GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 6, "丢弃C4UTT", UI_Spoof_DropC4);
+					GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 6, "无法捡起C4UTT", UI_Spoof_DropC4);
 					GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 7, "假反瞄准UTT", UI_Spoof_FakeAntiAim);
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Spoof_4>(Block_Spoof, 7, UI_Spoof_FakeAntiAim_Key);
 					GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 8, "击杀丢弃狙击枪UTT", UI_Spoof_KillDropSniper);
@@ -1051,7 +1051,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Text(Block_About, 3, "发布日期: UTT" + Rensen_ReleaseDate, { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 4, "作者: https://github.com/CosllyUTT", { 100,100,100 });
 					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OpenLinkAuthor);
-					GUI_VAR.GUI_Text(Block_About, 5, "交流QQ群: 486214313 UTT", { 100,100,100 });
+					GUI_VAR.GUI_Text(Block_About, 5, "交流QQ群: 486214313UTT", { 100,100,100 });
 					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 5, UI_Setting_AddQQGroupChat);
 					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
 					const auto Block_Menu = GUI_VAR.GUI_Block(150, 240, 310, "菜单UTT");
@@ -1146,7 +1146,7 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 		ReLoad();//刷新CS2_SDK内存数据
 		Global_TeamCheck = UI_Misc_TeamCheck;//队伍判断(文件跨越修改变量)
 		if (UI_Misc_LockGameWindow && !Menu_Open)SetForegroundWindow(CS2_HWND);//锁定CS窗口到最前端
-		if (UI_Debug_ShowDebugWindow)
+		if (UI_Debug_ShowDebugWindow)//显示调试控制台窗口
 		{
 			Window::Show_ConsoleWindow();//显示控制台
 			Window::Set_Topmost_Status(GetConsoleWindow(), true);//将控制台窗口改为最前端
@@ -1182,7 +1182,7 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 					Window_Watermark_Render.RenderA_SmpStr(2, 2, "Release " + Rensen_ReleaseDate, GUI_IO.GUIColor.D_Alpha(150), { 1,0,0,130 });//编译日期绘制
 					Window_Watermark_Render.RenderA_SmpStr(2, 2 + 14, "Offsets " + CS2_Offsets::Offsets_Date, GUI_IO.GUIColor.D_Alpha(150), { 1,0,0,130 });//云偏移更新日期绘制
 				}
-				Window_Watermark_Render.DrawPaint(true);
+				Window_Watermark_Render.DrawPaint(true);//最终绘制
 			}
 		}
 		else Window_Watermark.Set_WindowPos(99999, 99999);//将窗口移至边界外来代替隐藏窗口
@@ -1361,7 +1361,19 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 					}
 					if (RecentPlayer.Dis <= 1000)//超出范围则不执行 (因为跟不上)
 					{
-						Advanced::Move_to_Angle(RecentPlayer.Pawn.ViewAngles(), 2, 1, 1);//学习玩家朝向角度
+						if (RecentPlayer.Pawn.ShotsFired() != 0)//开枪
+						{
+							ExecuteCommand("+attack");
+							Sleep(1);
+							ExecuteCommand("-attack");
+						}
+						if (!(RecentPlayer.Pawn.Flags() & (1 << 0)))//跳跃
+						{
+							ExecuteCommand("+jump");
+							Sleep(1);
+							ExecuteCommand("-jump");
+						}
+						Advanced::Move_to_Angle(RecentPlayer.Pawn.ViewAngles(), 5, 1);//学习玩家朝向角度
 						Advanced::Move_to_Pos(RecentPlayer.Pawn.Origin());//移动到玩家
 					}
 				}
@@ -1377,23 +1389,22 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 				static auto Old_Angle = Base::ViewAngles();//原始视角坐标 (要返回的坐标)
 				if (UI_Spoof_FakeRageBot && System::Get_Key(UI_Spoof_FakeRageBot_Key))//对某玩家实施暴力瞄准
 				{
-					for (int i = 0; i <= 64; ++i)//遍历人物ID
+					for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历人物ID
 					{
 						if (!System::Get_Key(UI_Spoof_FakeRageBot_Key))continue;//修复延时开枪
 						if (UI_Spoof_FakeRageBot_Target && i != UI_Spoof_FakeRageBot_Target)continue;//任何目标判定
-						const auto Target = Advanced::Traverse_Player(i);
-						if (Target.Health() && Target.Pawn() != Global_LocalPlayer.Pawn() && Target.TeamNumber() != 1)//目标活着 && 不是本地人物
+						const auto Target = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
+						if (Target.Health() && Target.Pawn() != Global_LocalPlayer.Pawn())//目标活着 && 不是本地人物
 						{
 							const auto Aim_Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), Target.BonePos(6), Global_LocalPlayer.AimPunchAngle() * 2);//计算要瞄准的目标视角坐标
-							Advanced::Move_to_Angle(Aim_Angle, 40, 0.1);//将视角移动到目标位置
+							Advanced::Move_to_Angle(Aim_Angle, 30, 0.15, 200);//将视角移动到目标位置
 							if (Global_LocalPlayer.IDEntIndex_Pawn().Pawn() == Target.Pawn())//检查是否瞄准到
 							{
 								ExecuteCommand("+attack");
 								Sleep(1);
 								ExecuteCommand("-attack");
-								Sleep(100);//防止重复冲突
 							}
-							Advanced::Move_to_Angle(Old_Angle);//将视角移动到出发点位置 实现fake静默XD
+							Advanced::Move_to_Angle(Old_Angle, 40, 1, 50);//将视角移动到出发点位置 (实现Fake静默)
 						}
 					}
 				}
@@ -2017,7 +2028,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 {
 	System::Anti_Debugger("Debugging is disabled after compilation is completed.");//防止逆向破解
 	//----------------------------------------------------------------------------------------------------------------------------------
-	if (FindWindow(0, L"Rensen")) { Window::Message_Box("Rensen Error", "The program is already running.", MB_ICONSTOP); exit(0); }//防止多开程序
+	if (FindWindow(0, L"Rensen - Menu")) { Window::Message_Box("Rensen Error", "The program is already running.", MB_ICONSTOP); exit(0); }//防止多开程序
 	//----------------------------------------------------------------------------------------------------------------------------------
 	System::URL_READ UserID_READ = { "Cache_UserID" }; BOOL Attest = false;//认证变量
 	if (UserID_READ.StoreMem("https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/UserID.uid?raw=true"))//Github读取有效用户ID
