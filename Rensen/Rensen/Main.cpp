@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.66;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-23 22:30]";//程序发布日期时间
+const float Rensen_Version = 4.67;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-25 12:40]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -561,7 +561,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_4>(Block_ESP, 14, "Radius", 0, 100, UI_Visual_ESP_OutFOV_Radius, "%");
 					GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 15, "Custom color", UI_Visual_ESP_CustomColor);
 					GUI_VAR.GUI_ColorSelector(Block_ESP, 15, UI_Visual_ESP_CustomColor_Color);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_5>(Block_ESP, 16, "Draw alpha", 20, 255, UI_Visual_ESP_DrawAlpha);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_5>(Block_ESP, 16, "Draw alpha", -1, 255, UI_Visual_ESP_DrawAlpha);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_6>(Block_ESP, 17, "Draw delay", 1, 30, UI_Visual_ESP_DrawDelay, "ms");
 					const auto Block_Hitmark = GUI_VAR.GUI_Block(580, 30, 310, "Hit mark");
 					GUI_VAR.GUI_Checkbox(Block_Hitmark, 1, "Enabled", UI_Visual_HitMark);
@@ -582,6 +582,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_2>(Block_Radar, 4, "Size", 150, 500, UI_Visual_Radar_Size, "px");
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_3>(Block_Radar, 5, "Alpha", 0, 255, UI_Visual_Radar_Alpha);
 					GUI_VAR.GUI_Tips(Block_ESP, 1, "Learn enemy coordinates through walls. (Full screen cannot be used)");
+					GUI_VAR.GUI_Tips({ Block_ESP.x + 10,Block_ESP.y }, 16, "-1: Draw ESP when gunfire occurs.");
 					GUI_VAR.GUI_Tips(Block_Hitmark, 1, "Effect that triggers when hitting the player.");
 					GUI_VAR.GUI_Tips(Block_Radar, 1, "Exterior window radar. (Full screen cannot be used)");
 					GUI_WindowSize = { 1010,610 };
@@ -961,7 +962,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_4>(Block_ESP, 14, "范围UTT", 0, 100, UI_Visual_ESP_OutFOV_Radius, "%");
 					GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 15, "自定义颜色UTT", UI_Visual_ESP_CustomColor);
 					GUI_VAR.GUI_ColorSelector(Block_ESP, 15, UI_Visual_ESP_CustomColor_Color);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_5>(Block_ESP, 16, "透明度UTT", 20, 255, UI_Visual_ESP_DrawAlpha);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_5>(Block_ESP, 16, "透明度UTT", -1, 255, UI_Visual_ESP_DrawAlpha);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_6>(Block_ESP, 17, "绘制延迟UTT", 1, 30, UI_Visual_ESP_DrawDelay, "ms");
 					const auto Block_Hitmark = GUI_VAR.GUI_Block(580, 30, 310, "命中标记UTT");
 					GUI_VAR.GUI_Checkbox(Block_Hitmark, 1, "启用UTT", UI_Visual_HitMark);
@@ -1646,13 +1647,25 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 		RenderWindow.Set_WindowTitle(System::Rand_String(10));//随机实体透视窗口标题
 		const auto CS_Scr_Res = Window::Get_WindowResolution(CS2_HWND);
 		MoveWindow(RenderWindow.Get_HWND(), CS_Scr_Res.b, CS_Scr_Res.a, CS_Scr_Res.r, CS_Scr_Res.g, true);//修改 Pos & Size
-		SetLayeredWindowAttributes(RenderWindow.Get_HWND(), RGB(0, 0, 0), Variable::Animation<class CLASS_PlayerESP_Alpha_Animation_>(UI_Visual_ESP_DrawAlpha, 2), LWA_ALPHA);//窗口透明度设置
+		if (UI_Visual_ESP_DrawAlpha == -1)//敌人开枪时显示透视
+		{
+			static short ESP_DrawAlpha = 0;//初始化透明度变量
+			if (ESP_DrawAlpha <= 0)Sleep(20);//透明度为0时睡眠 (降低CPU占用)
+			ESP_DrawAlpha -= 5;//淡化透明度
+			for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历所有有效人物
+			{
+				const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);
+				if (PlayerPawn.ShotsFired() != 0)ESP_DrawAlpha = 200;//刷新显示
+			}
+			Window::Set_WindowLayeredColor(RenderWindow.Get_HWND(), { 0,0,0 }, ESP_DrawAlpha, LWA_ALPHA);//窗口透明度设置
+		}
+		else Window::Set_WindowLayeredColor(RenderWindow.Get_HWND(), { 0,0,0 }, Variable::Animation<class CLASS_PlayerESP_Alpha_Animation_>(UI_Visual_ESP_DrawAlpha, 2), LWA_ALPHA);//窗口透明度设置
 		Window::Set_LimitWindowShow(RenderWindow.Get_HWND(), UI_Misc_ByPassOBS);//绕过OBS
 		ESP_Paint.Render_SolidRect(0, 0, 9999, 9999, { 0,0,0 });//清除画板
 		if (CS2_HWND && (Menu_Open || Global_IsShowWindow))//当CS窗口在最前端 && 菜单在最前端
 		{
 			Window::Set_Topmost_Status(RenderWindow.Get_HWND(), Global_IsShowWindow);//修改窗口为最前端窗口 (覆盖一切的!!!)
-			if (UI_Visual_ESP && (!UI_Visual_ESP_Key || System::Get_Key(UI_Visual_ESP_Key)))//ESP 透视
+			if (UI_Visual_ESP && (!UI_Visual_ESP_Key || System::Key_Toggle<class CLASS_PlayerESP_KeyToggle_>(UI_Visual_ESP_Key)))//ESP 透视
 			{
 				auto Draw_Color = GUI_IO.GUIColor;
 				if (UI_Visual_ESP_CustomColor)Draw_Color = UI_Visual_ESP_CustomColor_Color;//自定义透视ESP颜色
@@ -1694,14 +1707,6 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 								const auto Bone_ScreenPos = WorldToScreen(CS_Scr_Res.r, CS_Scr_Res.g, PlayerPawn.BonePos(Bone_Flags[i]), Local_Matrix);
 								const auto Bone_ScreenPos_ = WorldToScreen(CS_Scr_Res.r, CS_Scr_Res.g, PlayerPawn.BonePos(Bone_Flags[i + 1]), Local_Matrix);
 								ESP_Paint.Render_Line(Bone_ScreenPos.x, Bone_ScreenPos.y, Bone_ScreenPos_.x, Bone_ScreenPos_.y, Draw_Color / 2, UI_Visual_ESP_Skeleton_Thickness);
-							}
-							if (false)//绘制所有骨骼ID (调试)
-							{
-								for (int i = 0; i <= 30; ++i)//显示所有骨骼ID
-								{
-									const auto Bone_ScrPos = WorldToScreen(CS_Scr_Res.r, CS_Scr_Res.g, PlayerPawn.BonePos(i), Local_Matrix);
-									ESP_Paint.RenderA_SmpStr(Bone_ScrPos.x, Bone_ScrPos.y, to_string(i), Draw_Color.D_Alpha(255));
-								}
 							}
 						}
 						if (UI_Visual_ESP_HeadDot)//头点
@@ -2087,6 +2092,6 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 		if (UI_Setting_MenuFont == "")GUI_VAR.Global_Set_EasyGUI_Font("Verdana");//自定义GUI字体
 		else GUI_VAR.Global_Set_EasyGUI_Font(UI_Setting_MenuFont);
 		GUI_VAR.Global_Set_EasyGUI_FontSize(UI_Setting_MenuFontSize);//自定义GUI字体大小
-		Sleep(1);
+		Sleep(1);//降低CPU占用
 	}
 }

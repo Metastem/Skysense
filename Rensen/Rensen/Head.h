@@ -1,4 +1,4 @@
-﻿//2024-08-21 20:30
+﻿//2024-08-25 12:40
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -434,6 +434,7 @@ namespace Window//窗口
     //-----------------------------------------------------------------------------------------------------------------------------
     void Set_WindowLayeredColor(HWND WindowHWND, Variable::Vector4 Color, int Alpha, int Flags) noexcept//修改分层窗口属性颜色
     {//Window::Set_WindowLayeredColor(FindWindow(NULL, L"TestWindow"), { 0,0,0 }, 200, LWA_ALPHA | LWA_COLORKEY);
+        if (Alpha < 0)Alpha = 0; else if (Alpha > 255)Alpha = 255;//限制透明度
         SetLayeredWindowAttributes(WindowHWND, RGB(Color.r, Color.g, Color.b), Alpha, Flags);
     }
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -1253,13 +1254,14 @@ namespace Window//窗口
         {
             if (!Render_HWND)return;
             Render_Window_HWND = Render_HWND;
-            ID2D1Factory* Render_Factory; D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &Render_Factory);
+            ID2D1Factory* Render_Factory; D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &Render_Factory);
             RECT rc; GetClientRect(Render_Window_HWND, &rc);
             Render_Factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(Render_Window_HWND, D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top)), &Render_Target);
             Render_Factory->Release();
         }
         HWND HWND() noexcept { return Render_Window_HWND; }//返回窗口HWND
         int FPS() noexcept { return Draw_FPS; }//返回绘制帧数
+        ID2D1HwndRenderTarget* Target() noexcept { return Render_Target; }//返回绘制目标
         void Draw(BOOL State = false) noexcept//绘制画板函数
         {
             if (State)//0:开始绘制 1:结束绘制
@@ -2082,7 +2084,7 @@ namespace System//Windows系统
     private:
         string File_Name = "URLREAD";
     public:
-        URL_READ(string FileName = "URLREAD") noexcept { File_Name = FileName; }
+        URL_READ(string FileName = "URLREAD") noexcept { File_Name = FileName; }//初始化写入文件名称
         BOOL StoreMem(string URL) noexcept//将字符串存入内存用来读取(下载)
         {
             const auto DownLoad = URLDownloadToFile(0, wstring(URL.begin(), URL.end()).c_str(), wstring(File_Name.begin(), File_Name.end()).c_str(), 0, 0);
