@@ -1,12 +1,12 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.67;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-25 12:40]";//程序发布日期时间
+const float Rensen_Version = 4.68;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-26 00:00]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
 	const string UI_LocalConfigPath = "Rensen.cfg";
-	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n0\n50\n";//默认参数
+	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n0\n50\n0\n";//默认参数
 	//----------------------------------------------------------------------------------------------
 	BOOL UI_Visual_Res_2560, UI_Visual_Res_1920, UI_Visual_Res_1280, UI_Visual_Res_960;
 	BOOL UI_Visual_Radar_Show;
@@ -47,7 +47,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	float UI_Legit_PreciseAim_DefaultSensitivity = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 26));
 	float UI_Legit_PreciseAim_EnableSensitivity = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 27));
 	BOOL UI_Legit_RemoveRecoil = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 28));
-	BOOL UI_Legit_RemoveRecoil_LateralRepair = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 29));
+	BOOL UI_Legit_RemoveRecoil_HorizontalRepair = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 29));
 	int UI_Legit_RemoveRecoil_StartBullet = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 30));
 	BOOL UI_Legit_Backtracking = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 31));
 	int UI_Legit_Backtracking_MaximumTime = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 32));
@@ -151,6 +151,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	int UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 139));
 	BOOL UI_Visual_HitMark_CustomColor = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 140));
 	int UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 141));
+	BOOL UI_Legit_MagnetAim_OnlyHeadLine = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 142));
 	//----------------------------------------------------------------------------------------------
 	void SaveLocalConfig() noexcept//保存本地参数
 	{
@@ -183,7 +184,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			to_string(UI_Legit_PreciseAim_DefaultSensitivity) + "\n" +
 			to_string(UI_Legit_PreciseAim_EnableSensitivity) + "\n" +
 			to_string(UI_Legit_RemoveRecoil) + "\n" +
-			to_string(UI_Legit_RemoveRecoil_LateralRepair) + "\n" +
+			to_string(UI_Legit_RemoveRecoil_HorizontalRepair) + "\n" +
 			to_string(UI_Legit_RemoveRecoil_StartBullet) + "\n" +
 			to_string(UI_Legit_Backtracking) + "\n" +
 			to_string(UI_Legit_Backtracking_MaximumTime) + "\n" +
@@ -295,7 +296,8 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			to_string(UI_Legit_Backtracking_MinimumTime) + "\n" +
 			to_string(UI_Legit_RemoveRecoil_Sensitive) + "\n" +
 			to_string(UI_Visual_HitMark_CustomColor) + "\n" +
-			to_string(UI_Legit_Aimbot_AutoShootHitChance) + "\n"
+			to_string(UI_Legit_Aimbot_AutoShootHitChance) + "\n" +
+			to_string(UI_Legit_MagnetAim_OnlyHeadLine) + "\n"
 		);
 	}
 	void LoadCloudConfig(string FileName = "", string NormalURL = "https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/") noexcept//加载Github云参数
@@ -331,7 +333,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			UI_Legit_PreciseAim_DefaultSensitivity = Variable::string_float_(URL_CONFIG.Read(26));
 			UI_Legit_PreciseAim_EnableSensitivity = Variable::string_float_(URL_CONFIG.Read(27));
 			UI_Legit_RemoveRecoil = Variable::string_int_(URL_CONFIG.Read(28));
-			UI_Legit_RemoveRecoil_LateralRepair = Variable::string_int_(URL_CONFIG.Read(29));
+			UI_Legit_RemoveRecoil_HorizontalRepair = Variable::string_int_(URL_CONFIG.Read(29));
 			UI_Legit_RemoveRecoil_StartBullet = Variable::string_int_(URL_CONFIG.Read(30));
 			UI_Legit_Backtracking = Variable::string_int_(URL_CONFIG.Read(31));
 			UI_Legit_Backtracking_MaximumTime = Variable::string_int_(URL_CONFIG.Read(32));
@@ -435,6 +437,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(URL_CONFIG.Read(139));
 			UI_Visual_HitMark_CustomColor = Variable::string_int_(URL_CONFIG.Read(140));
 			UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(URL_CONFIG.Read(141));
+			UI_Legit_MagnetAim_OnlyHeadLine = Variable::string_int_(URL_CONFIG.Read(142));
 			URL_CONFIG.Release();
 		}
 	}
@@ -518,14 +521,15 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Slider<float, class CLASS_Block_PreciseAim_2>(Block_PreciseAim, 3, "Enable sensitivity", 0, 0.015, UI_Legit_PreciseAim_EnableSensitivity);
 					const auto Block_RemoveRecoil = GUI_VAR.GUI_Block(580, 390, 160, "Remove recoil");
 					GUI_VAR.GUI_Checkbox(Block_RemoveRecoil, 1, "Enabled", UI_Legit_RemoveRecoil);
-					GUI_VAR.GUI_Checkbox({ Block_RemoveRecoil.x + 20,Block_RemoveRecoil.y }, 2, "Lateral repair", UI_Legit_RemoveRecoil_LateralRepair);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_1>(Block_RemoveRecoil, 3, "Start bullet", 1, 10, UI_Legit_RemoveRecoil_StartBullet);
+					GUI_VAR.GUI_Checkbox({ Block_RemoveRecoil.x + 20,Block_RemoveRecoil.y }, 2, "Only horizontal repair", UI_Legit_RemoveRecoil_HorizontalRepair);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_1>(Block_RemoveRecoil, 3, "Start bullet", 1, 15, UI_Legit_RemoveRecoil_StartBullet);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_2>(Block_RemoveRecoil, 4, "Sensitive", 0, 100, UI_Legit_RemoveRecoil_Sensitive, "%");
-					const auto Block_MagnetAim = GUI_VAR.GUI_Block(580, 570, 130, "Magnet aim");
+					const auto Block_MagnetAim = GUI_VAR.GUI_Block(580, 570, 160, "Magnet aim");
 					GUI_VAR.GUI_Checkbox(Block_MagnetAim, 1, "Enabled", UI_Legit_MagnetAim);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_MagnetAim_1>(Block_MagnetAim, 2, "Range", 0, 100, UI_Legit_MagnetAim_Range, "%");
-					GUI_VAR.GUI_Slider<float, class CLASS_Block_MagnetAim_2>(Block_MagnetAim, 3, "Smooth", 0.5, 6.6666, UI_Legit_MagnetAim_Smooth);
-					const auto Block_Backtracking = GUI_VAR.GUI_Block(580, 720, 130, "Back tracking");
+					GUI_VAR.GUI_Checkbox({ Block_MagnetAim.x + 20,Block_MagnetAim.y }, 2, "Only aim headline", UI_Legit_MagnetAim_OnlyHeadLine);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_MagnetAim_1>(Block_MagnetAim, 3, "Range", 0, 100, UI_Legit_MagnetAim_Range, "%");
+					GUI_VAR.GUI_Slider<float, class CLASS_Block_MagnetAim_2>(Block_MagnetAim, 4, "Smooth", 0.5, 6.6666, UI_Legit_MagnetAim_Smooth);
+					const auto Block_Backtracking = GUI_VAR.GUI_Block(580, 750, 130, "Back tracking");
 					GUI_VAR.GUI_Checkbox(Block_Backtracking, 1, "Enabled", UI_Legit_Backtracking);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_1>(Block_Backtracking, 2, "Minimum time", 0, 500, UI_Legit_Backtracking_MinimumTime, "ms");
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_2>(Block_Backtracking, 3, "Maximum time", UI_Legit_Backtracking_MinimumTime, 1000, UI_Legit_Backtracking_MaximumTime, "ms");
@@ -537,7 +541,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Tips(Block_PreciseAim, 1, "Reduce the sensitivity of the reticle when aiming at the enemy.");
 					GUI_VAR.GUI_Tips({ Block_RemoveRecoil.x + 10,Block_RemoveRecoil.y }, 2, "Operations that only return landscape.");
 					GUI_VAR.GUI_Tips({ Block_RemoveRecoil.x + 10,Block_RemoveRecoil.y }, 4, "Corresponding game sensitivity value.");
-					GUI_VAR.GUI_Tips(Block_MagnetAim, 1, "Slow aiming without triggering key conditions. (Hard to see)");
+					GUI_VAR.GUI_Tips(Block_MagnetAim, 1, "Slow aiming without triggering key conditions.");
 					GUI_VAR.GUI_Tips(Block_Backtracking, 1, "Take advantage of network latency to have a bigger hitbox.");
 					GUI_WindowSize = { 1010,940 };
 				}
@@ -731,7 +735,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					const auto Block_DebugControl = GUI_VAR.GUI_Block(510, 540, 280, "Debug control", 330);
 					GUI_VAR.GUI_Checkbox(Block_DebugControl, 1, "Show console window", UI_Debug_ShowDebugWindow);
 					GUI_VAR.GUI_Button_Small({ Block_DebugControl.x - 2,Block_DebugControl.y }, 1, Debug_Control_Var::ClearCommand);
-					GUI_VAR.GUI_InputText<class CLASS_Block_DebugControl_1>({ Block_DebugControl.x - 15,Block_DebugControl.y }, 2, Debug_Control_Var::SystemCommand, "Command");
+					GUI_VAR.GUI_InputText<class CLASS_Block_DebugControl_1>({ Block_DebugControl.x - 15,Block_DebugControl.y }, 2, Debug_Control_Var::SystemCommand, "Command ex./add checkbox");
 					GUI_VAR.GUI_Button_Small({ Block_DebugControl.x - 2,Block_DebugControl.y }, 2, Debug_Control_Var::SendSystemCommand);
 					GUI_VAR.GUI_Checkbox(Block_DebugControl, 3, "Checkbox 1", Debug_Control_Var::Checkbox_1);
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_DebugControl_2>({ Block_DebugControl.x - 70,Block_DebugControl.y }, 3, Debug_Control_Var::KeySelector_1);
@@ -866,7 +870,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			}
 		}
 	}
-	else {//汉化版菜单
+	else {//汉化版菜单 (字符串一定要加上UTT不然会乱码)
 		while (true)//进入死循环
 		{
 			Window::Set_LimitWindowShow(GUI_VAR.Window_HWND(), UI_Misc_ByPassOBS);//绕过OBS
@@ -929,14 +933,15 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Slider<float, class CLASS_Block_PreciseAim_2>(Block_PreciseAim, 3, "触发时灵敏度UTT", 0, 0.015, UI_Legit_PreciseAim_EnableSensitivity);
 					const auto Block_RemoveRecoil = GUI_VAR.GUI_Block(580, 390, 160, "自动压枪UTT");
 					GUI_VAR.GUI_Checkbox(Block_RemoveRecoil, 1, "启用UTT", UI_Legit_RemoveRecoil);
-					GUI_VAR.GUI_Checkbox({ Block_RemoveRecoil.x + 20,Block_RemoveRecoil.y }, 2, "水平修复UTT", UI_Legit_RemoveRecoil_LateralRepair);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_1>(Block_RemoveRecoil, 3, "开始子弹UTT", 1, 10, UI_Legit_RemoveRecoil_StartBullet);
+					GUI_VAR.GUI_Checkbox({ Block_RemoveRecoil.x + 20,Block_RemoveRecoil.y }, 2, "只进行水平修复UTT", UI_Legit_RemoveRecoil_HorizontalRepair);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_1>(Block_RemoveRecoil, 3, "开始子弹UTT", 1, 15, UI_Legit_RemoveRecoil_StartBullet);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_2>(Block_RemoveRecoil, 4, "灵敏度UTT", 0, 100, UI_Legit_RemoveRecoil_Sensitive, "%");
-					const auto Block_MagnetAim = GUI_VAR.GUI_Block(580, 570, 130, "磁吸瞄准UTT");
+					const auto Block_MagnetAim = GUI_VAR.GUI_Block(580, 570, 160, "磁吸瞄准UTT");
 					GUI_VAR.GUI_Checkbox(Block_MagnetAim, 1, "启用UTT", UI_Legit_MagnetAim);
-					GUI_VAR.GUI_Slider<int, class CLASS_Block_MagnetAim_1>(Block_MagnetAim, 2, "范围UTT", 0, 100, UI_Legit_MagnetAim_Range, "%");
-					GUI_VAR.GUI_Slider<float, class CLASS_Block_MagnetAim_2>(Block_MagnetAim, 3, "平滑度UTT", 0.5, 6.6666, UI_Legit_MagnetAim_Smooth);
-					const auto Block_Backtracking = GUI_VAR.GUI_Block(580, 720, 130, "回溯UTT");
+					GUI_VAR.GUI_Checkbox({ Block_MagnetAim.x + 20,Block_MagnetAim.y }, 2, "只磁吸头线UTT", UI_Legit_MagnetAim_OnlyHeadLine);
+					GUI_VAR.GUI_Slider<int, class CLASS_Block_MagnetAim_1>(Block_MagnetAim, 3, "范围UTT", 0, 100, UI_Legit_MagnetAim_Range, "%");
+					GUI_VAR.GUI_Slider<float, class CLASS_Block_MagnetAim_2>(Block_MagnetAim, 4, "平滑度UTT", 0.5, 6.6666, UI_Legit_MagnetAim_Smooth);
+					const auto Block_Backtracking = GUI_VAR.GUI_Block(580, 750, 130, "回溯UTT");
 					GUI_VAR.GUI_Checkbox(Block_Backtracking, 1, "开启UTT", UI_Legit_Backtracking);
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_1>(Block_Backtracking, 2, "最小延迟UTT", 0, 500, UI_Legit_Backtracking_MinimumTime, "ms");
 					GUI_VAR.GUI_Slider<int, class CLASS_Block_Backtracking_2>(Block_Backtracking, 3, "最大延迟UTT", UI_Legit_Backtracking_MinimumTime, 1000, UI_Legit_Backtracking_MaximumTime, "ms");
@@ -1045,7 +1050,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				}
 				else if (UI_Panel == 3)//Setting
 				{
-					const auto Block_About = GUI_VAR.GUI_Block(150, 30, 190, "关于UTT");
+					const auto Block_About = GUI_VAR.GUI_Block(150, 30, 220, "关于UTT");
 					GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
 					GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (官匹开源免费外部)UTT", { 100,100,100 });
 					GUI_VAR.GUI_Text(Block_About, 2, "版本: UTT" + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
@@ -1054,8 +1059,9 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OpenLinkAuthor);
 					GUI_VAR.GUI_Text(Block_About, 5, "交流QQ群: 486214313UTT", { 100,100,100 });
 					GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 5, UI_Setting_AddQQGroupChat);
+					GUI_VAR.GUI_Text(Block_About, 6, "中国内地用户检查更新时需要使用VPN (确保可以连接Github)UTT", { 100,100,100 });
 					GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
-					const auto Block_Menu = GUI_VAR.GUI_Block(150, 240, 310, "菜单UTT");
+					const auto Block_Menu = GUI_VAR.GUI_Block(150, 270, 310, "菜单UTT");
 					GUI_VAR.GUI_Text(Block_Menu, 1, "菜单按键UTT");
 					GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
 					GUI_VAR.GUI_Checkbox(Block_Menu, 2, "自定义菜单主题色UTT", UI_Setting_CustomColor);
@@ -1069,7 +1075,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					GUI_VAR.GUI_Button(Block_Menu, 7, "Github 项目链接UTT", UI_Setting_GithubRepositories, 75);
 					GUI_VAR.GUI_Button(Block_Menu, 8, "重启菜单UTT", UI_Setting_RestartMenu, 90);
 					GUI_VAR.GUI_Button(Block_Menu, 9, "关闭菜单UTT", UI_Setting_Unload, 90);
-					GUI_WindowSize = { 580,580 };
+					GUI_WindowSize = { 580,610 };
 				}
 				GUI_VAR.Draw_GUI(Debug_Control_Var::Checkbox_2);//最终绘制GUI画板
 				if (UI_Misc_SavePerformance)Sleep(5);//节省电脑占用性能
@@ -1318,7 +1324,7 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 				//--------------------------------------
 				if (UI_Spoof_AimbotTeam && System::Get_Key(UI_Spoof_AimbotTeam_Key))//瞄准队友
 				{
-					struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV Target = {};//记录变量和变量结构体
+					struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV Target = {};//记录变量和变量结构体 (寻找与准星距离最近的人物)
 					for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历所有实体 找到符合条件的人物Pawn 并且找到2D准星距离最近的实体
 					{
 						const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
@@ -1480,7 +1486,7 @@ void Thread_Funtion_Aimbot() noexcept//功能线程: 瞄准机器人
 			if (UI_Legit_Aimbot_RemoveRecoil)Recoil_Angle = Base::ViewAngles() + Local_AimPunchAngle * 2;//移除后坐力
 			else Recoil_Angle = Base::ViewAngles();
 			const auto CrosshairId = Advanced::Check_Enemy(Global_LocalPlayer.IDEntIndex_Pawn());//瞄准的实体Pawn
-			struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV EligiblePlayers = {};//记录变量和变量结构体
+			struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV EligiblePlayers = {};//记录变量和变量结构体 (寻找与准星距离最近的人物)
 			for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历所有实体 找到符合条件的人物Pawn 并且找到2D准星距离最近的实体
 			{
 				const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
@@ -1537,7 +1543,7 @@ void Thread_Funtion_AdaptiveAimbot() noexcept//功能线程: 生物瞄准机器�
 			System::Sleep_ns(1500);//比Sleep更快的函数为了更加自然平滑
 			float Aim_Range = 5; int Aim_Bone = 6; const auto PunchAngle = Global_LocalPlayer.AimPunchAngle();
 			if (abs(PunchAngle.x) * 2 >= Aim_Range)Aim_Range = abs(PunchAngle.x) * 1.5;//计算开枪之后附加后坐力的范围
-			struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV Target = {};//记录变量和变量结构体
+			struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV Target = {};//记录变量和变量结构体 (寻找与准星距离最近的人物)
 			for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历所有实体 找到符合条件的人物Pawn 并且找到2D准星距离最近的实体
 			{
 				const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
@@ -1597,18 +1603,26 @@ void Thread_Funtion_AssisteAim() noexcept//功能线程: 精确瞄准
 				if (Advanced::Check_Enemy(Global_LocalPlayer.IDEntIndex_Pawn()))ExecuteCommand("m_yaw " + to_string(UI_Legit_PreciseAim_EnableSensitivity));
 				else ExecuteCommand("m_yaw " + to_string(UI_Legit_PreciseAim_DefaultSensitivity));
 			}
-			if (UI_Legit_MagnetAim && System::Is_MousePos_InMid(CS2_HWND) && !System::Get_Key(VK_LBUTTON) && Global_LocalPlayer.ActiveWeapon() != 0)//磁吸瞄准
+			if (UI_Legit_MagnetAim && System::Is_MousePos_InMid(CS2_HWND) && !System::Get_Key(VK_LBUTTON) && Global_LocalPlayer.ActiveWeapon() != 0 && Global_LocalPlayer.MoveSpeed() <= 150)//磁吸瞄准
 			{
 				Sleep(1);//降低CPU占用
 				float Aim_Range = UI_Legit_MagnetAim_Range / 5;//瞄准范围
+				struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV EligiblePlayers = {};//记录变量和变量结构体 (寻找与准星距离最近的人物)
 				for (short i = 0; i < Global_ValidClassID.size(); ++i)//人物ID遍历
 				{
 					const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);//遍历的人物Pawn
 					if (!Advanced::Check_Enemy(PlayerPawn) || !PlayerPawn.Spotted())continue;//简单的实体判断
-					const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(6), Base::ViewAngles());
-					const auto Fov = hypot(Angle.x, Angle.y);
-					if (!Angle.IsZero() && Fov <= Aim_Range && Fov >= 1.5) { Aim_Range = Fov; System::Mouse_Move(-Angle.y * (7.f - UI_Legit_MagnetAim_Smooth), Angle.x * (7.f - UI_Legit_MagnetAim_Smooth)); }
+					const auto NeedAngle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(6), Base::ViewAngles());
+					const auto Fov = hypot(NeedAngle.x, NeedAngle.y);
+					if (Fov < EligiblePlayers.MinFov)//范围判断
+					{
+						EligiblePlayers.Pawn = PlayerPawn;//刷新PlayerPawn
+						EligiblePlayers.MinFov = Fov;//刷新最短Fov
+						EligiblePlayers.AimAngle = NeedAngle;//刷新最终瞄准的Angle
+					}
 				}
+				if (UI_Legit_MagnetAim_OnlyHeadLine)EligiblePlayers.AimAngle.y = 0;//只处理Y坐标 (只磁吸爆头线)
+				if (EligiblePlayers.MinFov <= Aim_Range && EligiblePlayers.MinFov >= 2)System::Mouse_Move(-EligiblePlayers.AimAngle.y * (7.f - UI_Legit_MagnetAim_Smooth), EligiblePlayers.AimAngle.x * (7.f - UI_Legit_MagnetAim_Smooth));
 			}
 		}
 		else Sleep(20);
@@ -1626,7 +1640,7 @@ void Thread_Funtion_RemoveRecoil() noexcept//功能线程: 移除后坐力
 			{
 				const auto AimPunch = Global_LocalPlayer.AimPunchAngle();//原始后坐力角度
 				auto NewPunch = Variable::Vector3{ OldPunch.x - AimPunch.x * 2,OldPunch.y - AimPunch.y * 2,0 };//计算后坐力之后的角度
-				if (UI_Legit_RemoveRecoil_LateralRepair)NewPunch.x = 0;//只处理X坐标
+				if (UI_Legit_RemoveRecoil_HorizontalRepair)NewPunch.x = 0;//只处理X坐标
 				System::Mouse_Move(-NewPunch.y * UI_Legit_RemoveRecoil_Sensitive, NewPunch.x * (UI_Legit_RemoveRecoil_Sensitive / 2 + 5));//修改计算后坐力之后的角度
 				OldPunch = AimPunch * 2;
 			}
@@ -2089,7 +2103,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 		else { if (MenuWindowAlpha == 0)GUI_VAR.Window_Hide(); Menu_Open = false; }
 		GUI_IO = GUI_VAR.Get_IO();//刷新GUI状态数据
 		if (!UI_Setting_CustomColor)GUI_IO.GUIColor = { GUI_IO.GUIColor_Rainbow[3],GUI_IO.GUIColor_Rainbow[4],GUI_IO.GUIColor_Rainbow[5] };//GUI主题颜色到功能函数
-		if (UI_Setting_MenuFont == "")GUI_VAR.Global_Set_EasyGUI_Font("Verdana");//自定义GUI字体
+		if (UI_Setting_MenuFont == "")GUI_VAR.Global_Set_EasyGUI_Font("Verdana");//自定义GUI字体 (默认字体为Verdana)
 		else GUI_VAR.Global_Set_EasyGUI_Font(UI_Setting_MenuFont);
 		GUI_VAR.Global_Set_EasyGUI_FontSize(UI_Setting_MenuFontSize);//自定义GUI字体大小
 		Sleep(1);//降低CPU占用
