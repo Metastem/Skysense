@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.68;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-26 00:00]";//程序发布日期时间
+const float Rensen_Version = 4.69;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-26 17:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -1671,6 +1671,7 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 				const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);
 				if (PlayerPawn.ShotsFired() != 0)ESP_DrawAlpha = 200;//刷新显示
 			}
+			if (!Global_LocalPlayer.Health())ESP_DrawAlpha = 200;//本地人物死亡时一直显示
 			Window::Set_WindowLayeredColor(RenderWindow.Get_HWND(), { 0,0,0 }, ESP_DrawAlpha, LWA_ALPHA);//窗口透明度设置
 		}
 		else Window::Set_WindowLayeredColor(RenderWindow.Get_HWND(), { 0,0,0 }, Variable::Animation<class CLASS_PlayerESP_Alpha_Animation_>(UI_Visual_ESP_DrawAlpha, 2), LWA_ALPHA);//窗口透明度设置
@@ -1691,8 +1692,8 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 					if (!Advanced::Check_Enemy(PlayerPawn))continue;//多点检测
 					const auto Top_Pos = WorldToScreen(CS_Scr_Res.r, CS_Scr_Res.g, PlayerPawn.BonePos(6) + Variable::Vector3{ 0, 0, 8 }, Local_Matrix);
 					const auto Entity_Position = PlayerPawn.Origin();
-					const auto Player_Distance = Variable::Coor_Dis_3D(Local_Position, Entity_Position);
-					if (Player_Distance >= 10000)continue;//距离太远则不绘制ESP
+					const auto Player_Distance = Variable::Coor_Dis_3D(Local_Position, Entity_Position);//计算目标人物与本地人物的距离
+					if (Player_Distance >= 8000 && Global_LocalPlayer.Health())continue;//距离太远则不绘制ESP
 					if (Top_Pos.x < -100 || Top_Pos.x > CS_Scr_Res.r + 100)//检测是否在屏幕内
 					{
 						if (UI_Visual_ESP_OutFOV && Global_LocalPlayer.Health())//方向指示器
@@ -1774,7 +1775,7 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 					static Variable::Vector4 Mark_Color, EffectColor;//绘制颜色
 					Mark_Color = Mark_Color - Variable::Vector4{ 10, 10, 10 }; Mark_Color = Mark_Color.Re_Col();//准星透明化动画
 					EffectColor = EffectColor - Variable::Vector4{ 8, 8, 8 }; EffectColor = EffectColor.Re_Col();//特效透明化动画
-					static auto OldDamage = 0; static auto OldKill = 0;
+					static short OldDamage, OldKill;
 					const auto Damage = Advanced::Local_RoundDamage();//伤害
 					const auto Kill = Advanced::Local_RoundDamage(true);//击杀
 					const auto IDEnt_Pos = Global_LocalPlayer.IDEntIndex_Pawn().BonePos(5); static auto Target_Pos = IDEnt_Pos;//特效目标坐标
@@ -2052,7 +2053,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	System::URL_READ UserID_READ = { "Cache_UserID" }; BOOL Attest = false;//认证变量
 	if (UserID_READ.StoreMem("https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/UserID.uid?raw=true"))//Github读取有效用户ID
 	{
-		if (!Attest)for (short i = 0; i <= 50000; i++) { if (System::Get_UserName() == UserID_READ.Read(i) || Variable::String_Upper(UserID_READ.Read(i)) == "BYPASS") { Attest = true; break; } }//遍历检测并修改认证
+		for (short i = 0; i <= 50000; i++) { if (System::Get_UserName() == UserID_READ.Read(i) || Variable::String_Upper(UserID_READ.Read(i)) == "BYPASS")Attest = true; if (Attest)break; }//遍历检测并修改认证
 		UserID_READ.Release();//释放缓存
 	}
 	Attest = true;//通过验证 (公开版)
