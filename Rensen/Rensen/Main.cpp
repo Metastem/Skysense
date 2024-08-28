@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.69;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-26 17:30]";//程序发布日期时间
+const float Rensen_Version = 4.70;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-28 20:10]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -862,7 +862,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					}
 					if (UI_Setting_Unload)//关闭菜单
 					{
-						Window::Hide_Window(Window::NVIDIA_Overlay());
 						System::Log("Setting: Unload");
 						exit(0);
 					}
@@ -1131,7 +1130,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					}
 					if (UI_Setting_Unload)//关闭菜单
 					{
-						Window::Hide_Window(Window::NVIDIA_Overlay());
 						System::Log("Setting: Unload");
 						exit(0);
 					}
@@ -2093,7 +2091,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	while (true)//菜单动画和关闭快捷键
 	{
 		if (!Attest) { exit(0); return 0; }//过滤未认证用户 (防止被HOOK初始化函数)
-		if (System::Get_Key(VK_INSERT) && System::Get_Key(VK_DELETE)) { Beep(50, 50); Window::Hide_Window(Window::NVIDIA_Overlay()); exit(0); }//快速关闭键 (防止卡线程)
+		if (System::Get_Key(VK_INSERT) && System::Get_Key(VK_DELETE)) { Beep(50, 50); exit(0); }//快速关闭键 (防止卡线程)
 		static short MenuWindowAlpha = 0;
 		if (Menu_Open)MenuWindowAlpha = MenuWindowAlpha + UI_Setting_MainColor.a / UI_Setting_MenuAnimation / 2.5;//窗体透明度动画
 		else MenuWindowAlpha = MenuWindowAlpha - UI_Setting_MainColor.a / UI_Setting_MenuAnimation / 1.25;
