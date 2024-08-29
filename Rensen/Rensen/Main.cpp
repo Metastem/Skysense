@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.71;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-29 19:00]";//程序发布日期时间
+const float Rensen_Version = 4.72;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-29 22:00]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -851,8 +851,9 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_3>(Block_Radar, 5, "Alpha", 0, 255, UI_Visual_Radar_Alpha);
 				GUI_VAR.GUI_Tips(Block_ESP, 1, "Learn enemy coordinates through walls. (Full screen cannot be used)");
 				GUI_VAR.GUI_Tips({ Block_ESP.x + 10,Block_ESP.y }, 16, "-1: Draw ESP when gunfire occurs.");
-				GUI_VAR.GUI_Tips(Block_Hitmark, 1, "Effect that triggers when hitting the player.");
+				GUI_VAR.GUI_Tips(Block_Hitmark, 1, "Effect that triggers when hitting the player. (Full screen cannot be used)");
 				GUI_VAR.GUI_Tips(Block_Radar, 1, "Exterior window radar. (Full screen cannot be used)");
+				GUI_VAR.GUI_Tips({ Block_Radar.x + 12,Block_Radar.y }, 2, "Refresh window show state.");
 				GUI_WindowSize = { 1010,610 };
 			}
 			else if (UI_Panel == 2)//Misc
@@ -912,7 +913,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				auto FakeRageBot_SliderString = "Target: " + Advanced::Player_Name(UI_Spoof_FakeRageBot_Target);
 				if (!UI_Spoof_FakeRageBot_Target)FakeRageBot_SliderString = "Target: Any target";
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Spoof_7>({ Block_Spoof.x + 20,Block_Spoof.y }, 11, FakeRageBot_SliderString, 0, 64, UI_Spoof_FakeRageBot_Target);
-				GUI_VAR.GUI_Tips(Block_Misc, 2, "Play Beep when hitting player.");
+				GUI_VAR.GUI_Tips(Block_Misc, 2, "Play sound when hitting player.");
 				GUI_VAR.GUI_Tips(Block_Misc, 5, "Makes a subtle sound when approaching an enemy.");
 				GUI_VAR.GUI_Tips(Block_Misc, 8, "Auto attack when conditions such as distance and blood volume are met.");
 				GUI_VAR.GUI_Tips(Block_Misc, 14, "Lock the game window to the front.");
@@ -1553,7 +1554,7 @@ void Thread_Funtion_AdaptiveAimbot() noexcept//功能线程: 生物瞄准机器�
 			}
 			if (Target.MinFov <= Aim_Range)//如果玩家在范围内则触发
 			{
-				if (Global_LocalPlayer.ShotsFired() > 1 && Target.MinFov <= Aim_Range / 2 && Target.Pawn.MoveSpeed() <= 150)System::Mouse_Move(-Target.AimAngle.y * 30, Target.AimAngle.x * 30);
+				if (Global_LocalPlayer.ShotsFired() > 2 && Target.MinFov <= Aim_Range / 2 && Target.Pawn.MoveSpeed() <= 120)System::Mouse_Move(-Target.AimAngle.y * 30, Target.AimAngle.x * 30);
 				else System::Mouse_Move(-Target.AimAngle.y * (20 - UI_Legit_AdaptiveAimbot_InitialSmooth), Target.AimAngle.x * (20 - UI_Legit_AdaptiveAimbot_InitialSmooth));
 			}
 		}
