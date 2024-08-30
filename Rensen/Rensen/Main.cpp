@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.72;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-29 22:00]";//程序发布日期时间
+const float Rensen_Version = 4.73;//程序版本
+const string Rensen_ReleaseDate = "[2024-08-30 22:00]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -516,8 +516,8 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Triggerbot_3>(Block_Triggerbot, 5, "开火时长UTT", 1, 1000, UI_Legit_Triggerbot_ShootDuration, "ms");
 				const auto Block_PreciseAim = GUI_VAR.GUI_Block(580, 240, 130, "精确瞄准UTT");
 				GUI_VAR.GUI_Checkbox(Block_PreciseAim, 1, "启用UTT", UI_Legit_PreciseAim);
-				GUI_VAR.GUI_Slider<float, class CLASS_Block_PreciseAim_1>(Block_PreciseAim, 2, "默认灵敏度UTT", 0, 0.022, UI_Legit_PreciseAim_DefaultSensitivity);
-				GUI_VAR.GUI_Slider<float, class CLASS_Block_PreciseAim_2>(Block_PreciseAim, 3, "触发时灵敏度UTT", 0, 0.015, UI_Legit_PreciseAim_EnableSensitivity);
+				GUI_VAR.GUI_Slider<float, class CLASS_Block_PreciseAim_1>(Block_PreciseAim, 2, "默认游戏灵敏度UTT", 0, 0.022, UI_Legit_PreciseAim_DefaultSensitivity);
+				GUI_VAR.GUI_Slider<float, class CLASS_Block_PreciseAim_2>(Block_PreciseAim, 3, "触发时游戏灵敏度UTT", 0, 0.015, UI_Legit_PreciseAim_EnableSensitivity);
 				const auto Block_RemoveRecoil = GUI_VAR.GUI_Block(580, 390, 160, "自动压枪UTT");
 				GUI_VAR.GUI_Checkbox(Block_RemoveRecoil, 1, "启用UTT", UI_Legit_RemoveRecoil);
 				GUI_VAR.GUI_Checkbox({ Block_RemoveRecoil.x + 20,Block_RemoveRecoil.y }, 2, "只进行水平修复UTT", UI_Legit_RemoveRecoil_HorizontalRepair);
@@ -654,7 +654,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_Menu, 2, "自定义菜单主题色UTT", UI_Setting_CustomColor);
 				GUI_VAR.GUI_ColorSelector_a(Block_Menu, 2, UI_Setting_MainColor);
 				if (UI_Setting_MainColor.a < 100)UI_Setting_MainColor.a = 100;
-				GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "菜单动画速度UTT", 1.2, 10, UI_Setting_MenuAnimation);
+				GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "菜单动画平滑度UTT", 1.2, 10, UI_Setting_MenuAnimation);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Menu_3>(Block_Menu, 4, "菜单字体大小UTT", 0, 30, UI_Setting_MenuFontSize, "px");
 				GUI_VAR.GUI_Button(Block_Menu, 5, "保存本地配置UTT", UI_Setting_SaveLocalConfig, 75);
 				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 6, "关闭 CSUTT", UI_Setting_QuitCS, 90);
@@ -1051,7 +1051,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_Menu, 2, "Menu color", UI_Setting_CustomColor);
 				GUI_VAR.GUI_ColorSelector_a(Block_Menu, 2, UI_Setting_MainColor);
 				if (UI_Setting_MainColor.a < 100)UI_Setting_MainColor.a = 100;
-				GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "Menu animation speed", 1.2, 10, UI_Setting_MenuAnimation);
+				GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "Menu animation smooth", 1.2, 10, UI_Setting_MenuAnimation);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Menu_3>(Block_Menu, 4, "Menu font size", 0, 30, UI_Setting_MenuFontSize, "px");
 				GUI_VAR.GUI_InputText<class CLASS_Block_Menu_4>(Block_Menu, 5, UI_Setting_MenuFont, "Custom menu font");
 				GUI_VAR.GUI_Button(Block_Menu, 6, "Save local config", UI_Setting_SaveLocalConfig, 65);
@@ -1597,7 +1597,7 @@ void Thread_Funtion_AssisteAim() noexcept//功能线程: 精确瞄准
 				if (Advanced::Check_Enemy(Global_LocalPlayer.IDEntIndex_Pawn()))ExecuteCommand("m_yaw " + to_string(UI_Legit_PreciseAim_EnableSensitivity));
 				else ExecuteCommand("m_yaw " + to_string(UI_Legit_PreciseAim_DefaultSensitivity));
 			}
-			if (UI_Legit_MagnetAim && System::Is_MousePos_InMid(CS2_HWND) && !System::Get_Key(VK_LBUTTON) && Global_LocalPlayer.ActiveWeapon() != 0 && Global_LocalPlayer.MoveSpeed() <= 150)//磁吸瞄准
+			if (UI_Legit_MagnetAim && !System::Get_Key(VK_LBUTTON) && Global_LocalPlayer.ActiveWeapon() != 0 && Global_LocalPlayer.MoveSpeed() <= 150)//磁吸瞄准
 			{
 				float Aim_Range = UI_Legit_MagnetAim_Range / 5;//瞄准范围
 				struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV EligiblePlayers = {};//记录变量和变量结构体 (寻找与准星距离最近的人物)
