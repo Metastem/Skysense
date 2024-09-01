@@ -1,4 +1,4 @@
-﻿//2024-08-28 20:10
+﻿//2024-09-01 15:50
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -574,7 +574,7 @@ namespace Window//窗口
         int BKX, BKY; HWND Window_Hwnd;//GUI Window HWND
     public:
         //----------------------------------------------------------------------------------------
-        HWND Create_Window(int Size_X, int Size_Y, string WindowName, BOOL IfTop, HWND hWndParent = 0) noexcept//创建窗口
+        HWND Create_Window(int Size_X, int Size_Y, string WindowName, BOOL IfTop, int WindowStyle = WS_POPUP, HWND hWndParent = 0) noexcept//创建窗口
         {
             int 窗口类型 = (WS_EX_LAYERED | WS_EX_TOOLWINDOW);
             if (IfTop)窗口类型 = (WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TOOLWINDOW);
@@ -595,7 +595,7 @@ namespace Window//窗口
                 窗口类型//窗口的扩展风格 不显示窗口图标
                 , wstring(WindowName.begin(), WindowName.end()).c_str()//窗口类的名称，必须和上面的lpszClassName一致
                 , wstring(WindowName.begin(), WindowName.end()).c_str()//窗口的标题
-                , WS_POPUP//窗口的风格 透明WS_POPUP 正常WS_CAPTION
+                , WindowStyle//窗口的风格 透明WS_POPUP 正常WS_CAPTION
                 , GetSystemMetrics(SM_CXSCREEN) / 2 - Size_X / 2 //屏幕位置
                 , GetSystemMetrics(SM_CYSCREEN) / 2 - Size_Y / 2
                 , Size_X//宽高
@@ -1256,7 +1256,7 @@ namespace Window//窗口
             Render_Window_HWND = Render_HWND;
             ID2D1Factory* Render_Factory; D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &Render_Factory);
             RECT rc; GetClientRect(Render_Window_HWND, &rc);
-            Render_Factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(Render_Window_HWND, D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top)), &Render_Target);
+            Render_Factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(Render_Window_HWND, D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top), D2D1_PRESENT_OPTIONS_IMMEDIATELY), &Render_Target);
             Render_Factory->Release();
         }
         HWND HWND() noexcept { return Render_Window_HWND; }//返回窗口HWND
@@ -2414,7 +2414,8 @@ namespace EasyGUI
         void In_DrawString(int X, int Y, string String, Vector4 TextColor, string Fount_Name, short Fount_Size, short Font_Width = FW_NORMAL, BOOL AntiAlias = true) noexcept//绘制文字
         {
             if (String == "" || Fount_Size == 0)return;
-            if (Fount_Size > 15)Y -= Fount_Size / 3;//平衡上下坐标
+            if (Fount_Name == "微软雅黑")Y -= Fount_Size / 6;
+            else if (Fount_Size > 15)Y -= Fount_Size / 3;//平衡上下坐标
             HGDIOBJ FontPen;
             if (AntiAlias)FontPen = SelectObject(EasyGUI_DrawHDC, CreateFontA(Fount_Size, 0, 0, 0, Font_Width, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, Fount_Name.c_str()));
             else FontPen = SelectObject(EasyGUI_DrawHDC, CreateFontA(Fount_Size, 0, 0, 0, Font_Width, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FF_DONTCARE, Fount_Name.c_str()));
@@ -2594,7 +2595,7 @@ namespace EasyGUI
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
         int Window_FPS() noexcept { return EasyGUI_FPS; }//获取GUI绘制帧数
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
-        BOOL Window_Move(short Draw_Delay = 5) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
+        BOOL Window_Move(short Draw_Delay = 3) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
         {
             //--------------------------------消息循环
             MSG msg = { 0 }; if (GetMessage(&msg, 0, 0, 0)) { TranslateMessage(&msg); DispatchMessage(&msg); }

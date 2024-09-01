@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.73;//程序版本
-const string Rensen_ReleaseDate = "[2024-08-30 22:00]";//程序发布日期时间
+const float Rensen_Version = 4.74;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-01 15:50]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -458,14 +458,14 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 	System::Log("Load Thread: Thread_Menu()");
 	GUI_VAR.Window_Create(1200, 1000, "Rensen - Menu", true);//创建置顶GUI绘制窗口
 	const auto LanguageID = System::Get_DefaultLanguage();//获取系统默认语言
-	while ((LanguageID == 0x804 || LanguageID == 0x404 || LanguageID == 0xC04) && !System::Judge_File("EN"))//中文版菜单 (字符串一定要加上UTT不然会乱码)
+	while (LanguageID == 0x804 || LanguageID == 0x404 || LanguageID == 0xC04)//中文版菜单 (字符串一定要加上UTT不然会乱码)
 	{
 		Window::Set_LimitWindowShow(GUI_VAR.Window_HWND(), UI_Misc_ByPassOBS);//绕过OBS
-		UI_Setting_MenuFont = "等线";//中文字体
+		UI_Setting_MenuFont = "微软雅黑"; UI_Setting_MenuFontSize = 18;//中文字体
 		static int UI_Panel = 0;//大区块选择
 		static Variable::Vector2 GUI_WindowSize = { 0,0 };//窗体大小(用于开关动画)
 		if (!Menu_Open)GUI_WindowSize = { 0,0 };//关闭窗体时
-		GUI_VAR.Window_SetSize(Variable::Animation_Vec2<class CLASS_MenuState_Animation_>(GUI_WindowSize, UI_Setting_MenuAnimation));//菜单窗口大小动画 (弹出, 关闭)
+		GUI_VAR.Window_SetSize(Variable::Animation_Vec2<class CLASS_MenuState_Animation_>(GUI_WindowSize, UI_Setting_MenuAnimation));//菜单窗口大小动画 (弹出, 关闭, 切换大区块)
 		if (!GUI_VAR.Window_Move() && Menu_Open)//不在移动窗口时绘制GUI
 		{
 			if (UI_Setting_CustomColor)//自定义颜色(单色)
@@ -474,8 +474,8 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 			}
 			else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-			GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);
-			GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 20);
+			GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
+			GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 25);//大体区块选择
 			if (UI_Panel == 0)//Legit
 			{
 				const auto Block_Aimbot = GUI_VAR.GUI_Block(150, 30, 370, "瞄准机器人UTT");
@@ -597,7 +597,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_Misc, 13, "防止挂机踢出UTT", UI_Misc_AntiAFKKick);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 14, "锁定游戏窗口最前端UTT", UI_Misc_LockGameWindow);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 15, "绕过OBS捕捉UTT", UI_Misc_ByPassOBS);
-				GUI_VAR.GUI_Checkbox(Block_Misc, 16, "节省性能UTT", UI_Misc_SavePerformance, { 255,150,150 });
+				GUI_VAR.GUI_Checkbox(Block_Misc, 16, "性能节省UTT", UI_Misc_SavePerformance, { 255,150,150 });
 				GUI_VAR.GUI_Checkbox(Block_Misc, 17, "夜晚模式UTT", UI_Misc_NightMode);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_9>(Block_Misc, 18, "透明度UTT", 50, 180, UI_Misc_NightMode_Alpha);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 19, "自动PEEKUTT", UI_Misc_AutoPeek);
@@ -648,21 +648,20 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 5, UI_Setting_AddQQGroupChat);
 				GUI_VAR.GUI_Text(Block_About, 6, "中国内地用户检查更新时需要使用VPN (确保可以连接Github)UTT", { 100,100,100 });
 				GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
-				const auto Block_Menu = GUI_VAR.GUI_Block(150, 270, 310, "菜单UTT");
+				const auto Block_Menu = GUI_VAR.GUI_Block(150, 270, 280, "菜单UTT");
 				GUI_VAR.GUI_Text(Block_Menu, 1, "菜单按键UTT");
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
 				GUI_VAR.GUI_Checkbox(Block_Menu, 2, "自定义菜单主题色UTT", UI_Setting_CustomColor);
 				GUI_VAR.GUI_ColorSelector_a(Block_Menu, 2, UI_Setting_MainColor);
 				if (UI_Setting_MainColor.a < 100)UI_Setting_MainColor.a = 100;
 				GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "菜单动画平滑度UTT", 1.2, 10, UI_Setting_MenuAnimation);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Menu_3>(Block_Menu, 4, "菜单字体大小UTT", 0, 30, UI_Setting_MenuFontSize, "px");
-				GUI_VAR.GUI_Button(Block_Menu, 5, "保存本地配置UTT", UI_Setting_SaveLocalConfig, 75);
-				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 6, "关闭 CSUTT", UI_Setting_QuitCS, 90);
-				else GUI_VAR.GUI_Button(Block_Menu, 6, "打开 CSUTT", UI_Setting_StartCS, 90);
-				GUI_VAR.GUI_Button(Block_Menu, 7, "Github 项目链接UTT", UI_Setting_GithubRepositories, 75);
-				GUI_VAR.GUI_Button(Block_Menu, 8, "重启菜单UTT", UI_Setting_RestartMenu, 90);
-				GUI_VAR.GUI_Button(Block_Menu, 9, "关闭菜单UTT", UI_Setting_Unload, 90);
-				GUI_WindowSize = { 580,610 };
+				GUI_VAR.GUI_Button(Block_Menu, 4, "保存本地配置UTT", UI_Setting_SaveLocalConfig, 75);
+				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 5, "关闭 CSUTT", UI_Setting_QuitCS, 90);
+				else GUI_VAR.GUI_Button(Block_Menu, 5, "打开 CSUTT", UI_Setting_StartCS, 90);
+				GUI_VAR.GUI_Button(Block_Menu, 6, "Github 项目链接UTT", UI_Setting_GithubRepositories, 75);
+				GUI_VAR.GUI_Button(Block_Menu, 7, "重启菜单UTT", UI_Setting_RestartMenu, 90);
+				GUI_VAR.GUI_Button(Block_Menu, 8, "关闭菜单UTT", UI_Setting_Unload, 90);
+				GUI_WindowSize = { 580,580 };
 			}
 			GUI_VAR.Draw_GUI(Debug_Control_Var::Checkbox_2);//最终绘制GUI画板
 			if (UI_Misc_SavePerformance)Sleep(5);//节省电脑占用性能
@@ -730,7 +729,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 		static int UI_Panel = 0;//大区块选择
 		static Variable::Vector2 GUI_WindowSize = { 0,0 };//窗体大小(用于开关动画)
 		if (!Menu_Open)GUI_WindowSize = { 0,0 };//关闭窗体时
-		GUI_VAR.Window_SetSize(Variable::Animation_Vec2<class CLASS_MenuState_Animation_>(GUI_WindowSize, UI_Setting_MenuAnimation));//菜单窗口大小动画 (弹出, 关闭)
+		GUI_VAR.Window_SetSize(Variable::Animation_Vec2<class CLASS_MenuState_Animation_>(GUI_WindowSize, UI_Setting_MenuAnimation));//菜单窗口大小动画 (弹出, 关闭, 切换大区块)
 		if (!GUI_VAR.Window_Move() && Menu_Open)//不在移动窗口时绘制GUI
 		{
 			if (UI_Setting_CustomColor)//自定义颜色(单色)
@@ -739,8 +738,8 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 			}
 			else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-			GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);
-			GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);
+			GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
+			GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);//大体区块选择
 			if (UI_Panel == 0)//Legit
 			{
 				const auto Block_Aimbot = GUI_VAR.GUI_Block(150, 30, 370, "Aim bot");
@@ -1137,8 +1136,8 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功能)
 {
 	System::Log("Load Thread: Thread_Misc()");
-	Window::Windows Window_Watermark; const auto Window_Watermark_HWND = Window_Watermark.Create_RenderBlock_Alpha(Window::Get_Resolution().x, 50, "Rensen - Watermark");//创建水印透明窗口
-	Window::Render Window_Watermark_Render; Window_Watermark_Render.CreatePaint(Window_Watermark_HWND, 0, 0, Window::Get_Resolution().x, 50);//创建水印绘制画板
+	Window::Windows Window_Watermark; Window_Watermark.Create_RenderBlock_Alpha(Window::Get_Resolution().x, 50, "Rensen - Watermark");//创建水印透明窗口
+	Window::Render Window_Watermark_Render; Window_Watermark_Render.CreatePaint(Window_Watermark.Get_HWND(), 0, 0, Window::Get_Resolution().x, 50);//创建水印绘制画板
 	Window::Windows Window_NightMode; Window_NightMode.Create_RenderBlock(Window::Get_Resolution().x, Window::Get_Resolution().y, "Rensen - NightMode");//夜晚模式窗口
 	Window_Watermark.Show_Window();//将水印修改为最前端绘制覆盖窗口
 	ReLoad(true);//刷新CS2_SDK内存数据 (快速初始化)
@@ -1599,7 +1598,7 @@ void Thread_Funtion_AssisteAim() noexcept//功能线程: 精确瞄准
 			}
 			if (UI_Legit_MagnetAim && !System::Get_Key(VK_LBUTTON) && Global_LocalPlayer.ActiveWeapon() != 0 && Global_LocalPlayer.MoveSpeed() <= 150)//磁吸瞄准
 			{
-				float Aim_Range = UI_Legit_MagnetAim_Range / 5;//瞄准范围
+				const float Aim_Range = UI_Legit_MagnetAim_Range / 5;//瞄准范围
 				struct AimPlayerFOV { Base::PlayerPawn Pawn = 0; float MinFov = 1337; Variable::Vector3 AimAngle = {}; }; AimPlayerFOV EligiblePlayers = {};//记录变量和变量结构体 (寻找与准星距离最近的人物)
 				for (short i = 0; i < Global_ValidClassID.size(); ++i)//人物ID遍历
 				{
@@ -1862,10 +1861,7 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 				}
 				if (UI_Misc_SniperCrosshair && Global_LocalPlayer.ActiveWeapon(true) == 3 && !Global_LocalPlayer.Scoped())ESP_Paint.RenderA_GradientCircle(CS_Scr_Res.r / 2, CS_Scr_Res.g / 2, UI_Misc_SniperCrosshair_Size, GUI_IO.GUIColor.D_Alpha(150), { 0,0,0,0 }, 0.3);//狙击枪准星
 			}
-			else {//死亡时节省性能
-				ESP_Paint.RenderA_SmpStr(0, 0, "Render Performance Saving... 10ms", GUI_IO.GUIColor.D_Alpha(100));
-				Sleep(10);
-			}
+			else if (UI_Misc_SavePerformance) { ESP_Paint.RenderA_SmpStr(0, 0, "Render Performance Saving... 10ms", GUI_IO.GUIColor.D_Alpha(100)); Sleep(10); }//死亡时节省性能
 		}
 		else Sleep(20);
 		if (CS2_HWND && Menu_Open)Sleep(20);//菜单打开时降低绘制速度以降低CPU使用率
@@ -1957,8 +1953,8 @@ void Thread_Funtion_Radar() noexcept//功能线程: 雷达
 {
 	System::Log("Load Thread: Thread_Funtion_Radar()");
 	Sleep(500);//相比菜单后一步创建窗口
-	Window::Windows Radar_Window; const auto RadarRenderWindow = Radar_Window.Create_Window(UI_Visual_Radar_Size, UI_Visual_Radar_Size + 15, "Rensen - Radar", true);//创建雷达绘制窗口
-	Window::Render Radar_Paint; Radar_Paint.CreatePaint(RadarRenderWindow, 0, 0, 500, 500 + 15);//创建绘制画板
+	Window::Windows Radar_Window; Radar_Window.Create_Window(UI_Visual_Radar_Size, UI_Visual_Radar_Size + 15, "Rensen - Radar", true);//创建雷达绘制窗口
+	Window::Render Radar_Paint; Radar_Paint.CreatePaint(Radar_Window.Get_HWND(), 0, 0, 500, 500 + 15);//创建绘制画板
 	Radar_Window.Set_WindowPos(UI_Visual_Radar_Pos.x, UI_Visual_Radar_Pos.y);//套用参数的雷达位置
 	while (true)
 	{
