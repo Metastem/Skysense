@@ -1,4 +1,4 @@
-﻿//2024-09-01 15:50
+﻿//2024-09-02 21:30
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -1584,7 +1584,7 @@ namespace System//Windows系统
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Create_File(string FileName, string Content, BOOL Append = false) noexcept//生成并且改写任何文件 //详细：https://blog.csdn.net/qq_29406323/article/details/81261926
+    void Create_File(string FileName, string Content, BOOL Append = false) noexcept//生成并且改写任何文件 详细: https://blog.csdn.net/qq_29406323/article/details/81261926
     {//System::Create_File("Test File.txt","1\n2\n3\n");
         if (Append)//Append
         {
@@ -2414,7 +2414,7 @@ namespace EasyGUI
         void In_DrawString(int X, int Y, string String, Vector4 TextColor, string Fount_Name, short Fount_Size, short Font_Width = FW_NORMAL, BOOL AntiAlias = true) noexcept//绘制文字
         {
             if (String == "" || Fount_Size == 0)return;
-            if (Fount_Name == "微软雅黑")Y -= Fount_Size / 6;
+            if (Fount_Name == "微软雅黑")Y -= Fount_Size / 7;
             else if (Fount_Size > 15)Y -= Fount_Size / 3;//平衡上下坐标
             HGDIOBJ FontPen;
             if (AntiAlias)FontPen = SelectObject(EasyGUI_DrawHDC, CreateFontA(Fount_Size, 0, 0, 0, Font_Width, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, Fount_Name.c_str()));

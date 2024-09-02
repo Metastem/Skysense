@@ -1,12 +1,12 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.74;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-01 15:50]";//程序发布日期时间
+const float Rensen_Version = 4.76;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-02 21:50]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
 	const string UI_LocalConfigPath = "Rensen.cfg";
-	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n0\n50\n0\n";//默认参数
+	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n0\n50\n0\n0\n0\n";//默认参数
 	//----------------------------------------------------------------------------------------------
 	BOOL UI_Visual_Res_2560, UI_Visual_Res_1920, UI_Visual_Res_1280, UI_Visual_Res_960;
 	BOOL UI_Visual_Radar_Show;
@@ -152,6 +152,8 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	BOOL UI_Visual_HitMark_CustomColor = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 140));
 	int UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 141));
 	BOOL UI_Legit_MagnetAim_OnlyHeadLine = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 142));
+	BOOL UI_Misc_WalkingBot = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 143));
+	int UI_Misc_WalkingBot_Map = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 144));
 	//----------------------------------------------------------------------------------------------
 	void SaveLocalConfig() noexcept//保存本地参数
 	{
@@ -297,7 +299,9 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			to_string(UI_Legit_RemoveRecoil_Sensitive) + "\n" +
 			to_string(UI_Visual_HitMark_CustomColor) + "\n" +
 			to_string(UI_Legit_Aimbot_AutoShootHitChance) + "\n" +
-			to_string(UI_Legit_MagnetAim_OnlyHeadLine) + "\n"
+			to_string(UI_Legit_MagnetAim_OnlyHeadLine) + "\n" +
+			to_string(UI_Misc_WalkingBot) + "\n" +
+			to_string(UI_Misc_WalkingBot_Map) + "\n"
 		);
 	}
 	void LoadCloudConfig(string FileName = "", string NormalURL = "https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/") noexcept//加载Github云参数
@@ -438,6 +442,8 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			UI_Visual_HitMark_CustomColor = Variable::string_int_(URL_CONFIG.Read(140));
 			UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(URL_CONFIG.Read(141));
 			UI_Legit_MagnetAim_OnlyHeadLine = Variable::string_int_(URL_CONFIG.Read(142));
+			UI_Misc_WalkingBot = Variable::string_int_(URL_CONFIG.Read(143));
+			UI_Misc_WalkingBot_Map = Variable::string_int_(URL_CONFIG.Read(144));
 			URL_CONFIG.Release();
 		}
 	}
@@ -468,6 +474,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 		GUI_VAR.Window_SetSize(Variable::Animation_Vec2<class CLASS_MenuState_Animation_>(GUI_WindowSize, UI_Setting_MenuAnimation));//菜单窗口大小动画 (弹出, 关闭, 切换大区块)
 		if (!GUI_VAR.Window_Move() && Menu_Open)//不在移动窗口时绘制GUI
 		{
+			if (System::Get_Key_Onest(0x7B))break;//F12开启英文菜单
 			if (UI_Setting_CustomColor)//自定义颜色(单色)
 			{
 				GUI_VAR.Global_Set_EasyGUI_Color(UI_Setting_MainColor);//设置主题颜色
@@ -578,7 +585,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			}
 			else if (UI_Panel == 2)//Misc
 			{
-				const auto Block_Misc = GUI_VAR.GUI_Block(150, 30, 720, "杂项UTT");
+				const auto Block_Misc = GUI_VAR.GUI_Block(150, 30, 780, "杂项UTT");
 				GUI_VAR.GUI_Checkbox(Block_Misc, 1, "连跳UTT", UI_Misc_BunnyHop);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 2, "命中音效UTT", UI_Misc_HitSound);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_1>(Block_Misc, 3, "音调UTT", 10, 5000, UI_Misc_HitSound_Tone);
@@ -606,16 +613,25 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_Misc, 21, "击杀自动停火UTT", UI_Misc_AutoKillCeasefire);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 22, "光标透视UTT", UI_Misc_CursorESP);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_11>(Block_Misc, 22, UI_Misc_CursorESP_Key);
-				GUI_VAR.GUI_Checkbox(Block_Misc, 23, "判断队友UTT", UI_Misc_TeamCheck, { 200,200,150 });
+				GUI_VAR.GUI_Checkbox(Block_Misc, 23, "自动行走机器人UTT", UI_Misc_WalkingBot);
+				string MapName = "";
+				if (UI_Misc_WalkingBot_Map == 0)MapName = "Dust2";
+				else if (UI_Misc_WalkingBot_Map == 1)MapName = "Mirage";
+				else if (UI_Misc_WalkingBot_Map == 2)MapName = "Inferno";
+				else if (UI_Misc_WalkingBot_Map == 3)MapName = "Ancient";
+				else if (UI_Misc_WalkingBot_Map == 4)MapName = "Anubis";
+				else if (UI_Misc_WalkingBot_Map == 5)MapName = "Overpass";
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_12>(Block_Misc, 24, "地图: UTT" + MapName, 0, 5, UI_Misc_WalkingBot_Map);
+				GUI_VAR.GUI_Checkbox(Block_Misc, 25, "判断队友UTT", UI_Misc_TeamCheck, { 200,200,150 });
 				const auto Block_Resolution = GUI_VAR.GUI_Block(580, 30, 160, "屏幕像素UTT");
 				GUI_VAR.GUI_Button(Block_Resolution, 1, "2560 * 1440", UI_Visual_Res_2560, 78);
 				GUI_VAR.GUI_Button(Block_Resolution, 2, "1920 * 1080", UI_Visual_Res_1920, 78);
 				GUI_VAR.GUI_Button(Block_Resolution, 3, "1280 * 1024", UI_Visual_Res_1280, 78);
 				GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", UI_Visual_Res_960, 83);
-				const auto Block_CloudConfig = GUI_VAR.GUI_Block(580, 210, 150, "云端配置UTT");
+				const auto Block_CloudConfig = GUI_VAR.GUI_Block(580, 210, 180, "云端配置UTT");
 				GUI_VAR.GUI_Button(Block_CloudConfig, 1, "加载选定配置UTT", UI_Misc_LoadCloudConfig, 75);
-				GUI_VAR.GUI_List(Block_CloudConfig, 2, { "Legit","Rage","Legit - no visual" }, UI_Misc_SelectedConfig);
-				auto Block_Spoof = GUI_VAR.GUI_Block(580, 380, 370, "恶搞UTT");
+				GUI_VAR.GUI_List(Block_CloudConfig, 2, { "合法UTT","暴力UTT","合法 - 无视觉UTT","跑图机器人UTT" }, UI_Misc_SelectedConfig);
+				auto Block_Spoof = GUI_VAR.GUI_Block(580, 410, 370, "恶搞UTT");
 				GUI_VAR.GUI_Checkbox(Block_Spoof, 1, "启用UTT", UI_Spoof_Spoof, { 200,200,150 });
 				GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 2, "瞄准队友UTT", UI_Spoof_AimbotTeam);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Spoof_1>(Block_Spoof, 2, UI_Spoof_AimbotTeam_Key);
@@ -633,7 +649,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				auto FakeRageBot_SliderString = "目标: UTT" + Advanced::Player_Name(UI_Spoof_FakeRageBot_Target);
 				if (!UI_Spoof_FakeRageBot_Target)FakeRageBot_SliderString = "目标: 任何目标UTT";
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Spoof_7>({ Block_Spoof.x + 20,Block_Spoof.y }, 11, FakeRageBot_SliderString, 0, 64, UI_Spoof_FakeRageBot_Target);
-				GUI_WindowSize = { 1010,780 };
+				GUI_WindowSize = { 1010,840 };
 			}
 			else if (UI_Panel == 3)//Setting
 			{
@@ -658,7 +674,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Button(Block_Menu, 4, "保存本地配置UTT", UI_Setting_SaveLocalConfig, 75);
 				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 5, "关闭 CSUTT", UI_Setting_QuitCS, 90);
 				else GUI_VAR.GUI_Button(Block_Menu, 5, "打开 CSUTT", UI_Setting_StartCS, 90);
-				GUI_VAR.GUI_Button(Block_Menu, 6, "Github 项目链接UTT", UI_Setting_GithubRepositories, 75);
+				GUI_VAR.GUI_Button(Block_Menu, 6, "Github 项目链接UTT", UI_Setting_GithubRepositories, 70);
 				GUI_VAR.GUI_Button(Block_Menu, 7, "重启菜单UTT", UI_Setting_RestartMenu, 90);
 				GUI_VAR.GUI_Button(Block_Menu, 8, "关闭菜单UTT", UI_Setting_Unload, 90);
 				GUI_WindowSize = { 580,580 };
@@ -677,6 +693,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					if (UI_Misc_SelectedConfig == 0)LoadCloudConfig("Legit");
 					else if (UI_Misc_SelectedConfig == 1)LoadCloudConfig("Rage");
 					else if (UI_Misc_SelectedConfig == 2)LoadCloudConfig("Legit No Visual");
+					else if (UI_Misc_SelectedConfig == 3)LoadCloudConfig("Robot");
 					System::Log("Misc: LoadCloudConfig [" + to_string(Config_ID) + "]");
 				}
 				if (UI_Setting_OpenLinkAuthor)//打开作者Github主题页面
@@ -857,7 +874,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			}
 			else if (UI_Panel == 2)//Misc
 			{
-				const auto Block_Misc = GUI_VAR.GUI_Block(150, 30, 720, "Miscellaneous");
+				const auto Block_Misc = GUI_VAR.GUI_Block(150, 30, 780, "Miscellaneous");
 				GUI_VAR.GUI_Checkbox(Block_Misc, 1, "Bunny hop", UI_Misc_BunnyHop);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 2, "Hit sound", UI_Misc_HitSound);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_1>(Block_Misc, 3, "Tone", 10, 5000, UI_Misc_HitSound_Tone);
@@ -885,16 +902,25 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_Misc, 21, "Auto kill ceasefire", UI_Misc_AutoKillCeasefire);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 22, "Cursor ESP", UI_Misc_CursorESP);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_11>(Block_Misc, 22, UI_Misc_CursorESP_Key);
-				GUI_VAR.GUI_Checkbox(Block_Misc, 23, "Global team check", UI_Misc_TeamCheck, { 200,200,150 });
+				GUI_VAR.GUI_Checkbox(Block_Misc, 23, "Walking bot", UI_Misc_WalkingBot);
+				string MapName = "";
+				if (UI_Misc_WalkingBot_Map == 0)MapName = "Dust2";
+				else if (UI_Misc_WalkingBot_Map == 1)MapName = "Mirage";
+				else if (UI_Misc_WalkingBot_Map == 2)MapName = "Inferno";
+				else if (UI_Misc_WalkingBot_Map == 3)MapName = "Ancient";
+				else if (UI_Misc_WalkingBot_Map == 4)MapName = "Anubis";
+				else if (UI_Misc_WalkingBot_Map == 5)MapName = "Overpass";
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_12>(Block_Misc, 24, "Map: " + MapName, 0, 5, UI_Misc_WalkingBot_Map);
+				GUI_VAR.GUI_Checkbox(Block_Misc, 25, "Global team check", UI_Misc_TeamCheck, { 200,200,150 });
 				const auto Block_Resolution = GUI_VAR.GUI_Block(580, 30, 160, "Screen resolution");
 				GUI_VAR.GUI_Button(Block_Resolution, 1, "2560 * 1440", UI_Visual_Res_2560, 78);
 				GUI_VAR.GUI_Button(Block_Resolution, 2, "1920 * 1080", UI_Visual_Res_1920, 78);
 				GUI_VAR.GUI_Button(Block_Resolution, 3, "1280 * 1024", UI_Visual_Res_1280, 78);
 				GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", UI_Visual_Res_960, 83);
-				const auto Block_CloudConfig = GUI_VAR.GUI_Block(580, 210, 150, "Cloud config");
+				const auto Block_CloudConfig = GUI_VAR.GUI_Block(580, 210, 180, "Cloud config");
 				GUI_VAR.GUI_Button(Block_CloudConfig, 1, "Load config", UI_Misc_LoadCloudConfig, 80);
-				GUI_VAR.GUI_List(Block_CloudConfig, 2, { "Legit","Rage","Legit - no visual" }, UI_Misc_SelectedConfig);
-				auto Block_Spoof = GUI_VAR.GUI_Block(580, 380, 370, "Spoof");
+				GUI_VAR.GUI_List(Block_CloudConfig, 2, { "Legit","Rage","Legit - no visual","Robot" }, UI_Misc_SelectedConfig);
+				auto Block_Spoof = GUI_VAR.GUI_Block(580, 410, 370, "Spoof");
 				GUI_VAR.GUI_Checkbox(Block_Spoof, 1, "Enabled", UI_Spoof_Spoof, { 200,200,150 });
 				GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 2, "Aim at teammate", UI_Spoof_AimbotTeam);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Spoof_1>(Block_Spoof, 2, UI_Spoof_AimbotTeam_Key);
@@ -920,6 +946,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Tips(Block_Misc, 17, "Reduce screen brightness.");
 				GUI_VAR.GUI_Tips(Block_Misc, 19, "Return to coordinates when shooting.");
 				GUI_VAR.GUI_Tips(Block_Misc, 22, "Implement ESP by modifying cursor coordinates.");
+				GUI_VAR.GUI_Tips(Block_Misc, 23, "Automatically walk along the map.");
 				GUI_VAR.GUI_Tips({ Block_Resolution.x + 10,Block_Resolution.y }, 1, "Flexible switching of window resolution. (Do not use screen zoom!!!)");
 				GUI_VAR.GUI_Tips({ Block_CloudConfig.x + 10,Block_CloudConfig.y }, 1, "Load parameter files stored in Github.");
 				GUI_VAR.GUI_Tips(Block_Spoof, 1, "Prank local player. (global switch)");
@@ -930,7 +957,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 8, "Drop the weapon when killing an enemy with a sniper rifle.");
 				GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 9, "Learn recent player actions.");
 				GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 10, "Mimic Ragebot silent aim.");
-				GUI_WindowSize = { 1010,780 };
+				GUI_WindowSize = { 1010,840 };
 			}
 			else if (UI_Panel == 3)//List
 			{
@@ -984,7 +1011,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 12, "m_fFlags = " + Variable::Hex_String(CS2_Offsets::m_fFlags));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 13, "m_iShotsFired = " + Variable::Hex_String(CS2_Offsets::m_iShotsFired));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 14, "m_vecVelocity = " + Variable::Hex_String(CS2_Offsets::m_vecVelocity));
-				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 15, "m_bSpotted = " + Variable::Hex_String(CS2_Offsets::m_bSpotted));
+				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 15, "m_bSpottedByMask = " + Variable::Hex_String(CS2_Offsets::m_bSpottedByMask));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 16, "m_bIsScoped = " + Variable::Hex_String(CS2_Offsets::m_bIsScoped));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 17, "m_pClippingWeapon = " + Variable::Hex_String(CS2_Offsets::m_pClippingWeapon));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 18, "m_pGameSceneNode = " + Variable::Hex_String(CS2_Offsets::m_pGameSceneNode));
@@ -1091,6 +1118,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					if (UI_Misc_SelectedConfig == 0)LoadCloudConfig("Legit");
 					else if (UI_Misc_SelectedConfig == 1)LoadCloudConfig("Rage");
 					else if (UI_Misc_SelectedConfig == 2)LoadCloudConfig("Legit No Visual");
+					else if (UI_Misc_SelectedConfig == 3)LoadCloudConfig("Robot");
 					System::Log("Misc: LoadCloudConfig [" + to_string(Config_ID) + "]");
 				}
 				if (UI_Setting_OpenLinkAuthor)//打开作者Github主题页面
@@ -2033,6 +2061,56 @@ void Thread_Funtion_Sonar() noexcept//功能线程: 声呐(距离检测)
 		else Sleep(20);
 	}
 }
+void Thread_Funtion_WalkingBot() noexcept//功能线程: 自动行走机器人(用于刷经验)
+{
+	System::Log("Load Thread: Thread_Funtion_WalkingBot()");
+	while (false)//记录路径工具
+	{
+		const auto Pos = Global_LocalPlayer.Origin();//玩家坐标
+		if (System::Get_Key_Onest(0x10))//Shift按键记录
+		{
+			System::Create_File("MovingPath.txt", "{" + Variable::Float_Precision(Pos.x, 1) + "," + Variable::Float_Precision(Pos.y, 1) + "," + Variable::Float_Precision(Pos.z, 1) + "},\n", true);//写入文件
+			Beep(200, 200);//反馈音效
+		}
+		Sleep(1);
+	}
+	while (true)
+	{
+		if (CS2_HWND && Global_IsShowWindow && Global_LocalPlayer.Health() && UI_Misc_WalkingBot)//当CS窗口在最前端 && 本地人物活着 && 没有在射击时 && 自动行走机器人开关
+		{
+			Sleep(1);//降低CPU占用
+			const auto MovingPath = Advanced::MovingPath_Map(UI_Misc_WalkingBot_Map);//地图行走路径
+			short Distance = 133337; short TargetPosID = 0;//最近点位记录变量
+			for (short Pos_ID = 0; Pos_ID <= MovingPath.size(); ++Pos_ID)//寻找最近距离的点位设定为起点
+			{
+				const auto Dis = Variable::Coor_Dis_3D(Global_LocalPlayer.Origin(), MovingPath[Pos_ID]);
+				if (Distance > Dis) { Distance = Dis; TargetPosID = Pos_ID; }//记录起点
+			}
+			for (short Pos_ID = TargetPosID; Pos_ID < MovingPath.size(); ++Pos_ID)//执行移动到路径中...
+			{
+				while (CS2_HWND && Global_IsShowWindow && Global_LocalPlayer.Health() && UI_Misc_WalkingBot)//循环知道移动到目标点
+				{
+					BOOL IsHasPlayerInFov = false;//记录是否有目标被发现并且在视线范围内
+					for (short i = 0; i < Global_ValidClassID.size(); ++i)//全局人物实体遍历
+					{
+						const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);
+						if (!Advanced::Check_Enemy(PlayerPawn) || !PlayerPawn.Spotted())continue;//判断目标
+						const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(3), Base::ViewAngles());
+						if (hypot(Angle.x, Angle.y) <= 45)IsHasPlayerInFov = true;//记录
+					}
+					if (Advanced::Check_Enemy(Global_LocalPlayer.IDEntIndex_Pawn()) || IsHasPlayerInFov)Advanced::Stop_Move();//发现到目标时停止移动坐标和移动视角
+					else {
+						if (Advanced::Move_to_Pos(MovingPath[Pos_ID], 25))break;//移动到坐标
+						const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), MovingPath[Pos_ID + 3] + Variable::Vector3{0, 0, 60}, Base::ViewAngles());
+						System::Mouse_Move(-Angle.y * 20, Angle.x * 5);
+					}
+					Sleep(1);//降低CPU占用
+				}
+			}
+		}
+		else Sleep(20);//降低CPU占用
+	}
+}
 int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 {
 	System::Anti_Debugger("Debugging is disabled after compilation is completed.");//防止逆向破解
@@ -2079,6 +2157,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	thread Thread_Funtion_EntityESP_ = thread(Thread_Funtion_EntityESP);
 	thread Thread_Funtion_Radar_ = thread(Thread_Funtion_Radar);
 	thread Thread_Funtion_Sonar_ = thread(Thread_Funtion_Sonar);
+	thread Thread_Funtion_WalkingBot_ = thread(Thread_Funtion_WalkingBot);
 	while (true)//菜单动画和关闭快捷键
 	{
 		if (!Attest) { exit(0); return 0; }//过滤未认证用户 (防止被HOOK初始化函数)
