@@ -53,7 +53,7 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 		uintptr_t m_fFlags = 0x3CC;
 		uintptr_t m_iShotsFired = 0x22B4;
 		uintptr_t m_vecVelocity = 0x3E0;
-		uintptr_t m_bSpottedByMask = 0x2294;//m_entitySpottedState + m_bSpottedByMask
+		uintptr_t m_bSpotted = 0x2290;//m_entitySpottedState + m_bSpotted
 		uintptr_t m_bIsScoped = 0x22A0;
 		uintptr_t m_pClippingWeapon = 0x12F0;
 		uintptr_t m_pGameSceneNode = 0x308;
@@ -85,9 +85,9 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 				   const auto Index = CS2_MEM.Read<short>(m_PlayerPawn + CS2_Offsets::m_iIDEntIndex);
 				   if (Index <= 10000)return Convert(EntityList(), Index); else return 0;
 			   }
-			   short Flags() const noexcept { return CS2_MEM.Read<short>(m_PlayerPawn + CS2_Offsets::m_fFlags); }//人物状态
+			   short Flags() const noexcept { return CS2_MEM.Read<short>(m_PlayerPawn + CS2_Offsets::m_fFlags); }//人物状态 (跳跃,蹲下等动作)
 			   short ShotsFired() const noexcept { return CS2_MEM.Read<short>(m_PlayerPawn + CS2_Offsets::m_iShotsFired); }//人物开枪子弹数量
-			   short Spotted() const noexcept { if (CS2_MEM.Read<short>(m_PlayerPawn + CS2_Offsets::m_bSpottedByMask) & (1 << CS2_MEM.Read<uintptr_t>(Module_client + CS2_Offsets::dwLocalPlayerPawn)))return true; else return false; }//人物发现状态
+			   short Spotted() const noexcept { return CS2_MEM.Read<short>(m_PlayerPawn + CS2_Offsets::m_bSpotted); }//人物发现状态
 			   short Scoped() const noexcept { const auto Scoped = CS2_MEM.Read<short>(m_PlayerPawn + CS2_Offsets::m_bIsScoped); if (Scoped == 65536)return 0; else return Scoped; }//人物狙击枪开镜
 			   short ActiveWeapon(BOOL Type = 0) const noexcept//人物手持武器(类型,ID)
 			   {
@@ -1965,7 +1965,7 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 					CS2_Offsets::m_fFlags = Variable::string_uint_(URL_OFFSETS.Read(24));
 					CS2_Offsets::m_iShotsFired = Variable::string_uint_(URL_OFFSETS.Read(26));
 					CS2_Offsets::m_vecVelocity = Variable::string_uint_(URL_OFFSETS.Read(28));
-					CS2_Offsets::m_bSpottedByMask = Variable::string_uint_(URL_OFFSETS.Read(30));
+					CS2_Offsets::m_bSpotted = Variable::string_uint_(URL_OFFSETS.Read(30));
 					CS2_Offsets::m_bIsScoped = Variable::string_uint_(URL_OFFSETS.Read(32));
 					CS2_Offsets::m_pClippingWeapon = Variable::string_uint_(URL_OFFSETS.Read(34));
 					CS2_Offsets::m_pGameSceneNode = Variable::string_uint_(URL_OFFSETS.Read(36));

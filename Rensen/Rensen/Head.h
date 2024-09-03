@@ -1,4 +1,4 @@
-﻿//2024-09-02 21:30
+﻿//2024-09-03 20:30
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -2144,12 +2144,13 @@ namespace System//Windows系统
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Anti_Debugger(string Log = "") noexcept//反调试 (防止程序被逆向破解 可放入循环)
+    void Anti_Debugger(string Log = "", BOOL BEEP = false) noexcept//反调试 (防止程序被逆向破解 可放入循环)
     {//System::Anti_Debugger();
         if (IsDebuggerPresent())
         {
             if (Log != "")printf((Log + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n").c_str());
             ShowWindow(GetConsoleWindow(), false);//隐藏控制台窗口
+            if (BEEP)Beep(100, 100);//反馈音效
             exit(0);//检测调试状态 (缺点是会被Hook绕过)
         }
     }

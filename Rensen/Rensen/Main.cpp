@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.76;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-02 21:50]";//程序发布日期时间
+const float Rensen_Version = 4.77;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-03 20:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -1011,7 +1011,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 12, "m_fFlags = " + Variable::Hex_String(CS2_Offsets::m_fFlags));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 13, "m_iShotsFired = " + Variable::Hex_String(CS2_Offsets::m_iShotsFired));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 14, "m_vecVelocity = " + Variable::Hex_String(CS2_Offsets::m_vecVelocity));
-				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 15, "m_bSpottedByMask = " + Variable::Hex_String(CS2_Offsets::m_bSpottedByMask));
+				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 15, "m_bSpotted = " + Variable::Hex_String(CS2_Offsets::m_bSpotted));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 16, "m_bIsScoped = " + Variable::Hex_String(CS2_Offsets::m_bIsScoped));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 17, "m_pClippingWeapon = " + Variable::Hex_String(CS2_Offsets::m_pClippingWeapon));
 				GUI_VAR.GUI_Text({ Block_Offsets.x - 20,Block_Offsets.y }, 18, "m_pGameSceneNode = " + Variable::Hex_String(CS2_Offsets::m_pGameSceneNode));
@@ -2098,7 +2098,7 @@ void Thread_Funtion_WalkingBot() noexcept//功能线程: 自动行走机器人(�
 						const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), PlayerPawn.BonePos(3), Base::ViewAngles());
 						if (hypot(Angle.x, Angle.y) <= 45)IsHasPlayerInFov = true;//记录
 					}
-					if (Advanced::Check_Enemy(Global_LocalPlayer.IDEntIndex_Pawn()) || IsHasPlayerInFov)Advanced::Stop_Move();//发现到目标时停止移动坐标和移动视角
+					if ((Advanced::Check_Enemy(Global_LocalPlayer.IDEntIndex_Pawn()) || IsHasPlayerInFov) && UI_Legit_Aimbot)Advanced::Stop_Move();//发现到目标时停止移动坐标和移动视角
 					else {
 						if (Advanced::Move_to_Pos(MovingPath[Pos_ID], 25))break;//移动到坐标
 						const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), MovingPath[Pos_ID + 3] + Variable::Vector3{0, 0, 60}, Base::ViewAngles());
@@ -2113,7 +2113,7 @@ void Thread_Funtion_WalkingBot() noexcept//功能线程: 自动行走机器人(�
 }
 int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 {
-	System::Anti_Debugger("Debugging is disabled after compilation is completed.");//防止逆向破解
+	System::Anti_Debugger("Debugging is disabled after compilation is completed.", true);//防止逆向破解
 	//----------------------------------------------------------------------------------------------------------------------------------
 	if (FindWindow(0, L"Rensen - Menu")) { Window::Message_Box("Rensen Error", "The program is already running.", MB_ICONSTOP); exit(0); }//防止多开程序
 	//----------------------------------------------------------------------------------------------------------------------------------
