@@ -1,12 +1,12 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.78;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-04 10:55]";//程序发布日期时间
+const float Rensen_Version = 4.79;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-04 21:40]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
 	const string UI_LocalConfigPath = "Rensen.cfg";
-	const string UI_DefaultConfig = "1\n6\n1\n1\n0\n1\n1\n100\n1\n1\n0\n100\n0\n0\n100\n0\n1\n100\n5\n1\n5\n0\n1\n150\n1\n0.015\n0.004\n1\n1\n2\n1\n500\n1\n0\n0\n1\n1\n0\n1\n0\n1\n1\n1\n1\n40\n80\n0\n255\n255\n255\n255\n1\n1\n1\n4\n260\n180\n26\n11\n1\n1\n1000\n10\n1\n1\n5\n5\n1\n1\n0\n0\n1\n1\n1\n0\n0\n1\n160\n800\n350\n0\n45\n0\n200\n200\n255\n250\n200\n200\n255\n2\n0\n1\n1\n4\n10\n10\n0\n1\n2\n10\n1\n500\n1\n1\n4\n1\n3\n1\n10\n100\n1\n1\n0\n1\n1\n50\n1\n6\n0\n5\n1\n5\n0\n1\n\n13\n0\n1\n9\n1\n255\n0\n100\n0\n400\n40\n250\n40\n0\n50\n0\n0\n0\n";//默认参数
+	const string UI_DefaultConfig = "0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n1\n1\n0\n0\n0\n0\n0\n1\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n20\n0\n0\n0\n0\n0\n255\n1\n0\n0\n0.2\n150\n0\n26\n11\n0\n0\n10\n10\n0\n0\n3\n3\n0\n0\n0\n0\n1\n0\n1\n0\n0\n0\n0\n500\n0\n0\n45\n1\n255\n255\n255\n255\n0\n0\n0\n1\n0\n0\n0\n0.5\n0\n10\n0\n0\n0\n0\n0\n50\n0\n0\n0\n0\n3\n0\n10\n10\n1\n0\n0\n0\n0\n50\n0\n0\n0\n0\n0\n0\n0\n0\n\n13\n0\n0\n0\n0\n255\n0\n0\n0\n100\n0\n0\n0\n0\n0\n0\n0\n0\n";//默认参数
 	//----------------------------------------------------------------------------------------------
 	BOOL UI_Visual_Res_2560, UI_Visual_Res_1920, UI_Visual_Res_1280, UI_Visual_Res_960;
 	BOOL UI_Visual_Radar_Show;
@@ -1440,7 +1440,8 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 				//--------------------------------------
 			}
 			//----------------------------------------------------------------------------------------------------------------------------------------
-			Sleep(1);//降低CPU占用
+			if (UI_Misc_SavePerformance)Sleep(3);//降低CPU占用
+			else Sleep(1);
 		}
 		else Sleep(20);//降低CPU占用
 	}
@@ -1916,7 +1917,7 @@ void Thread_Funtion_EntityESP() noexcept//功能线程: 实体透视
 			Window::Set_LimitWindowShow(RenderWindow.Get_HWND(), UI_Misc_ByPassOBS);//绕过OBS
 			const auto Entitylist = Base::EntityList(); const auto Local_Origin = Global_LocalPlayer.Origin(); const auto Local_ViewMatrix = Base::ViewMatrix();
 			static vector<short> Class_ID = {};//有效实体ID
-			if (System::Sleep_Tick<class CLASS_Drops_ESP_Reload_ClassID_>(600))//特殊算法为了提高绘制效率
+			if (System::Sleep_Tick<class CLASS_Drops_ESP_Reload_ClassID_>(500))//特殊算法为了提高绘制效率
 			{
 				short Show_Quantity = 0;//计算绘制的实体数量
 				Class_ID = {};//刷新有效实体ID
@@ -2175,6 +2176,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 		if (UI_Setting_MenuFont == "")GUI_VAR.Global_Set_EasyGUI_Font("Verdana");//自定义GUI字体 (默认字体为Verdana)
 		else GUI_VAR.Global_Set_EasyGUI_Font(UI_Setting_MenuFont);
 		GUI_VAR.Global_Set_EasyGUI_FontSize(UI_Setting_MenuFontSize);//自定义GUI字体大小
-		Sleep(1);//降低CPU占用
+		if (UI_Misc_SavePerformance)Sleep(3);//降低CPU占用
+		else Sleep(1);
 	}
 }
