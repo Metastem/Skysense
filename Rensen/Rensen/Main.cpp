@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.79;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-04 21:40]";//程序发布日期时间
+const float Rensen_Version = 4.80;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-05 19:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -775,19 +775,19 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				const auto Block_Armory = GUI_VAR.GUI_Block(150, 420, 490, "Armory");
 				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 1, "Show range", UI_Legit_Armory_ShowAimbotRange);
 				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 2, "Hit site parser", UI_Legit_Armory_HitSiteParser);
-				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 3, "PISTOL Body aim (else head)", UI_Legit_Armory_BodyAim_PISTOL);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_1>({ Block_Armory.x - 10,Block_Armory.y }, 4, "PISTOL range", 0, 100, UI_Legit_Armory_Range_PISTOL, "%");
-				GUI_VAR.GUI_Slider<float, class CLASS_Block_Armory_2>({ Block_Armory.x - 10,Block_Armory.y }, 5, "PISTOL smooth", 0, 40, UI_Legit_Armory_Smooth_PISTOL);
-				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 6, "RIFLE Body aim (else head)", UI_Legit_Armory_BodyAim_RIFLE);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_3>({ Block_Armory.x - 10,Block_Armory.y }, 7, "RIFLE range", 0, 100, UI_Legit_Armory_Range_RIFLE, "%");
-				GUI_VAR.GUI_Slider<float, class CLASS_Block_Armory_4>({ Block_Armory.x - 10,Block_Armory.y }, 8, "RIFLE smooth", 0, 40, UI_Legit_Armory_Smooth_RIFLE);
-				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 9, "SNIPER Body aim (else head)", UI_Legit_Armory_BodyAim_SNIPER);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_5>({ Block_Armory.x - 10,Block_Armory.y }, 10, "SNIPER range", 0, 100, UI_Legit_Armory_Range_SNIPER, "%");
-				GUI_VAR.GUI_Slider<float, class CLASS_Block_Armory_6>({ Block_Armory.x - 10,Block_Armory.y }, 11, "SNIPER smooth", 0, 40, UI_Legit_Armory_Smooth_SNIPER);
-				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 12, "SHOTGUN Body aim (else head)", UI_Legit_Armory_BodyAim_SHOTGUN);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_7>({ Block_Armory.x - 10,Block_Armory.y }, 13, "SHOTGUN range", 0, 100, UI_Legit_Armory_Range_SHOTGUN, "%");
-				GUI_VAR.GUI_Slider<float, class CLASS_Block_Armory_8>({ Block_Armory.x - 10,Block_Armory.y }, 14, "SHOTGUN smooth", 0, 40, UI_Legit_Armory_Smooth_SHOTGUN);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_9>({ Block_Armory.x - 10,Block_Armory.y }, 15, "SHOTGUN trigger distance", 100, 2000, UI_Legit_Armory_TriggerDistance_SHOTGUN);
+				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 3, "[PISTOL] Body aim (else head)", UI_Legit_Armory_BodyAim_PISTOL);
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_1>({ Block_Armory.x - 10,Block_Armory.y }, 4, "[PISTOL] Range", 0, 100, UI_Legit_Armory_Range_PISTOL, "%");
+				GUI_VAR.GUI_Slider<float, class CLASS_Block_Armory_2>({ Block_Armory.x - 10,Block_Armory.y }, 5, "[PISTOL] Smooth", 0, 40, UI_Legit_Armory_Smooth_PISTOL);
+				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 6, "[RIFLE] Body aim (else head)", UI_Legit_Armory_BodyAim_RIFLE);
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_3>({ Block_Armory.x - 10,Block_Armory.y }, 7, "[RIFLE] Range", 0, 100, UI_Legit_Armory_Range_RIFLE, "%");
+				GUI_VAR.GUI_Slider<float, class CLASS_Block_Armory_4>({ Block_Armory.x - 10,Block_Armory.y }, 8, "[RIFLE] Smooth", 0, 40, UI_Legit_Armory_Smooth_RIFLE);
+				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 9, "[SNIPER] Body aim (else head)", UI_Legit_Armory_BodyAim_SNIPER);
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_5>({ Block_Armory.x - 10,Block_Armory.y }, 10, "[SNIPER] Range", 0, 100, UI_Legit_Armory_Range_SNIPER, "%");
+				GUI_VAR.GUI_Slider<float, class CLASS_Block_Armory_6>({ Block_Armory.x - 10,Block_Armory.y }, 11, "[SNIPER] Smooth", 0, 40, UI_Legit_Armory_Smooth_SNIPER);
+				GUI_VAR.GUI_Checkbox({ Block_Armory.x - 10,Block_Armory.y }, 12, "[SHOTGUN] Body aim (else head)", UI_Legit_Armory_BodyAim_SHOTGUN);
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_7>({ Block_Armory.x - 10,Block_Armory.y }, 13, "[SHOTGUN] Range", 0, 100, UI_Legit_Armory_Range_SHOTGUN, "%");
+				GUI_VAR.GUI_Slider<float, class CLASS_Block_Armory_8>({ Block_Armory.x - 10,Block_Armory.y }, 14, "[SHOTGUN] Smooth", 0, 40, UI_Legit_Armory_Smooth_SHOTGUN);
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Armory_9>({ Block_Armory.x - 10,Block_Armory.y }, 15, "[SHOTGUN] trigger distance", 100, 2000, UI_Legit_Armory_TriggerDistance_SHOTGUN);
 				const auto Block_Triggerbot = GUI_VAR.GUI_Block(580, 30, 190, "Trigger bot");
 				GUI_VAR.GUI_Checkbox(Block_Triggerbot, 1, "Enabled", UI_Legit_Triggerbot);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Triggerbot_1>(Block_Triggerbot, 1, UI_Legit_Triggerbot_Key);
@@ -1530,16 +1530,12 @@ void Thread_Funtion_Aimbot() noexcept//功能线程: 瞄准机器人
 				else System::Mouse_Move(-EligiblePlayers.AimAngle.y * Aim_Smooth, EligiblePlayers.AimAngle.x * Aim_Smooth);
 				if (UI_Legit_Aimbot_AutoShoot && CrosshairId && (!UI_Legit_Aimbot_AutoStop || LocalPlayer_ActiveWeapon_Type == 4 || Advanced::Stop_Move()))//AutoShoot & CrosshairId & AutoStop
 				{
-					if (LocalPlayer_ActiveWeapon_Type == 3)//手持狙击枪时
+					if (UI_Legit_Aimbot_AutoScope && LocalPlayer_ActiveWeapon_Type == 3 && !Global_LocalPlayer.Scoped())//手持狙击枪时自动开镜
 					{
-						if (LocalPlayer_ActiveWeapon_ID != 11 && LocalPlayer_ActiveWeapon_ID != 38)System::Key_Con(UI_Legit_Aimbot_Key, false);//单发狙击枪射击后释放触发按键
-						if (UI_Legit_Aimbot_AutoScope && !Global_LocalPlayer.Scoped())//自动开镜
-						{
-							ExecuteCommand("+attack2");
-							Sleep(1);
-							ExecuteCommand("-attack2");
-							Sleep(100);//待扩散稳定
-						}
+						ExecuteCommand("+attack2");
+						Sleep(1);
+						ExecuteCommand("-attack2");
+						Sleep(100);//待扩散稳定
 					}
 					if (EligiblePlayers.MinFov <= (101 - UI_Legit_Aimbot_AutoShootHitChance) * 0.01 || UI_Legit_Aimbot_AutoShootHitChance == 0)//最大边缘点 (为了更加精准的瞄准到目标部位)
 					{
@@ -1547,6 +1543,7 @@ void Thread_Funtion_Aimbot() noexcept//功能线程: 瞄准机器人
 						if (LocalPlayer_ActiveWeapon_ID == 64)Sleep(250);//R8左轮无法开枪修复 (无法跟紧目标点)
 						else Sleep(1);
 						ExecuteCommand("-attack");
+						if (LocalPlayer_ActiveWeapon_Type == 3 && LocalPlayer_ActiveWeapon_ID != 11 && LocalPlayer_ActiveWeapon_ID != 38)System::Key_Con(UI_Legit_Aimbot_Key);//单发狙击枪射击后释放触发按键
 						if (Global_LocalPlayer.ShotsFired() != 0)Sleep(UI_Legit_Aimbot_AutoShootDelay);//自动开枪延迟 (缓解后座力)
 					}
 				}
@@ -2121,7 +2118,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	System::URL_READ UserID_READ = { "Cache_UserID" }; BOOL Attest = false;//认证变量
 	if (UserID_READ.StoreMem("https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/UserID.uid?raw=true"))//Github读取有效用户ID
 	{
-		for (short i = 0; i <= 50000; i++) { if (System::Get_UserName() == UserID_READ.Read(i) || Variable::String_Upper(UserID_READ.Read(i)) == "BYPASS")Attest = true; if (Attest)break; }//遍历检测并修改认证
+		for (short i = 0; i <= 50000; ++i) { if (System::Get_UserName() == UserID_READ.Read(i) || Variable::String_Upper(UserID_READ.Read(i)) == "BYPASS") { Attest = true; break; } }//遍历检测并修改认证
 		UserID_READ.Release();//释放缓存
 	}
 	Attest = true;//通过验证 (公开版)
@@ -2138,7 +2135,6 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 		}
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------
-	System::Anti_click();//控制台不被暂停
 	Window::Hide_ConsoleWindow();//隐藏控制台
 	Window::Initialization_ConsoleWindow();//初始化控制台窗口 (初始化窗口大小, 清除字符)
 	printf("Welcome to Rensen for Counter-Strike 2 cheat.\nThe Rensen project is a version converted from FreeCS.\nNo team author By: https://github.com/Coslly\nThe following information returned is debugging information.\n");//作者留言
@@ -2159,6 +2155,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	thread Thread_Funtion_Radar_ = thread(Thread_Funtion_Radar);
 	thread Thread_Funtion_Sonar_ = thread(Thread_Funtion_Sonar);
 	thread Thread_Funtion_WalkingBot_ = thread(Thread_Funtion_WalkingBot);
+	System::Set_ProcessPriority();//将Rensen程序优先级设置为高(防止崩溃)
 	while (true)//菜单动画和关闭快捷键
 	{
 		if (!Attest) { exit(0); return 0; }//过滤未认证用户 (防止被HOOK初始化函数)

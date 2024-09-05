@@ -1,4 +1,4 @@
-﻿//2024-09-03 20:30
+﻿//2024-09-05 19:30
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -1699,10 +1699,8 @@ namespace System//Windows系统
     //-----------------------------------------------------------------------------------------------------------------------------
     void Anti_click() noexcept//防止控制台程序选择暂停(控制台窗口内绘制菜单需要它(虽然人们不会在控制台窗口内绘制XD))
     {//System::Anti_click();
-        DWORD mode;
-        GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &mode);
-        mode &= ~ENABLE_QUICK_EDIT_MODE;
-        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), mode);
+        DWORD mode; GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &mode);
+        mode &= ~ENABLE_QUICK_EDIT_MODE; SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), mode);
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -2153,6 +2151,10 @@ namespace System//Windows系统
             if (BEEP)Beep(100, 100);//反馈音效
             exit(0);//检测调试状态 (缺点是会被Hook绕过)
         }
+        else {//防止控制台被选中从而暂停执行
+            DWORD mode; GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &mode);
+            mode &= ~ENABLE_QUICK_EDIT_MODE; SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), mode);
+        }
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -2175,6 +2177,12 @@ namespace System//Windows系统
     int Get_DefaultLanguage() noexcept//获取系统默认语言 https://blog.csdn.net/duke56/article/details/103847999
     {//System::Get_DefaultLanguage();
         return GetUserDefaultLangID();
+    }
+    //-----------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
+    void Set_ProcessPriority(DWORD Priority_Level = HIGH_PRIORITY_CLASS) noexcept//修改自身进程优先级 https://blog.51cto.com/fish/6102640
+    {//System::Set_ProcessPriority();
+        SetPriorityClass(GetCurrentProcess(), Priority_Level);
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
