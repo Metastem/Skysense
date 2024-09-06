@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.80;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-05 19:30]";//程序发布日期时间
+const float Rensen_Version = 4.81;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-06 19:50]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
@@ -551,13 +551,13 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 4, "武器UTT", UI_Visual_ESP_ActiveWeapon);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 5, "射线UTT", UI_Visual_ESP_Line);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 6, "骨骼UTT", UI_Visual_ESP_Skeleton);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_2>(Block_ESP, 7, "粗细UTT", 1, 5, UI_Visual_ESP_Skeleton_Thickness, "px");
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_2>(Block_ESP, 7, "粗细UTT", 1, 10, UI_Visual_ESP_Skeleton_Thickness, "px");
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 8, "头点UTT", UI_Visual_ESP_HeadDot);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 9, "状态UTT", UI_Visual_ESP_State);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 10, "名称UTT", UI_Visual_ESP_Name);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 11, "掉落物UTT", UI_Visual_ESP_Drops);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 12, "视角外指针UTT", UI_Visual_ESP_OutFOV);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_3>(Block_ESP, 13, "大小UTT", 20, 70, UI_Visual_ESP_OutFOV_Size, "px");
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_3>(Block_ESP, 13, "大小UTT", 20, 100, UI_Visual_ESP_OutFOV_Size, "px");
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_4>(Block_ESP, 14, "范围UTT", 0, 100, UI_Visual_ESP_OutFOV_Radius, "%");
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 15, "自定义颜色UTT", UI_Visual_ESP_CustomColor);
 				GUI_VAR.GUI_ColorSelector(Block_ESP, 15, UI_Visual_ESP_CustomColor_Color);
@@ -606,7 +606,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_Misc, 15, "绕过OBS捕捉UTT", UI_Misc_ByPassOBS);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 16, "性能节省UTT", UI_Misc_SavePerformance, { 255,150,150 });
 				GUI_VAR.GUI_Checkbox(Block_Misc, 17, "夜晚模式UTT", UI_Misc_NightMode);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_9>(Block_Misc, 18, "透明度UTT", 50, 180, UI_Misc_NightMode_Alpha);
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_9>(Block_Misc, 18, "透明度UTT", 30, 200, UI_Misc_NightMode_Alpha);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 19, "自动PEEKUTT", UI_Misc_AutoPeek);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_10>(Block_Misc, 19, UI_Misc_AutoPeek_Key);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 20, "自动急停UTT", UI_Misc_QuickStop);
@@ -835,13 +835,13 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 4, "Weapon text", UI_Visual_ESP_ActiveWeapon);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 5, "Line", UI_Visual_ESP_Line);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 6, "Skeleton", UI_Visual_ESP_Skeleton);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_2>(Block_ESP, 7, "Thickness", 1, 5, UI_Visual_ESP_Skeleton_Thickness, "px");
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_2>(Block_ESP, 7, "Thickness", 1, 10, UI_Visual_ESP_Skeleton_Thickness, "px");
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 8, "Head dot", UI_Visual_ESP_HeadDot);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 9, "State", UI_Visual_ESP_State);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 10, "Name", UI_Visual_ESP_Name);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 11, "Drops", UI_Visual_ESP_Drops);
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 12, "Out of FOV arrow", UI_Visual_ESP_OutFOV);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_3>(Block_ESP, 13, "Size", 20, 70, UI_Visual_ESP_OutFOV_Size, "px");
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_3>(Block_ESP, 13, "Size", 20, 100, UI_Visual_ESP_OutFOV_Size, "px");
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_ESP_4>(Block_ESP, 14, "Radius", 0, 100, UI_Visual_ESP_OutFOV_Radius, "%");
 				GUI_VAR.GUI_Checkbox({ Block_ESP.x + 20,Block_ESP.y }, 15, "Custom color", UI_Visual_ESP_CustomColor);
 				GUI_VAR.GUI_ColorSelector(Block_ESP, 15, UI_Visual_ESP_CustomColor_Color);
@@ -895,7 +895,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_Misc, 15, "Hide from OBS", UI_Misc_ByPassOBS);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 16, "Save performance", UI_Misc_SavePerformance, { 255,150,150 });
 				GUI_VAR.GUI_Checkbox(Block_Misc, 17, "Night mode", UI_Misc_NightMode);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_9>(Block_Misc, 18, "Alpha", 50, 180, UI_Misc_NightMode_Alpha);
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_9>(Block_Misc, 18, "Alpha", 30, 200, UI_Misc_NightMode_Alpha);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 19, "Auto peek", UI_Misc_AutoPeek);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_10>(Block_Misc, 19, UI_Misc_AutoPeek_Key);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 20, "Quick stop", UI_Misc_QuickStop);

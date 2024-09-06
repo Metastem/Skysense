@@ -1,4 +1,4 @@
-﻿//2024-09-05 19:30
+﻿//2024-09-06 19:50
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -2368,7 +2368,7 @@ namespace EasyGUI
         POINT EasyGUI_MousePos; RECT EasyGUI_WindowPos;//EasyGUI窗口鼠标坐标
         int EasyGUI_FPS = 0;//EasyGUI绘制帧数 (需要后期计算得出)
         //------------------
-        BOOL Mouse_Block_, Mouse_Slider_ = false;//防止控件函数之间冲突的判断变量
+        BOOL Mouse_Block_, Mouse_Slider_, Mouse_Move_ = false;//防止控件函数之间冲突的判断变量
         //------------------
     public:
         //---------------------------------------------------------------------开发者函数 (方便制作GUI)
@@ -2492,6 +2492,15 @@ namespace EasyGUI
             if (Tick - OldTick >= Time_MS) { OldTick = Tick; return true; }//当达到一定数值返回并且重写变量
             else return false;
         }
+        //---------------------------------------------------------------------
+        template<class CreateClassName>//防止同函数同步
+        float In_Animation(float Value, float Speed = 1.3, Vector2 Limit = { 0,0 }) noexcept//快到慢动画
+        {
+            static float ReturnValue = Value;
+            if (Value > ReturnValue)ReturnValue += (Value - ReturnValue) / Speed; else if (Value < ReturnValue)ReturnValue -= (ReturnValue - Value) / Speed;
+            if (Limit.x != 0 || Limit.y != 0) { if (Limit.x > ReturnValue)ReturnValue = Limit.x; else if (Limit.y < ReturnValue)ReturnValue = Limit.y; }
+            return ReturnValue;
+        }
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
         void Global_Set_EasyGUI_Font(string FontName) noexcept { Global_EasyGUIFont = FontName; }//设置全局GUI字体
         void Global_Set_EasyGUI_FontSize(int FontSize) noexcept { Global_EasyGUIFontSize = FontSize; }//设置全局GUI字体大小
@@ -2538,7 +2547,7 @@ namespace EasyGUI
             BitBlt(EasyGUI_WindowHDC, 0, 0, PaintSize.x, PaintSize.y, EasyGUI_DrawHDC, 0, 0, SRCCOPY);//最终绘制内存中的图像
             //--------------------------------消息循环
             In_KeyEvent(VK_UP, true); In_KeyEvent(VK_DOWN, true);//释放滚轮消息
-            MSG msg = { 0 }; if (GetMessage(&msg, 0, 0, 0)) { TranslateMessage(&msg); DispatchMessage(&msg); }
+            MSG MSG = { 0 }; if (GetMessage(&MSG, 0, 0, 0)) { TranslateMessage(&MSG); DispatchMessage(&MSG); }
             GetCursorPos(&EasyGUI_MousePos); GetWindowRect(EasyGUI_WindowHWND, &EasyGUI_WindowPos);//刷新鼠标窗口坐标
             //--------------------------------帧数计算
             static int m_fps = 0; m_fps++;
@@ -2604,10 +2613,10 @@ namespace EasyGUI
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
         int Window_FPS() noexcept { return EasyGUI_FPS; }//获取GUI绘制帧数
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
-        BOOL Window_Move(short Draw_Delay = 3) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
+        BOOL Window_Move(short Draw_Delay = 3, BOOL Limit_Edge = false) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
         {
             //--------------------------------消息循环
-            MSG msg = { 0 }; if (GetMessage(&msg, 0, 0, 0)) { TranslateMessage(&msg); DispatchMessage(&msg); }
+            MSG MSG = { 0 }; if (GetMessage(&MSG, 0, 0, 0)) { TranslateMessage(&MSG); DispatchMessage(&MSG); }
             GetCursorPos(&EasyGUI_MousePos); GetWindowRect(EasyGUI_WindowHWND, &EasyGUI_WindowPos);//刷新鼠标窗口坐标
             //---------------------------------------
             static BOOL 防止脱离, 保存鼠标坐标; static Vector2 OldPos;//按下时坐标
@@ -2620,13 +2629,22 @@ namespace EasyGUI
                 }
                 else if (防止脱离 && In_KeyEvent(VK_LBUTTON))//移动窗口时
                 {
-                    Mouse_Block_ = true;
-                    MoveWindow(EasyGUI_WindowHWND, EasyGUI_MousePos.x - OldPos.x, EasyGUI_MousePos.y - OldPos.y, EasyGUI_WindowPos.right - EasyGUI_WindowPos.left, EasyGUI_WindowPos.bottom - EasyGUI_WindowPos.top, true);//移动窗口到鼠标坐标
+                    Mouse_Block_ = true; Mouse_Move_ = true;
+                    if (Limit_Edge)//限制窗口不超过显示器像素区域
+                    {
+                        Vector2 Scre = { GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };//系统显示器像素
+                        Vector2 Move = { EasyGUI_MousePos.x - OldPos.x, EasyGUI_MousePos.y - OldPos.y };//窗口坐标
+                        Vector2 Size = { EasyGUI_WindowPos.right - EasyGUI_WindowPos.left, EasyGUI_WindowPos.bottom - EasyGUI_WindowPos.top };//窗口大小
+                        if (Move.x + Size.x >= Scre.x)Move.x = Scre.x - Size.x; else if (Move.x <= 0)Move.x = 0;//限制左右
+                        if (Move.y + Size.y >= Scre.y)Move.y = Scre.y - Size.y; else if (Move.y <= 0)Move.y = 0;//限制上下
+                        MoveWindow(EasyGUI_WindowHWND, Move.x, Move.y, Size.x, Size.y, true);//移动窗口
+                    }
+                    else MoveWindow(EasyGUI_WindowHWND, EasyGUI_MousePos.x - OldPos.x, EasyGUI_MousePos.y - OldPos.y, EasyGUI_WindowPos.right - EasyGUI_WindowPos.left, EasyGUI_WindowPos.bottom - EasyGUI_WindowPos.top, true);//移动窗口到鼠标坐标
                     if (In_TickSleep<class CLASS_EasyGUI_WindowMove_FPS_Delay_>(100))return false;//定时返回false (用来刷新面板)
                     else return true;
                 }
                 else {//闲置时
-                    防止脱离 = false; 保存鼠标坐标 = true; Mouse_Block_ = false;
+                    防止脱离 = false; 保存鼠标坐标 = true; Mouse_Block_ = false; Mouse_Move_ = false;
                     if (!Mouse_Slider_)
                     {
                         if (In_KeyEvent(VK_LBUTTON))Sleep(1);
@@ -2767,7 +2785,7 @@ namespace EasyGUI
                 else if (DetectMousePos)
                 {
                     In_DrawGradientRect(X + 2, Y + 16 + 30 * i, Width - 4, 23, Global_EasyGUIColor / 5, { 20,20,20 });
-                    if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && In_KeyEvent(VK_LBUTTON, true))m_In_Block = i;
+                    if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_ && In_KeyEvent(VK_LBUTTON, true))m_In_Block = i;
                 }
                 In_DrawString(X + TextPos_X + 1, Y + 21 + 30 * i, BlockText_[i], { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize + 2);
                 In_DrawString(X + TextPos_X, Y + 20 + 30 * i, BlockText_[i], { 220,220,220 }, Global_EasyGUIFont, Global_EasyGUIFontSize + 2);
@@ -2778,7 +2796,7 @@ namespace EasyGUI
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
         string GUI_Text(Vector2 BlockPos, short LineRow, string Text, Vector4 TextColor = { 200,200,200 }) noexcept//行文字
         {
-            if (BlockPos.x == 0 && BlockPos.y == 0)return 0;//当无block则不进行绘制
+            if (BlockPos.x == 0 && BlockPos.y == 0)return "";//当无block则不进行绘制
             In_DrawString(BlockPos.x + 53, BlockPos.y - 2 + 30 * LineRow, Text, { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
             In_DrawString(BlockPos.x + 52, BlockPos.y - 3 + 30 * LineRow, Text, TextColor, Global_EasyGUIFont, Global_EasyGUIFontSize);
             return Text;
@@ -2788,7 +2806,7 @@ namespace EasyGUI
         {
             if (BlockPos.x == 0 && BlockPos.y == 0)return false;//当无block则不进行绘制
             const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 30, BlockPos.y + 30 * LineRow - 2, 140, 12);//窗口检测
-            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && DetectMousePos && In_KeyEvent(VK_LBUTTON, true))m_CheckboxValue = !m_CheckboxValue;//当最前端窗口为GUI窗口接收按钮事件
+            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_ && DetectMousePos && In_KeyEvent(VK_LBUTTON, true))m_CheckboxValue = !m_CheckboxValue;//当最前端窗口为GUI窗口接收按钮事件
             In_DrawRect(BlockPos.x + 29, BlockPos.y - 1 + 30 * LineRow, 10, 10, { 0,0,0 });
             In_DrawString(BlockPos.x + 53, BlockPos.y - 2 + 30 * LineRow, Text, { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
             In_DrawString(BlockPos.x + 52, BlockPos.y - 3 + 30 * LineRow, Text, TextColor, Global_EasyGUIFont, Global_EasyGUIFontSize);
@@ -2806,7 +2824,7 @@ namespace EasyGUI
             if (BlockPos.x == 0 && BlockPos.y == 0)return false;//当无block则不进行绘制
             if (m_ButtonValue)Sleep(30);//更好地让其他循环线程接收
             const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 55, BlockPos.y + 30 * LineRow - 8, 230, 25);//窗口检测机制
-            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_)m_ButtonValue = !m_ButtonValue && DetectMousePos && In_KeyEvent(VK_LBUTTON, true);//当最前端窗口为GUI窗口接收按钮事件
+            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_)m_ButtonValue = !m_ButtonValue && DetectMousePos && In_KeyEvent(VK_LBUTTON, true);//当最前端窗口为GUI窗口接收按钮事件
             In_DrawRect(BlockPos.x + 53, BlockPos.y - 10 + 30 * LineRow, 234, 29, { 0,0,0 });
             In_DrawRect(BlockPos.x + 54, BlockPos.y - 9 + 30 * LineRow, 232, 27, { 60,60,60 });
             if (DetectMousePos && !m_ButtonValue)In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 30 * LineRow - 8, 230, 25, Global_EasyGUIColor / 5, { 20,20,20 }, true);
@@ -2816,17 +2834,17 @@ namespace EasyGUI
             return m_ButtonValue;
         }
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
-        BOOL GUI_Button_Small(Vector2 BlockPos, short LineRow, BOOL& m_ButtonValue) noexcept//单击按钮(小号)
+        BOOL GUI_Button_Small(Vector2 BlockPos, short LineRow, BOOL& m_ButtonValue, string Text = "...") noexcept//单击按钮(小号)
         {
             if (BlockPos.x == 0 && BlockPos.y == 0)return false;//当无block则不进行绘制
             if (m_ButtonValue)Sleep(30);//更好地让其他循环线程接收
             const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 10, BlockPos.y + 30 * LineRow - 5, 13, 18);//窗口检测机制
-            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_)m_ButtonValue = !m_ButtonValue && DetectMousePos && In_KeyEvent(VK_LBUTTON, true);//当最前端窗口为GUI窗口接收按钮事件
+            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_)m_ButtonValue = !m_ButtonValue && DetectMousePos && In_KeyEvent(VK_LBUTTON, true);//当最前端窗口为GUI窗口接收按钮事件
             In_DrawRect(BlockPos.x + 8, BlockPos.y - 7 + 30 * LineRow, 17, 22, { 0,0,0 });
             In_DrawRect(BlockPos.x + 9, BlockPos.y - 6 + 30 * LineRow, 15, 20, { 60,60,60 });
             if (DetectMousePos && !m_ButtonValue)In_DrawGradientRect(BlockPos.x + 10, BlockPos.y + 30 * LineRow - 5, 13, 18, Global_EasyGUIColor / 5, { 20,20,20 }, true);
             else In_DrawGradientRect(BlockPos.x + 10, BlockPos.y + 30 * LineRow - 5, 13, 18, Global_EasyGUIColor / 7, { 20,20,20 }, true);
-            In_DrawString_Simple(BlockPos.x + 12, BlockPos.y + 30 * LineRow - 1, "...", { 200,200,200 });
+            In_DrawString_Simple(BlockPos.x + 12, BlockPos.y + 30 * LineRow - 1, Text, { 200,200,200 });
             return m_ButtonValue;
         }
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2836,33 +2854,29 @@ namespace EasyGUI
             if (BlockPos.x == 0 && BlockPos.y == 0)return false;//当无block则不进行绘制
             const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, 230, 5);//窗口检测
             static BOOL OutSide = false;//防止指针脱落时失去控制力
-            if (GetForegroundWindow() == EasyGUI_WindowHWND)//当最前端窗口为GUI窗口接收按钮事件
+            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Move_)//当最前端窗口为GUI窗口接收按钮事件
             {
                 static const ValueClass ClassValueDetect = 0.1;//检测是否是浮点值 (变量)
-                if (DetectMousePos && In_KeyEvent(VK_LEFT, true))//当鼠标移动到滑条上方 按键反馈事件
+                if (DetectMousePos && (In_KeyEvent(VK_LEFT, true) || In_KeyEvent(VK_UP, true)))//当鼠标移动到滑条上方 按键反馈事件
                 {
                     if (ClassValueDetect == 0)m_SliderValue--; else m_SliderValue -= 0.05;//检测是否是浮点值
                 }
-                else if (DetectMousePos && In_KeyEvent(VK_RIGHT, true))
+                else if (DetectMousePos && (In_KeyEvent(VK_RIGHT, true) || In_KeyEvent(VK_DOWN, true)))
                 {
                     if (ClassValueDetect == 0)m_SliderValue++; else m_SliderValue += 0.05;//检测是否是浮点值
                 }
                 if (In_KeyEvent(VK_LBUTTON) && DetectMousePos && !OutSide)OutSide = true;
-                if (OutSide && In_KeyEvent(VK_LBUTTON))
-                {
-                    m_SliderValue = ((EasyGUI_MousePos.x - BlockPos.x - 54 - EasyGUI_WindowPos.left) * (EndValue - StartValue) / 230) + StartValue;
-                    Mouse_Block_ = true; Mouse_Slider_ = true;
-                }
+                if (OutSide && In_KeyEvent(VK_LBUTTON)) { m_SliderValue = ((EasyGUI_MousePos.x - BlockPos.x - 54 - EasyGUI_WindowPos.left) * (EndValue - StartValue) / 230) + StartValue; Mouse_Block_ = true; Mouse_Slider_ = true; }
                 else if (!In_KeyEvent(VK_LBUTTON)) { OutSide = false; Mouse_Slider_ = false; }
             }
             int SliderPos = (float)(m_SliderValue - StartValue) / (float)(EndValue - StartValue) * 230;
-            if (SliderPos >= 230)SliderPos = 230; else if (SliderPos <= 0) SliderPos = 0;
+            if (SliderPos > 230)SliderPos = 230; else if (SliderPos < 0) SliderPos = 0;
             if (m_SliderValue <= StartValue)m_SliderValue = StartValue; else if (m_SliderValue >= EndValue)m_SliderValue = EndValue;//范围限制
             stringstream ss; ss << fixed << setprecision(4) << m_SliderValue; ss >> m_SliderValue;//只保留4位小数点后数
             In_DrawRect(BlockPos.x + 54, BlockPos.y + 5 + 30 * LineRow, 232, 7, { 0,0,0 });//黑色外边框
             if (DetectMousePos || OutSide)In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, 230, 5, { 30,30,30 }, Global_EasyGUIColor / 4, true);//滑条背景
             else In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, 230, 5, { 20,20,20 }, Global_EasyGUIColor / 5, true);
-            In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, SliderPos, 5, Global_EasyGUIColor, Global_EasyGUIColor / 5, true);//滑条 (动画0.8果冻效果)
+            In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, In_Animation<CreateClassName>(SliderPos, 2, { 0,230 }), 5, Global_EasyGUIColor, Global_EasyGUIColor / 5, true);//滑条 (动画0.8果冻效果)
             In_DrawString(BlockPos.x + 56, BlockPos.y - 9 + 30 * LineRow, Text, { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
             In_DrawString(BlockPos.x + 55, BlockPos.y - 10 + 30 * LineRow, Text, TextColor, Global_EasyGUIFont, Global_EasyGUIFontSize);
             In_DrawString_Simple(BlockPos.x + 295, BlockPos.y + 2 + 30 * LineRow, ss.str() + Unit, { 150,150,150 });//返回值绘制
@@ -2876,7 +2890,7 @@ namespace EasyGUI
             if (m_KeySelectValue >= 0xCCCCCCCC)m_KeySelectValue = 0;//修复过量
             const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 350, BlockPos.y + 26 + 30 * (LineRow - 1), 40, 12);//鼠标坐标检测
             static BOOL BoxMea = false;//只声明一次初始开关设定变量
-            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_)//当最前端窗口为GUI窗口接收按钮事件
+            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_)//当最前端窗口为GUI窗口接收按钮事件
             {
                 if (!BoxMea && DetectMousePos && In_KeyEvent(VK_LBUTTON, true))BoxMea = true;
                 else if (BoxMea)
@@ -3046,7 +3060,7 @@ namespace EasyGUI
             In_DrawString_Simple(BlockPos.x + 8, BlockPos.y + 27 + 30 * (LineRow - 1), "[?]", { 100,100,100 });//GUI绘制
             if (GetForegroundWindow() == EasyGUI_WindowHWND && In_MouseEventJudgment(BlockPos.x + 8, BlockPos.y + 26 + 30 * (LineRow - 1), 13, 13) && !Mouse_Slider_)//当鼠标移动到问号 且GUI窗口为最顶层
             {
-                int Rect_Length = strlen(TipsString.c_str()) * 6; if (BackGround_Length != 0)Rect_Length = BackGround_Length;//自定义背景方框长度
+                short Rect_Length = strlen(TipsString.c_str()) * 6; if (BackGround_Length != 0)Rect_Length = BackGround_Length;//自定义背景方框长度
                 In_DrawRect(EasyGUI_MousePos.x - EasyGUI_WindowPos.left + 15, EasyGUI_MousePos.y - EasyGUI_WindowPos.top + 10, Rect_Length, 20, { 0,0,0 });
                 In_DrawRect(EasyGUI_MousePos.x - EasyGUI_WindowPos.left + 16, EasyGUI_MousePos.y - EasyGUI_WindowPos.top + 11, Rect_Length - 2, 18, { 60,60,60 });
                 In_DrawRect(EasyGUI_MousePos.x - EasyGUI_WindowPos.left + 17, EasyGUI_MousePos.y - EasyGUI_WindowPos.top + 12, Rect_Length - 4, 16, { 15,15,15 });
@@ -3059,7 +3073,7 @@ namespace EasyGUI
         Vector4 GUI_ColorSelector(Vector2 BlockPos, short LineRow, Vector4& m_ColorValue) noexcept//颜色选择器
         {
             if (BlockPos.x == 0 && BlockPos.y == 0)return { -1,-1,-1 };//当无block则不进行绘制
-            if (GetForegroundWindow() == EasyGUI_WindowHWND && In_MouseEventJudgment(BlockPos.x + 360, BlockPos.y - 6 + 30 * LineRow, 20, 20) && In_KeyEvent(VK_LBUTTON, true) && !Mouse_Slider_)//复制选取的颜色值
+            if (GetForegroundWindow() == EasyGUI_WindowHWND && In_MouseEventJudgment(BlockPos.x + 360, BlockPos.y - 6 + 30 * LineRow, 20, 20) && !Mouse_Slider_ && !Mouse_Move_ && In_KeyEvent(VK_LBUTTON, true))//复制选取的颜色值
             {
                 const string Color_String_Copy__ = to_string(m_ColorValue.r) + ", " + to_string(m_ColorValue.g) + ", " + to_string(m_ColorValue.b);//要复制的字符串
                 OpenClipboard(0);//打开剪切板
@@ -3074,7 +3088,7 @@ namespace EasyGUI
             {
                 vector<int> UsedColor = { m_ColorValue.r,m_ColorValue.g,m_ColorValue.b };
                 const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 218 + 46 * Color_Bl, BlockPos.y - 6 + 30 * LineRow, 41, 20);
-                if (GetForegroundWindow() == EasyGUI_WindowHWND && DetectMousePos && !Mouse_Slider_)//当最前端窗口为GUI窗口接收按钮事件 当鼠标移动到滑条上方 按键反馈事件
+                if (GetForegroundWindow() == EasyGUI_WindowHWND && DetectMousePos && !Mouse_Slider_ && !Mouse_Move_)//当最前端窗口为GUI窗口接收按钮事件 当鼠标移动到滑条上方 按键反馈事件
                 {
                     if (In_KeyEvent(VK_LBUTTON, true))UsedColor[Color_Bl]++;
                     else if (In_KeyEvent(VK_RBUTTON, true))UsedColor[Color_Bl]--;
@@ -3099,7 +3113,7 @@ namespace EasyGUI
         Vector4 GUI_ColorSelector_a(Vector2 BlockPos, short LineRow, Vector4& m_ColorValue) noexcept//颜色选择器(包含Alpha 透明度值)
         {
             if (BlockPos.x == 0 && BlockPos.y == 0)return { -1,-1,-1,-1 };//当无block则不进行绘制
-            if (GetForegroundWindow() == EasyGUI_WindowHWND && In_MouseEventJudgment(BlockPos.x + 360, BlockPos.y - 6 + 30 * LineRow, 20, 20) && In_KeyEvent(VK_LBUTTON, true) && !Mouse_Slider_)//复制选取的颜色值
+            if (GetForegroundWindow() == EasyGUI_WindowHWND && In_MouseEventJudgment(BlockPos.x + 360, BlockPos.y - 6 + 30 * LineRow, 20, 20) && !Mouse_Slider_ && !Mouse_Move_ && In_KeyEvent(VK_LBUTTON, true))//复制选取的颜色值
             {
                 const string Color_String_Copy__ = to_string(m_ColorValue.r) + ", " + to_string(m_ColorValue.g) + ", " + to_string(m_ColorValue.b) + ", " + to_string(m_ColorValue.a);//要复制的字符串
                 OpenClipboard(0);//打开剪切板
@@ -3114,7 +3128,7 @@ namespace EasyGUI
             {
                 vector<int> UsedColor = { m_ColorValue.r,m_ColorValue.g,m_ColorValue.b,m_ColorValue.a };
                 const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 172 + 46 * Color_Bl, BlockPos.y - 6 + 30 * LineRow, 41, 20);
-                if (GetForegroundWindow() == EasyGUI_WindowHWND && DetectMousePos && !Mouse_Slider_)//当最前端窗口为GUI窗口接收按钮事件 当鼠标移动到滑条上方 按键反馈事件
+                if (GetForegroundWindow() == EasyGUI_WindowHWND && DetectMousePos && !Mouse_Slider_ && !Mouse_Move_)//当最前端窗口为GUI窗口接收按钮事件 当鼠标移动到滑条上方 按键反馈事件
                 {
                     if (In_KeyEvent(VK_LBUTTON, true))UsedColor[Color_Bl]++;
                     else if (In_KeyEvent(VK_RBUTTON, true))UsedColor[Color_Bl]--;
@@ -3144,7 +3158,7 @@ namespace EasyGUI
             {
                 vector<float> UsedPos = { m_PosValue.x,m_PosValue.y,m_PosValue.z };
                 const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 180 + 70 * Color_Bl, BlockPos.y - 6 + 30 * LineRow, 68, 20);
-                if (GetForegroundWindow() == EasyGUI_WindowHWND && DetectMousePos && !Mouse_Slider_)//当最前端窗口为GUI窗口接收按钮事件 当鼠标移动到滑条上方 按键反馈事件
+                if (GetForegroundWindow() == EasyGUI_WindowHWND && DetectMousePos && !Mouse_Slider_ && !Mouse_Move_)//当最前端窗口为GUI窗口接收按钮事件 当鼠标移动到滑条上方 按键反馈事件
                 {
                     if (In_KeyEvent(VK_LBUTTON, true))UsedPos[Color_Bl] += 0.03;
                     else if (In_KeyEvent(VK_RBUTTON, true))UsedPos[Color_Bl] -= 0.03;
@@ -3178,11 +3192,10 @@ namespace EasyGUI
             {
                 if (i >= LimitLine)continue;//限制行数
                 const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 54, BlockPos.y + StartLineRow * 30 + i * 25 - 5, 232, 20);//光标检测范围
-                if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && DetectMousePos)
+                if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_ && DetectMousePos)
                 {
                     if (In_KeyEvent(VK_LBUTTON, true))m_InLine = i;//赋值选择
-                    if (In_KeyEvent(VK_UP, true))--m_InLine;
-                    if (In_KeyEvent(VK_DOWN, true))++m_InLine;
+                    if (In_KeyEvent(VK_UP, true))--m_InLine; else if (In_KeyEvent(VK_DOWN, true))++m_InLine;
                 }
                 if (m_InLine == i)
                 {
@@ -3193,7 +3206,7 @@ namespace EasyGUI
                 else {
                     if (DetectMousePos)In_DrawGradientRect(BlockPos.x + 54, BlockPos.y + StartLineRow * 30 + i * 25 - 5, 232, 20, Global_EasyGUIColor / 7, { 15,15,15 });//当光标选择时视觉反馈 (在上方时)
                     In_DrawString(BlockPos.x + 66, BlockPos.y + StartLineRow * 30 + i * 25, LineString[i], { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
-                    if (LineString[i] == "None" || LineString[i] == "none")In_DrawString(BlockPos.x + 65, BlockPos.y + StartLineRow * 30 + i * 25 - 1, LineString[i], { 80,80,80 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
+                    if (LineString[i] == "None" || LineString[i] == "none" || LineString[i] == "NONE" || LineString[i] == "NULL")In_DrawString(BlockPos.x + 65, BlockPos.y + StartLineRow * 30 + i * 25 - 1, LineString[i], { 80,80,80 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
                     else In_DrawString(BlockPos.x + 65, BlockPos.y + StartLineRow * 30 + i * 25 - 1, LineString[i], { 200,200,200 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
                 }
             }
@@ -3207,7 +3220,7 @@ namespace EasyGUI
             const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 55, BlockPos.y + 30 * LineRow - 9, 230, 25);//窗口检测机制
             static BOOL IsInput = false;//判断是否在输入变量
             string DrawString = m_String;//绘制字符串
-            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_)//当最前端窗口为GUI窗口接收输入框事件
+            if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_)//当最前端窗口为GUI窗口接收输入框事件
             {
                 if (!IsInput && DetectMousePos && In_KeyEvent(VK_LBUTTON, true))IsInput = true;//进入输入状态
                 else if (IsInput)//在输入状态时
@@ -3298,7 +3311,7 @@ namespace EasyGUI
                             case 0x6D:PressedKey = "-"; break;
                             case 0x6E:PressedKey = "."; break;
                             case 0x6F:PressedKey = "/"; break;//以上小键盘按键**
-                                //===================================================
+                            //===================================================
                             case VK_BACK:if (m_String.size() > 0)m_String.erase(m_String.end() - 1); break;//擦除最后一个字符
                             case VK_DELETE:m_String = ""; break;//清除全部字符
                             case VK_ESCAPE:case VK_RETURN:IsInput = false; break;//按键解除输入状态
