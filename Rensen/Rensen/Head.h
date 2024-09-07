@@ -1,4 +1,4 @@
-﻿//2024-09-07 17:30
+﻿//2024-09-08 00:50
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -1583,34 +1583,52 @@ namespace System//Windows系统
         system(("mkdir " + filename).c_str());
     }
     //-----------------------------------------------------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------------------------------------------------
     BOOL Judge_File(string FileName) noexcept//判断 文件or夹 是否存在
     {//System::Judge_File("Test File.txt");
         return _access(FileName.c_str(), 0) != -1;
     }
     //-----------------------------------------------------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------------------------------------------------
-    void Create_File(string FileName, string Content, BOOL Append = false) noexcept//生成并且改写任何文件 详细: https://blog.csdn.net/qq_29406323/article/details/81261926
+    void Create_File(string FileName, string Content = "") noexcept//生成任何文件 详细: https://blog.csdn.net/qq_29406323/article/details/81261926
     {//System::Create_File("Test File.txt","1\n2\n3\n");
-        if (Append)//Append
+        if (_access(FileName.c_str(), 0) == -1)//当文件不存在时
         {
-            fstream foundfile(FileName.c_str(), ios::app);
-            if (foundfile.is_open())foundfile << Content.c_str(); foundfile.close();
-        }
-        else {//Set
             fstream foundfile(FileName.c_str(), ios::out);
             if (foundfile.is_open())foundfile << Content.c_str(); foundfile.close();
         }
     }
     //-----------------------------------------------------------------------------------------------------------------------------
+    string Get_File(string FileName, int Row = 1) noexcept//获取文件信息中的特定行数
+    {//System::Get_File("Test File.txt", 2);
+        if (_access(FileName.c_str(), 0) != -1)//当文件存在时
+        {
+            ifstream infile; infile.open(FileName, ios::in);//将文件流对象与文件连接起来 
+            static char str[2048];//初始化缓冲区
+            for (int i = 0; i < Row; i++)infile.getline(str, sizeof(str));//遍历
+            infile.close();//关闭文件输入流 
+            return str;
+        }
+        else return "";
+    }
     //-----------------------------------------------------------------------------------------------------------------------------
-    string Get_File(string file, int line) noexcept//获取文件信息中的特定行数
-    {//System::Get_File("Free(武器力度参数).txt", 2);
-        ifstream infile; infile.open(file, ios::in);//将文件流对象与文件连接起来 
-        static char str[2048];//初始化缓冲区
-        for (int i = 0; i < line; i++)infile.getline(str, sizeof(str));//遍历
-        infile.close();//关闭文件输入流 
-        return str;
+    void Set_File(string FileName, string Content = "", BOOL Append = false) noexcept//改写任何文件 详细: https://blog.csdn.net/qq_29406323/article/details/81261926
+    {//System::Set_File("Test File.txt","1\n2\n3\n");
+        if (_access(FileName.c_str(), 0) != -1)//当文件存在时
+        {
+            if (Append)//继续上文写入
+            {
+                fstream foundfile(FileName.c_str(), ios::app);
+                if (foundfile.is_open())foundfile << Content.c_str(); foundfile.close();
+            }
+            else {//修改
+                fstream foundfile(FileName.c_str(), ios::out);
+                if (foundfile.is_open())foundfile << Content.c_str(); foundfile.close();
+            }
+        }
+    }
+    //-----------------------------------------------------------------------------------------------------------------------------
+    void Delete_File(string FileName) noexcept//删除任何文件
+    {//System::Delete_File("Test File.txt");
+        remove(FileName.c_str());
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -2192,6 +2210,22 @@ namespace System//Windows系统
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
+    vector<string> Traversal_FindFile(string FileName = "*", string Format = "", BOOL Erase_Format = false,string Attach = "") noexcept//通过遍历的方式获取目录下的所有文件
+    {//System::Traversal_FindFile("*", ".exe");
+        vector<string> FileList = {}; _finddata64i32_t FileInfo; const auto hFile = _findfirst(FileName.c_str(), &FileInfo);
+        if (hFile == -1)return {};
+        do {
+            string FileName = FileInfo.name;//未知类型转换为字符串
+            if (FileName.find(Format) != string::npos)
+            {
+                if (Erase_Format)FileName.erase(FileName.find(Format), Format.length());//擦除格式 只输出名称
+                FileList.push_back(FileName + Attach);//只输出指定格式
+            }
+        } while (_findnext(hFile, &FileInfo) == 0);//遍历所有文件
+        return FileList;//最终返回文件列表
+    }
+    //-----------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
 }
 namespace EasyGUI
 {
@@ -2619,7 +2653,7 @@ namespace EasyGUI
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
         int Window_FPS() noexcept { return EasyGUI_FPS; }//获取GUI绘制帧数
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
-        BOOL Window_Move(short Draw_Delay = 3, BOOL Limit_Edge = true) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
+        BOOL Window_Move(short Draw_Delay = 3, BOOL Limit_Edge = false) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
         {
             //--------------------------------消息循环
             MSG MSG = { 0 }; if (GetMessage(&MSG, 0, 0, 0)) { TranslateMessage(&MSG); DispatchMessage(&MSG); }
@@ -3192,7 +3226,7 @@ namespace EasyGUI
         {
             if (BlockPos.x == 0 && BlockPos.y == 0)return false;//当无block则不进行绘制
             if (m_InLine < 0)m_InLine = 0; else if (m_InLine >= LineString.size())m_InLine = LineString.size() - 1;//范围限制
-            if (!LimitLine)LimitLine = LineString.size();
+            if (!LimitLine)LimitLine = LineString.size(); if (LineString.size() == 0)m_InLine = -1;
             In_DrawRect(BlockPos.x + 53, BlockPos.y - 10 + 30 * StartLineRow, 234, LimitLine * 25 + 5, { 0,0,0 });//黑色外边框
             In_DrawGradientRect(BlockPos.x + 54, BlockPos.y - 9 + 30 * StartLineRow, 232, LimitLine * 25 + 3, Global_EasyGUIColor / 10, { 10,10,10 }, true);//主题色渐变背景
             for (short i = 0; i < LineString.size(); ++i)

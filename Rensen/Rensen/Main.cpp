@@ -1,163 +1,157 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.82;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-07 17:30]";//程序发布日期时间
+const float Rensen_Version = 4.84;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-08 00:50]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
-	const string UI_LocalConfigPath = "Rensen.cfg";
-	const string UI_DefaultConfig = "0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n1\n1\n0\n0\n0\n0\n0\n1\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n20\n0\n0\n0\n0\n0\n255\n1\n0\n0\n0.2\n150\n0\n26\n11\n0\n0\n10\n10\n0\n0\n3\n3\n0\n0\n0\n0\n1\n0\n1\n0\n0\n0\n0\n500\n0\n0\n45\n1\n255\n255\n255\n255\n0\n0\n0\n1\n0\n0\n0\n0.5\n0\n10\n0\n0\n0\n0\n0\n50\n0\n0\n0\n0\n3\n0\n10\n10\n1\n0\n0\n0\n0\n50\n0\n0\n0\n0\n0\n0\n0\n0\n\n0\n0\n0\n0\n0\n255\n0\n0\n0\n100\n0\n0\n0\n0\n0\n0\n0\n0\n";//默认参数
 	//----------------------------------------------------------------------------------------------
-	BOOL UI_Visual_Res_2560, UI_Visual_Res_1920, UI_Visual_Res_1280, UI_Visual_Res_960;
-	BOOL UI_Visual_Radar_Show;
-	BOOL UI_Misc_LoadCloudConfig;
-	BOOL UI_Setting_OpenLinkAuthor;
-	BOOL UI_Setting_AddQQGroupChat;
-	BOOL UI_Setting_SaveLocalConfig;
-	BOOL UI_Setting_StartCS, UI_Setting_QuitCS;
-	BOOL UI_Setting_GithubRepositories;
-	BOOL UI_Setting_RestartMenu;
-	BOOL UI_Setting_Unload;
-	//以上变量不需要纳入参数------------------------------------------------------------------------
-	BOOL UI_Legit_Aimbot = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 1));
-	int UI_Legit_Aimbot_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 2));
-	BOOL UI_Legit_Aimbot_JudgingWall = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 3));
-	BOOL UI_Legit_Aimbot_RemoveRecoil = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 4));
-	BOOL UI_Legit_Aimbot_TriggerOnAim = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 5));
-	BOOL UI_Legit_Aimbot_AutoShoot = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 6));
-	BOOL UI_Legit_Aimbot_AutoStop = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 7));
-	int UI_Legit_Aimbot_AutoShootDelay = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 8));
-	BOOL UI_Legit_AdaptiveAimbot = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 9));
-	BOOL UI_Legit_Armory_ShowAimbotRange = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 10));
-	BOOL UI_Legit_Armory_BodyAim_PISTOL = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 11));
-	int UI_Legit_Armory_Range_PISTOL = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 12));
-	float UI_Legit_Armory_Smooth_PISTOL = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 13));
-	BOOL UI_Legit_Armory_BodyAim_RIFLE = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 14));
-	int UI_Legit_Armory_Range_RIFLE = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 15));
-	float UI_Legit_Armory_Smooth_RIFLE = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 16));
-	BOOL UI_Legit_Armory_BodyAim_SNIPER = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 17));
-	int UI_Legit_Armory_Range_SNIPER = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 18));
-	float UI_Legit_Armory_Smooth_SNIPER = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 19));
-	BOOL UI_Legit_Triggerbot = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 20));
-	int UI_Legit_Triggerbot_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 21));
-	BOOL UI_Legit_Triggerbot_AnyTarget = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 22));
-	int UI_Legit_Triggerbot_ShootDelay = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 23));
-	int UI_Legit_Triggerbot_ShootDuration = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 24));
-	BOOL UI_Legit_PreciseAim = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 25));
-	float UI_Legit_PreciseAim_DefaultSensitivity = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 26));
-	float UI_Legit_PreciseAim_EnableSensitivity = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 27));
-	BOOL UI_Legit_RemoveRecoil = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 28));
-	BOOL UI_Legit_RemoveRecoil_HorizontalRepair = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 29));
-	int UI_Legit_RemoveRecoil_StartBullet = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 30));
-	BOOL UI_Legit_Backtracking = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 31));
-	int UI_Legit_Backtracking_MaximumTime = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 32));
-	BOOL UI_Visual_ESP = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 33));
-	int UI_Visual_ESP_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 34));
-	BOOL UI_Visual_ESP_Box = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 35));
-	BOOL UI_Visual_ESP_Health = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 36));
-	BOOL UI_Visual_ESP_ActiveWeapon = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 37));
-	BOOL UI_Visual_ESP_Line = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 38));
-	BOOL UI_Visual_ESP_Skeleton = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 39));
-	BOOL UI_Visual_ESP_HeadDot = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 40));
-	BOOL UI_Visual_ESP_State = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 41));
-	BOOL UI_Visual_ESP_Name = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 42));
-	BOOL UI_Visual_ESP_Drops = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 43));
-	BOOL UI_Visual_ESP_OutFOV = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 44));
-	int UI_Visual_ESP_OutFOV_Size = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 45));
-	int UI_Visual_ESP_OutFOV_Radius = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 46));
-	BOOL UI_Visual_ESP_CustomColor = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 47));
-	Variable::Vector4 UI_Visual_ESP_CustomColor_Color = { Variable::string_int_(System::Get_File(UI_LocalConfigPath, 48)),Variable::string_int_(System::Get_File(UI_LocalConfigPath, 49)),Variable::string_int_(System::Get_File(UI_LocalConfigPath, 50)),Variable::string_int_(System::Get_File(UI_LocalConfigPath, 51)) };
-	int UI_Visual_ESP_DrawDelay = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 52));
-	BOOL UI_Visual_Radar = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 53));
-	BOOL UI_Visual_Radar_FollowAngle = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 54));
-	float UI_Visual_Radar_Range = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 55));
-	int UI_Visual_Radar_Size = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 56));
-	int UI_Visual_Radar_Alpha = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 57));
-	Variable::Vector2 UI_Visual_Radar_Pos = { Variable::string_int_(System::Get_File(UI_LocalConfigPath, 58)), Variable::string_int_(System::Get_File(UI_LocalConfigPath, 59)) };
-	BOOL UI_Misc_BunnyHop = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 60));
-	BOOL UI_Misc_HitSound = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 61));
-	int UI_Misc_HitSound_Tone = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 62));
-	int	UI_Misc_HitSound_Length = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 63));
-	BOOL UI_Visual_HitMark = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 64));
-	BOOL UI_Visual_HitMark_Damage = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 65));
-	int UI_Visual_HitMark_Range = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 66));
-	int UI_Visual_HitMark_Length = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 67));
-	BOOL UI_Misc_AutoKnife = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 68));
-	BOOL UI_Misc_AutoTaser = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 69));
-	int UI_Misc_AutoKnife_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 70));
-	int UI_Misc_AutoTaser_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 71));
-	BOOL UI_Misc_Watermark = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 72));
-	BOOL UI_Misc_SniperCrosshair = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 73));
-	BOOL UI_Misc_TeamCheck = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 74));
-	BOOL UI_Misc_LockGameWindow = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 75));
-	BOOL UI_Debug_ShowDebugWindow = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 76));
-	BOOL UI_Misc_Sonar = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 77));
-	int UI_Misc_Sonar_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 78));
-	int UI_Misc_Sonar_Range_Far = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 79));
-	int UI_Misc_Sonar_Range_Near = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 80));
-	int UI_Misc_SelectedConfig = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 81));
-	int UI_Setting_MenuKey = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 82));
-	BOOL UI_Setting_CustomColor = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 83));
-	Variable::Vector4 UI_Setting_MainColor = { Variable::string_int_(System::Get_File(UI_LocalConfigPath, 84)),Variable::string_int_(System::Get_File(UI_LocalConfigPath, 85)),Variable::string_int_(System::Get_File(UI_LocalConfigPath, 86)),Variable::string_int_(System::Get_File(UI_LocalConfigPath, 87)) };
-	Variable::Vector4 UI_Visual_HitMark_Color = { Variable::string_int_(System::Get_File(UI_LocalConfigPath, 88)),Variable::string_int_(System::Get_File(UI_LocalConfigPath, 89)),Variable::string_int_(System::Get_File(UI_LocalConfigPath, 90)) };
-	int UI_Visual_HitMark_Thickness = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 91));
-	BOOL UI_Legit_Triggerbot_ShootWhenAccurate = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 92));
-	BOOL UI_Misc_AntiAFKKick = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 93));
-	BOOL UI_Legit_MagnetAim = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 94));
-	float UI_Legit_MagnetAim_Smooth = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 95));
-	float UI_Legit_AdaptiveAimbot_InitialSmooth = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 96));
-	int UI_Misc_SniperCrosshair_Size = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 97));
-	BOOL UI_Spoof_Spoof = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 98));
-	BOOL UI_Spoof_AimbotTeam = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 99));
-	int UI_Spoof_AimbotTeam_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 100));
-	float UI_Spoof_AimbotTeam_Smooth = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 101));
-	BOOL UI_Spoof_IncreaseRecoil = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 102));
-	int UI_Spoof_IncreaseRecoil_Value = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 103));
-	BOOL UI_Spoof_DropC4 = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 104));
-	BOOL UI_Spoof_FakeAntiAim = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 105));
-	int UI_Spoof_FakeAntiAim_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 106));
-	BOOL UI_Spoof_KillDropSniper = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 107));
-	float UI_Setting_MenuAnimation = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 108));
-	BOOL UI_Visual_HitMark_KillEffect = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 109));
-	int UI_Visual_HitMark_KillEffect_Quantity = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 110));
-	int UI_Visual_HitMark_KillEffect_Range = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 111));
-	int UI_Visual_ESP_Skeleton_Thickness = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 112));
-	BOOL UI_Misc_ByPassOBS = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 113));
-	BOOL UI_Misc_SavePerformance = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 114));
-	BOOL UI_Legit_Aimbot_AutoScope = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 115));
-	BOOL UI_Misc_NightMode = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 116));
-	int UI_Misc_NightMode_Alpha = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 117));
-	BOOL UI_Spoof_LearnPlayer = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 118));
-	int UI_Spoof_LearnPlayer_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 119));
-	BOOL UI_Misc_AutoPeek = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 120));
-	int UI_Misc_AutoPeek_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 121));
-	BOOL UI_Spoof_FakeRageBot = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 122));
-	int UI_Spoof_FakeRageBot_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 123));
-	int UI_Spoof_FakeRageBot_Target = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 124));
-	BOOL UI_Misc_QuickStop = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 125));
-	string UI_Setting_MenuFont = System::Get_File(UI_LocalConfigPath, 126);
-	int UI_Setting_MenuFontSize = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 127));
-	BOOL UI_Misc_AutoKillCeasefire = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 128));
-	BOOL UI_Misc_CursorESP = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 129));
-	int UI_Misc_CursorESP_Key = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 130));
-	BOOL UI_Legit_Armory_HitSiteParser = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 131));
-	int UI_Visual_ESP_DrawAlpha = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 132));
-	BOOL UI_Legit_Armory_BodyAim_SHOTGUN = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 133));
-	int UI_Legit_Armory_Range_SHOTGUN = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 134));
-	float UI_Legit_Armory_Smooth_SHOTGUN = Variable::string_float_(System::Get_File(UI_LocalConfigPath, 135));
-	int UI_Legit_Armory_TriggerDistance_SHOTGUN = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 136));
-	int UI_Legit_MagnetAim_Range = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 137));
-	int UI_Legit_Backtracking_MinimumTime = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 138));
-	int UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 139));
-	BOOL UI_Visual_HitMark_CustomColor = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 140));
-	int UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 141));
-	BOOL UI_Legit_MagnetAim_OnlyHeadLine = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 142));
-	BOOL UI_Misc_WalkingBot = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 143));
-	int UI_Misc_WalkingBot_Map = Variable::string_int_(System::Get_File(UI_LocalConfigPath, 144));
+	BOOL UI_Legit_Aimbot = 0;
+	int UI_Legit_Aimbot_Key = 0;
+	BOOL UI_Legit_Aimbot_JudgingWall = 0;
+	BOOL UI_Legit_Aimbot_RemoveRecoil = 0;
+	BOOL UI_Legit_Aimbot_TriggerOnAim = 0;
+	BOOL UI_Legit_Aimbot_AutoShoot = 0;
+	BOOL UI_Legit_Aimbot_AutoStop = 0;
+	int UI_Legit_Aimbot_AutoShootDelay = 0;
+	BOOL UI_Legit_AdaptiveAimbot = 0;
+	BOOL UI_Legit_Armory_ShowAimbotRange = 0;
+	BOOL UI_Legit_Armory_BodyAim_PISTOL = 0;
+	int UI_Legit_Armory_Range_PISTOL = 0;
+	float UI_Legit_Armory_Smooth_PISTOL = 0;
+	BOOL UI_Legit_Armory_BodyAim_RIFLE = 0;
+	int UI_Legit_Armory_Range_RIFLE = 0;
+	float UI_Legit_Armory_Smooth_RIFLE = 0;
+	BOOL UI_Legit_Armory_BodyAim_SNIPER = 0;
+	int UI_Legit_Armory_Range_SNIPER = 0;
+	float UI_Legit_Armory_Smooth_SNIPER = 0;
+	BOOL UI_Legit_Triggerbot = 0;
+	int UI_Legit_Triggerbot_Key = 0;
+	BOOL UI_Legit_Triggerbot_AnyTarget = 0;
+	int UI_Legit_Triggerbot_ShootDelay = 1;
+	int UI_Legit_Triggerbot_ShootDuration = 1;
+	BOOL UI_Legit_PreciseAim = 0;
+	float UI_Legit_PreciseAim_DefaultSensitivity = 0;
+	float UI_Legit_PreciseAim_EnableSensitivity = 0;
+	BOOL UI_Legit_RemoveRecoil = 0;
+	BOOL UI_Legit_RemoveRecoil_HorizontalRepair = 0;
+	int UI_Legit_RemoveRecoil_StartBullet = 1;
+	BOOL UI_Legit_Backtracking = 0;
+	int UI_Legit_Backtracking_MaximumTime = 0;
+	BOOL UI_Visual_ESP = 0;
+	int UI_Visual_ESP_Key = 0;
+	BOOL UI_Visual_ESP_Box = 0;
+	BOOL UI_Visual_ESP_Health = 0;
+	BOOL UI_Visual_ESP_ActiveWeapon = 0;
+	BOOL UI_Visual_ESP_Line = 0;
+	BOOL UI_Visual_ESP_Skeleton = 0;
+	BOOL UI_Visual_ESP_HeadDot = 0;
+	BOOL UI_Visual_ESP_State = 0;
+	BOOL UI_Visual_ESP_Name = 0;
+	BOOL UI_Visual_ESP_Drops = 0;
+	BOOL UI_Visual_ESP_OutFOV = 0;
+	int UI_Visual_ESP_OutFOV_Size = 20;
+	int UI_Visual_ESP_OutFOV_Radius = 0;
+	BOOL UI_Visual_ESP_CustomColor = 0;
+	Variable::Vector4 UI_Visual_ESP_CustomColor_Color = { 0,0,0,255 };
+	int UI_Visual_ESP_DrawDelay = 1;
+	BOOL UI_Visual_Radar = 0;
+	BOOL UI_Visual_Radar_FollowAngle = 0;
+	float UI_Visual_Radar_Range = 0.2;
+	int UI_Visual_Radar_Size = 150;
+	int UI_Visual_Radar_Alpha = 0;
+	Variable::Vector2 UI_Visual_Radar_Pos = { 30, 30 };
+	BOOL UI_Misc_BunnyHop = 0;
+	BOOL UI_Misc_HitSound = 0;
+	int UI_Misc_HitSound_Tone = 10;
+	int	UI_Misc_HitSound_Length = 10;
+	BOOL UI_Visual_HitMark = 0;
+	BOOL UI_Visual_HitMark_Damage = 0;
+	int UI_Visual_HitMark_Range = 3;
+	int UI_Visual_HitMark_Length = 3;
+	BOOL UI_Misc_AutoKnife = 0;
+	BOOL UI_Misc_AutoTaser = 0;
+	int UI_Misc_AutoKnife_Key = 0;
+	int UI_Misc_AutoTaser_Key = 0;
+	BOOL UI_Misc_Watermark = 1;
+	BOOL UI_Misc_SniperCrosshair = 0;
+	BOOL UI_Misc_TeamCheck = 1;
+	BOOL UI_Misc_LockGameWindow = 0;
+	BOOL UI_Debug_ShowDebugWindow = 0;
+	BOOL UI_Misc_Sonar = 0;
+	int UI_Misc_Sonar_Key = 0;
+	int UI_Misc_Sonar_Range_Far = 500;
+	int UI_Misc_Sonar_Range_Near = 0;
+	int UI_Setting_MenuKey = 45;
+	BOOL UI_Setting_CustomColor = 0;
+	Variable::Vector4 UI_Setting_MainColor = { 255,255,255,250 };
+	Variable::Vector4 UI_Visual_HitMark_Color = { 255,255,255 };
+	int UI_Visual_HitMark_Thickness = 1;
+	BOOL UI_Legit_Triggerbot_ShootWhenAccurate = 0;
+	BOOL UI_Misc_AntiAFKKick = 0;
+	BOOL UI_Legit_MagnetAim = 0;
+	float UI_Legit_MagnetAim_Smooth = 0.5;
+	float UI_Legit_AdaptiveAimbot_InitialSmooth = 0;
+	int UI_Misc_SniperCrosshair_Size = 10;
+	BOOL UI_Spoof_Spoof = 0;
+	BOOL UI_Spoof_AimbotTeam = 0;
+	int UI_Spoof_AimbotTeam_Key = 0;
+	float UI_Spoof_AimbotTeam_Smooth = 0;
+	BOOL UI_Spoof_IncreaseRecoil = 0;
+	int UI_Spoof_IncreaseRecoil_Value = 50;
+	BOOL UI_Spoof_DropC4 = 0;
+	BOOL UI_Spoof_FakeAntiAim = 0;
+	int UI_Spoof_FakeAntiAim_Key = 0;
+	BOOL UI_Spoof_KillDropSniper = 0;
+	float UI_Setting_MenuAnimation = 5;
+	BOOL UI_Visual_HitMark_KillEffect = 0;
+	int UI_Visual_HitMark_KillEffect_Quantity = 10;
+	int UI_Visual_HitMark_KillEffect_Range = 10;
+	int UI_Visual_ESP_Skeleton_Thickness = 1;
+	BOOL UI_Misc_ByPassOBS = 0;
+	BOOL UI_Misc_SavePerformance = 0;
+	BOOL UI_Legit_Aimbot_AutoScope = 0;
+	BOOL UI_Misc_NightMode = 0;
+	int UI_Misc_NightMode_Alpha = 30;
+	BOOL UI_Spoof_LearnPlayer = 0;
+	int UI_Spoof_LearnPlayer_Key = 0;
+	BOOL UI_Misc_AutoPeek = 0;
+	int UI_Misc_AutoPeek_Key = 0;
+	BOOL UI_Spoof_FakeRageBot = 0;
+	int UI_Spoof_FakeRageBot_Key = 0;
+	int UI_Spoof_FakeRageBot_Target = 0;
+	BOOL UI_Misc_QuickStop = 0;
+	string UI_Setting_MenuFont = "";
+	int UI_Setting_MenuFontSize = 0;
+	BOOL UI_Misc_AutoKillCeasefire = 0;
+	BOOL UI_Misc_CursorESP = 0;
+	int UI_Misc_CursorESP_Key = 0;
+	BOOL UI_Legit_Armory_HitSiteParser = 0;
+	int UI_Visual_ESP_DrawAlpha = 255;
+	BOOL UI_Legit_Armory_BodyAim_SHOTGUN = 0;
+	int UI_Legit_Armory_Range_SHOTGUN = 0;
+	float UI_Legit_Armory_Smooth_SHOTGUN = 0;
+	int UI_Legit_Armory_TriggerDistance_SHOTGUN = 100;
+	int UI_Legit_MagnetAim_Range = 0;
+	int UI_Legit_Backtracking_MinimumTime = 0;
+	int UI_Legit_RemoveRecoil_Sensitive = 0;
+	BOOL UI_Visual_HitMark_CustomColor = 0;
+	int UI_Legit_Aimbot_AutoShootHitChance = 0;
+	BOOL UI_Legit_MagnetAim_OnlyHeadLine = 0;
+	BOOL UI_Misc_WalkingBot = 0;
+	int UI_Misc_WalkingBot_Map = 0;
 	//----------------------------------------------------------------------------------------------
-	void SaveLocalConfig() noexcept//保存本地参数
+	void CreatePreset(string FileName = "") noexcept//创建特定预设
 	{
-		System::Create_File(UI_LocalConfigPath,
+		if (FileName != "")System::Create_File(FileName + ".cfg");
+	}
+	void DeletePreset(string FileName = "") noexcept//删除特定预设
+	{
+		System::Delete_File(FileName + ".cfg");
+	}
+	void SavePreset(string FileName = "") noexcept//保存特定预设
+	{
+		System::Set_File(FileName + ".cfg",
 			to_string(UI_Legit_Aimbot) + "\n" +
 			to_string(UI_Legit_Aimbot_Key) + "\n" +
 			to_string(UI_Legit_Aimbot_JudgingWall) + "\n" +
@@ -238,7 +232,6 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			to_string(UI_Misc_Sonar_Key) + "\n" +
 			to_string(UI_Misc_Sonar_Range_Far) + "\n" +
 			to_string(UI_Misc_Sonar_Range_Near) + "\n" +
-			to_string(UI_Misc_SelectedConfig) + "\n" +
 			to_string(UI_Setting_MenuKey) + "\n" +
 			to_string(UI_Setting_CustomColor) + "\n" +
 			to_string(UI_Setting_MainColor.r) + "\n" +
@@ -304,147 +297,284 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 			to_string(UI_Misc_WalkingBot_Map) + "\n"
 		);
 	}
-	void LoadCloudConfig(string FileName = "", string NormalURL = "https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/") noexcept//加载Github云参数
+	void LoadPreset(string FileName = "") noexcept//加载特定预设
 	{
-		System::URL_READ URL_CONFIG = { "Cache_CloudConfig" };
-		if (URL_CONFIG.StoreMem(NormalURL + FileName + (string)".cfg?raw=true"))
+		FileName += ".cfg"; if (System::Get_File(FileName, 1) == "")return;//不加载空配置
+		UI_Legit_Aimbot = Variable::string_int_(System::Get_File(FileName, 1));
+		UI_Legit_Aimbot_Key = Variable::string_int_(System::Get_File(FileName, 2));
+		UI_Legit_Aimbot_JudgingWall = Variable::string_int_(System::Get_File(FileName, 3));
+		UI_Legit_Aimbot_RemoveRecoil = Variable::string_int_(System::Get_File(FileName, 4));
+		UI_Legit_Aimbot_TriggerOnAim = Variable::string_int_(System::Get_File(FileName, 5));
+		UI_Legit_Aimbot_AutoShoot = Variable::string_int_(System::Get_File(FileName, 6));
+		UI_Legit_Aimbot_AutoStop = Variable::string_int_(System::Get_File(FileName, 7));
+		UI_Legit_Aimbot_AutoShootDelay = Variable::string_int_(System::Get_File(FileName, 8));
+		UI_Legit_AdaptiveAimbot = Variable::string_int_(System::Get_File(FileName, 9));
+		UI_Legit_Armory_ShowAimbotRange = Variable::string_int_(System::Get_File(FileName, 10));
+		UI_Legit_Armory_BodyAim_PISTOL = Variable::string_int_(System::Get_File(FileName, 11));
+		UI_Legit_Armory_Range_PISTOL = Variable::string_int_(System::Get_File(FileName, 12));
+		UI_Legit_Armory_Smooth_PISTOL = Variable::string_float_(System::Get_File(FileName, 13));
+		UI_Legit_Armory_BodyAim_RIFLE = Variable::string_int_(System::Get_File(FileName, 14));
+		UI_Legit_Armory_Range_RIFLE = Variable::string_int_(System::Get_File(FileName, 15));
+		UI_Legit_Armory_Smooth_RIFLE = Variable::string_float_(System::Get_File(FileName, 16));
+		UI_Legit_Armory_BodyAim_SNIPER = Variable::string_int_(System::Get_File(FileName, 17));
+		UI_Legit_Armory_Range_SNIPER = Variable::string_int_(System::Get_File(FileName, 18));
+		UI_Legit_Armory_Smooth_SNIPER = Variable::string_float_(System::Get_File(FileName, 19));
+		UI_Legit_Triggerbot = Variable::string_int_(System::Get_File(FileName, 20));
+		UI_Legit_Triggerbot_Key = Variable::string_int_(System::Get_File(FileName, 21));
+		UI_Legit_Triggerbot_AnyTarget = Variable::string_int_(System::Get_File(FileName, 22));
+		UI_Legit_Triggerbot_ShootDelay = Variable::string_int_(System::Get_File(FileName, 23));
+		UI_Legit_Triggerbot_ShootDuration = Variable::string_int_(System::Get_File(FileName, 24));
+		UI_Legit_PreciseAim = Variable::string_int_(System::Get_File(FileName, 25));
+		UI_Legit_PreciseAim_DefaultSensitivity = Variable::string_float_(System::Get_File(FileName, 26));
+		UI_Legit_PreciseAim_EnableSensitivity = Variable::string_float_(System::Get_File(FileName, 27));
+		UI_Legit_RemoveRecoil = Variable::string_int_(System::Get_File(FileName, 28));
+		UI_Legit_RemoveRecoil_HorizontalRepair = Variable::string_int_(System::Get_File(FileName, 29));
+		UI_Legit_RemoveRecoil_StartBullet = Variable::string_int_(System::Get_File(FileName, 30));
+		UI_Legit_Backtracking = Variable::string_int_(System::Get_File(FileName, 31));
+		UI_Legit_Backtracking_MaximumTime = Variable::string_int_(System::Get_File(FileName, 32));
+		UI_Visual_ESP = Variable::string_int_(System::Get_File(FileName, 33));
+		UI_Visual_ESP_Key = Variable::string_int_(System::Get_File(FileName, 34));
+		UI_Visual_ESP_Box = Variable::string_int_(System::Get_File(FileName, 35));
+		UI_Visual_ESP_Health = Variable::string_int_(System::Get_File(FileName, 36));
+		UI_Visual_ESP_ActiveWeapon = Variable::string_int_(System::Get_File(FileName, 37));
+		UI_Visual_ESP_Line = Variable::string_int_(System::Get_File(FileName, 38));
+		UI_Visual_ESP_Skeleton = Variable::string_int_(System::Get_File(FileName, 39));
+		UI_Visual_ESP_HeadDot = Variable::string_int_(System::Get_File(FileName, 40));
+		UI_Visual_ESP_State = Variable::string_int_(System::Get_File(FileName, 41));
+		UI_Visual_ESP_Name = Variable::string_int_(System::Get_File(FileName, 42));
+		UI_Visual_ESP_Drops = Variable::string_int_(System::Get_File(FileName, 43));
+		UI_Visual_ESP_OutFOV = Variable::string_int_(System::Get_File(FileName, 44));
+		UI_Visual_ESP_OutFOV_Size = Variable::string_int_(System::Get_File(FileName, 45));
+		UI_Visual_ESP_OutFOV_Radius = Variable::string_int_(System::Get_File(FileName, 46));
+		UI_Visual_ESP_CustomColor = Variable::string_int_(System::Get_File(FileName, 47));
+		UI_Visual_ESP_CustomColor_Color = { Variable::string_int_(System::Get_File(FileName, 48)),Variable::string_int_(System::Get_File(FileName, 49)),Variable::string_int_(System::Get_File(FileName, 50)),Variable::string_int_(System::Get_File(FileName, 51)) };
+		UI_Visual_ESP_DrawDelay = Variable::string_int_(System::Get_File(FileName, 52));
+		UI_Visual_Radar = Variable::string_int_(System::Get_File(FileName, 53));
+		UI_Visual_Radar_FollowAngle = Variable::string_int_(System::Get_File(FileName, 54));
+		UI_Visual_Radar_Range = Variable::string_float_(System::Get_File(FileName, 55));
+		UI_Visual_Radar_Size = Variable::string_int_(System::Get_File(FileName, 56));
+		UI_Visual_Radar_Alpha = Variable::string_int_(System::Get_File(FileName, 57));
+		UI_Visual_Radar_Pos = { Variable::string_int_(System::Get_File(FileName, 58)), Variable::string_int_(System::Get_File(FileName, 59)) };
+		UI_Misc_BunnyHop = Variable::string_int_(System::Get_File(FileName, 60));
+		UI_Misc_HitSound = Variable::string_int_(System::Get_File(FileName, 61));
+		UI_Misc_HitSound_Tone = Variable::string_int_(System::Get_File(FileName, 62));
+		UI_Misc_HitSound_Length = Variable::string_int_(System::Get_File(FileName, 63));
+		UI_Visual_HitMark = Variable::string_int_(System::Get_File(FileName, 64));
+		UI_Visual_HitMark_Damage = Variable::string_int_(System::Get_File(FileName, 65));
+		UI_Visual_HitMark_Range = Variable::string_int_(System::Get_File(FileName, 66));
+		UI_Visual_HitMark_Length = Variable::string_int_(System::Get_File(FileName, 67));
+		UI_Misc_AutoKnife = Variable::string_int_(System::Get_File(FileName, 68));
+		UI_Misc_AutoTaser = Variable::string_int_(System::Get_File(FileName, 69));
+		UI_Misc_AutoKnife_Key = Variable::string_int_(System::Get_File(FileName, 70));
+		UI_Misc_AutoTaser_Key = Variable::string_int_(System::Get_File(FileName, 71));
+		UI_Misc_Watermark = Variable::string_int_(System::Get_File(FileName, 72));
+		UI_Misc_SniperCrosshair = Variable::string_int_(System::Get_File(FileName, 73));
+		UI_Misc_TeamCheck = Variable::string_int_(System::Get_File(FileName, 74));
+		UI_Misc_LockGameWindow = Variable::string_int_(System::Get_File(FileName, 75));
+		UI_Debug_ShowDebugWindow = Variable::string_int_(System::Get_File(FileName, 76));
+		UI_Misc_Sonar = Variable::string_int_(System::Get_File(FileName, 77));
+		UI_Misc_Sonar_Key = Variable::string_int_(System::Get_File(FileName, 78));
+		UI_Misc_Sonar_Range_Far = Variable::string_int_(System::Get_File(FileName, 79));
+		UI_Misc_Sonar_Range_Near = Variable::string_int_(System::Get_File(FileName, 80));
+		UI_Setting_MenuKey = Variable::string_int_(System::Get_File(FileName, 81));
+		UI_Setting_CustomColor = Variable::string_int_(System::Get_File(FileName, 82));
+		UI_Setting_MainColor = { Variable::string_int_(System::Get_File(FileName, 83)),Variable::string_int_(System::Get_File(FileName, 84)),Variable::string_int_(System::Get_File(FileName, 85)),Variable::string_int_(System::Get_File(FileName, 86)) };
+		UI_Visual_HitMark_Color = { Variable::string_int_(System::Get_File(FileName, 87)),Variable::string_int_(System::Get_File(FileName, 88)),Variable::string_int_(System::Get_File(FileName, 89)) };
+		UI_Visual_HitMark_Thickness = Variable::string_int_(System::Get_File(FileName, 90));
+		UI_Legit_Triggerbot_ShootWhenAccurate = Variable::string_int_(System::Get_File(FileName, 91));
+		UI_Misc_AntiAFKKick = Variable::string_int_(System::Get_File(FileName, 92));
+		UI_Legit_MagnetAim = Variable::string_int_(System::Get_File(FileName, 93));
+		UI_Legit_MagnetAim_Smooth = Variable::string_float_(System::Get_File(FileName, 94));
+		UI_Legit_AdaptiveAimbot_InitialSmooth = Variable::string_float_(System::Get_File(FileName, 95));
+		UI_Misc_SniperCrosshair_Size = Variable::string_int_(System::Get_File(FileName, 96));
+		UI_Spoof_Spoof = Variable::string_int_(System::Get_File(FileName, 97));
+		UI_Spoof_AimbotTeam = Variable::string_int_(System::Get_File(FileName, 98));
+		UI_Spoof_AimbotTeam_Key = Variable::string_int_(System::Get_File(FileName, 99));
+		UI_Spoof_AimbotTeam_Smooth = Variable::string_float_(System::Get_File(FileName, 100));
+		UI_Spoof_IncreaseRecoil = Variable::string_int_(System::Get_File(FileName, 101));
+		UI_Spoof_IncreaseRecoil_Value = Variable::string_int_(System::Get_File(FileName, 102));
+		UI_Spoof_DropC4 = Variable::string_int_(System::Get_File(FileName, 103));
+		UI_Spoof_FakeAntiAim = Variable::string_int_(System::Get_File(FileName, 104));
+		UI_Spoof_FakeAntiAim_Key = Variable::string_int_(System::Get_File(FileName, 105));
+		UI_Spoof_KillDropSniper = Variable::string_int_(System::Get_File(FileName, 106));
+		UI_Setting_MenuAnimation = Variable::string_float_(System::Get_File(FileName, 107));
+		UI_Visual_HitMark_KillEffect = Variable::string_int_(System::Get_File(FileName, 108));
+		UI_Visual_HitMark_KillEffect_Quantity = Variable::string_int_(System::Get_File(FileName, 109));
+		UI_Visual_HitMark_KillEffect_Range = Variable::string_int_(System::Get_File(FileName, 110));
+		UI_Visual_ESP_Skeleton_Thickness = Variable::string_int_(System::Get_File(FileName, 111));
+		UI_Misc_ByPassOBS = Variable::string_int_(System::Get_File(FileName, 112));
+		UI_Misc_SavePerformance = Variable::string_int_(System::Get_File(FileName, 113));
+		UI_Legit_Aimbot_AutoScope = Variable::string_int_(System::Get_File(FileName, 114));
+		UI_Misc_NightMode = Variable::string_int_(System::Get_File(FileName, 115));
+		UI_Misc_NightMode_Alpha = Variable::string_int_(System::Get_File(FileName, 116));
+		UI_Spoof_LearnPlayer = Variable::string_int_(System::Get_File(FileName, 117));
+		UI_Spoof_LearnPlayer_Key = Variable::string_int_(System::Get_File(FileName, 118));
+		UI_Misc_AutoPeek = Variable::string_int_(System::Get_File(FileName, 119));
+		UI_Misc_AutoPeek_Key = Variable::string_int_(System::Get_File(FileName, 120));
+		UI_Spoof_FakeRageBot = Variable::string_int_(System::Get_File(FileName, 121));
+		UI_Spoof_FakeRageBot_Key = Variable::string_int_(System::Get_File(FileName, 122));
+		UI_Spoof_FakeRageBot_Target = Variable::string_int_(System::Get_File(FileName, 123));
+		UI_Misc_QuickStop = Variable::string_int_(System::Get_File(FileName, 124));
+		UI_Setting_MenuFont = System::Get_File(FileName, 125);
+		UI_Setting_MenuFontSize = Variable::string_int_(System::Get_File(FileName, 126));
+		UI_Misc_AutoKillCeasefire = Variable::string_int_(System::Get_File(FileName, 127));
+		UI_Misc_CursorESP = Variable::string_int_(System::Get_File(FileName, 128));
+		UI_Misc_CursorESP_Key = Variable::string_int_(System::Get_File(FileName, 129));
+		UI_Legit_Armory_HitSiteParser = Variable::string_int_(System::Get_File(FileName, 130));
+		UI_Visual_ESP_DrawAlpha = Variable::string_int_(System::Get_File(FileName, 131));
+		UI_Legit_Armory_BodyAim_SHOTGUN = Variable::string_int_(System::Get_File(FileName, 132));
+		UI_Legit_Armory_Range_SHOTGUN = Variable::string_int_(System::Get_File(FileName, 133));
+		UI_Legit_Armory_Smooth_SHOTGUN = Variable::string_float_(System::Get_File(FileName, 134));
+		UI_Legit_Armory_TriggerDistance_SHOTGUN = Variable::string_int_(System::Get_File(FileName, 135));
+		UI_Legit_MagnetAim_Range = Variable::string_int_(System::Get_File(FileName, 136));
+		UI_Legit_Backtracking_MinimumTime = Variable::string_int_(System::Get_File(FileName, 137));
+		UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(System::Get_File(FileName, 138));
+		UI_Visual_HitMark_CustomColor = Variable::string_int_(System::Get_File(FileName, 139));
+		UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(System::Get_File(FileName, 140));
+		UI_Legit_MagnetAim_OnlyHeadLine = Variable::string_int_(System::Get_File(FileName, 141));
+		UI_Misc_WalkingBot = Variable::string_int_(System::Get_File(FileName, 142));
+		UI_Misc_WalkingBot_Map = Variable::string_int_(System::Get_File(FileName, 143));
+	}
+	void LoadCloudPreset(string FileName = "", string NormalURL = "https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/") noexcept//加载特定Github云预设
+	{
+		System::URL_READ URL_PRESET = { "Cache_CloudPreset" };
+		if (URL_PRESET.StoreMem(NormalURL + FileName + (string)".cfg?raw=true"))
 		{
-			UI_Legit_Aimbot = Variable::string_int_(URL_CONFIG.Read(1));
-			UI_Legit_Aimbot_Key = Variable::string_int_(URL_CONFIG.Read(2));
-			UI_Legit_Aimbot_JudgingWall = Variable::string_int_(URL_CONFIG.Read(3));
-			UI_Legit_Aimbot_RemoveRecoil = Variable::string_int_(URL_CONFIG.Read(4));
-			UI_Legit_Aimbot_TriggerOnAim = Variable::string_int_(URL_CONFIG.Read(5));
-			UI_Legit_Aimbot_AutoShoot = Variable::string_int_(URL_CONFIG.Read(6));
-			UI_Legit_Aimbot_AutoStop = Variable::string_int_(URL_CONFIG.Read(7));
-			UI_Legit_Aimbot_AutoShootDelay = Variable::string_int_(URL_CONFIG.Read(8));
-			UI_Legit_AdaptiveAimbot = Variable::string_int_(URL_CONFIG.Read(9));
-			UI_Legit_Armory_ShowAimbotRange = Variable::string_int_(URL_CONFIG.Read(10));
-			UI_Legit_Armory_BodyAim_PISTOL = Variable::string_int_(URL_CONFIG.Read(11));
-			UI_Legit_Armory_Range_PISTOL = Variable::string_int_(URL_CONFIG.Read(12));
-			UI_Legit_Armory_Smooth_PISTOL = Variable::string_float_(URL_CONFIG.Read(13));
-			UI_Legit_Armory_BodyAim_RIFLE = Variable::string_int_(URL_CONFIG.Read(14));
-			UI_Legit_Armory_Range_RIFLE = Variable::string_int_(URL_CONFIG.Read(15));
-			UI_Legit_Armory_Smooth_RIFLE = Variable::string_float_(URL_CONFIG.Read(16));
-			UI_Legit_Armory_BodyAim_SNIPER = Variable::string_int_(URL_CONFIG.Read(17));
-			UI_Legit_Armory_Range_SNIPER = Variable::string_int_(URL_CONFIG.Read(18));
-			UI_Legit_Armory_Smooth_SNIPER = Variable::string_float_(URL_CONFIG.Read(19));
-			UI_Legit_Triggerbot = Variable::string_int_(URL_CONFIG.Read(20));
-			UI_Legit_Triggerbot_Key = Variable::string_int_(URL_CONFIG.Read(21));
-			UI_Legit_Triggerbot_AnyTarget = Variable::string_int_(URL_CONFIG.Read(22));
-			UI_Legit_Triggerbot_ShootDelay = Variable::string_int_(URL_CONFIG.Read(23));
-			UI_Legit_Triggerbot_ShootDuration = Variable::string_int_(URL_CONFIG.Read(24));
-			UI_Legit_PreciseAim = Variable::string_int_(URL_CONFIG.Read(25));
-			UI_Legit_PreciseAim_DefaultSensitivity = Variable::string_float_(URL_CONFIG.Read(26));
-			UI_Legit_PreciseAim_EnableSensitivity = Variable::string_float_(URL_CONFIG.Read(27));
-			UI_Legit_RemoveRecoil = Variable::string_int_(URL_CONFIG.Read(28));
-			UI_Legit_RemoveRecoil_HorizontalRepair = Variable::string_int_(URL_CONFIG.Read(29));
-			UI_Legit_RemoveRecoil_StartBullet = Variable::string_int_(URL_CONFIG.Read(30));
-			UI_Legit_Backtracking = Variable::string_int_(URL_CONFIG.Read(31));
-			UI_Legit_Backtracking_MaximumTime = Variable::string_int_(URL_CONFIG.Read(32));
-			UI_Visual_ESP = Variable::string_int_(URL_CONFIG.Read(33));
-			UI_Visual_ESP_Key = Variable::string_int_(URL_CONFIG.Read(34));
-			UI_Visual_ESP_Box = Variable::string_int_(URL_CONFIG.Read(35));
-			UI_Visual_ESP_Health = Variable::string_int_(URL_CONFIG.Read(36));
-			UI_Visual_ESP_ActiveWeapon = Variable::string_int_(URL_CONFIG.Read(37));
-			UI_Visual_ESP_Line = Variable::string_int_(URL_CONFIG.Read(38));
-			UI_Visual_ESP_Skeleton = Variable::string_int_(URL_CONFIG.Read(39));
-			UI_Visual_ESP_HeadDot = Variable::string_int_(URL_CONFIG.Read(40));
-			UI_Visual_ESP_State = Variable::string_int_(URL_CONFIG.Read(41));
-			UI_Visual_ESP_Name = Variable::string_int_(URL_CONFIG.Read(42));
-			UI_Visual_ESP_Drops = Variable::string_int_(URL_CONFIG.Read(43));
-			UI_Visual_ESP_OutFOV = Variable::string_int_(URL_CONFIG.Read(44));
-			UI_Visual_ESP_OutFOV_Size = Variable::string_int_(URL_CONFIG.Read(45));
-			UI_Visual_ESP_OutFOV_Radius = Variable::string_int_(URL_CONFIG.Read(46));
-			UI_Visual_ESP_CustomColor = Variable::string_int_(URL_CONFIG.Read(47));
-			UI_Visual_ESP_CustomColor_Color = { Variable::string_int_(URL_CONFIG.Read(48)),Variable::string_int_(URL_CONFIG.Read(49)),Variable::string_int_(URL_CONFIG.Read(50)),Variable::string_int_(URL_CONFIG.Read(51)) };
-			UI_Visual_ESP_DrawDelay = Variable::string_int_(URL_CONFIG.Read(52));
-			UI_Visual_Radar = Variable::string_int_(URL_CONFIG.Read(53));
-			UI_Visual_Radar_FollowAngle = Variable::string_int_(URL_CONFIG.Read(54));
-			UI_Visual_Radar_Range = Variable::string_float_(URL_CONFIG.Read(55));
-			UI_Visual_Radar_Size = Variable::string_int_(URL_CONFIG.Read(56));
-			UI_Visual_Radar_Alpha = Variable::string_int_(URL_CONFIG.Read(57));
-			UI_Visual_Radar_Pos = { Variable::string_int_(URL_CONFIG.Read(58)), Variable::string_int_(URL_CONFIG.Read(59)) };
-			UI_Misc_BunnyHop = Variable::string_int_(URL_CONFIG.Read(60));
-			UI_Misc_HitSound = Variable::string_int_(URL_CONFIG.Read(61));
-			UI_Misc_HitSound_Tone = Variable::string_int_(URL_CONFIG.Read(62));
-			UI_Misc_HitSound_Length = Variable::string_int_(URL_CONFIG.Read(63));
-			UI_Visual_HitMark = Variable::string_int_(URL_CONFIG.Read(64));
-			UI_Visual_HitMark_Damage = Variable::string_int_(URL_CONFIG.Read(65));
-			UI_Visual_HitMark_Range = Variable::string_int_(URL_CONFIG.Read(66));
-			UI_Visual_HitMark_Length = Variable::string_int_(URL_CONFIG.Read(67));
-			UI_Misc_AutoKnife = Variable::string_int_(URL_CONFIG.Read(68));
-			UI_Misc_AutoTaser = Variable::string_int_(URL_CONFIG.Read(69));
-			UI_Misc_AutoKnife_Key = Variable::string_int_(URL_CONFIG.Read(70));
-			UI_Misc_AutoTaser_Key = Variable::string_int_(URL_CONFIG.Read(71));
-			UI_Misc_Watermark = Variable::string_int_(URL_CONFIG.Read(72));
-			UI_Misc_SniperCrosshair = Variable::string_int_(URL_CONFIG.Read(73));
-			UI_Misc_TeamCheck = Variable::string_int_(URL_CONFIG.Read(74));
-			UI_Misc_LockGameWindow = Variable::string_int_(URL_CONFIG.Read(75));
-			UI_Debug_ShowDebugWindow = Variable::string_int_(URL_CONFIG.Read(76));
-			UI_Misc_Sonar = Variable::string_int_(URL_CONFIG.Read(77));
-			UI_Misc_Sonar_Key = Variable::string_int_(URL_CONFIG.Read(78));
-			UI_Misc_Sonar_Range_Far = Variable::string_int_(URL_CONFIG.Read(79));
-			UI_Misc_Sonar_Range_Near = Variable::string_int_(URL_CONFIG.Read(80));
-			UI_Misc_SelectedConfig = Variable::string_int_(URL_CONFIG.Read(81));
-			UI_Setting_MenuKey = Variable::string_int_(URL_CONFIG.Read(82));
-			UI_Setting_CustomColor = Variable::string_int_(URL_CONFIG.Read(83));
-			UI_Setting_MainColor = { Variable::string_int_(URL_CONFIG.Read(84)),Variable::string_int_(URL_CONFIG.Read(85)),Variable::string_int_(URL_CONFIG.Read(86)),Variable::string_int_(URL_CONFIG.Read(87)) };
-			UI_Visual_HitMark_Color = { Variable::string_int_(URL_CONFIG.Read(88)) ,Variable::string_int_(URL_CONFIG.Read(89)) ,Variable::string_int_(URL_CONFIG.Read(90)) };
-			UI_Visual_HitMark_Thickness = Variable::string_int_(URL_CONFIG.Read(91));
-			UI_Legit_Triggerbot_ShootWhenAccurate = Variable::string_int_(URL_CONFIG.Read(92));
-			UI_Misc_AntiAFKKick = Variable::string_int_(URL_CONFIG.Read(93));
-			UI_Legit_MagnetAim = Variable::string_int_(URL_CONFIG.Read(94));
-			UI_Legit_MagnetAim_Smooth = Variable::string_float_(URL_CONFIG.Read(95));
-			UI_Legit_AdaptiveAimbot_InitialSmooth = Variable::string_float_(URL_CONFIG.Read(96));
-			UI_Misc_SniperCrosshair_Size = Variable::string_int_(URL_CONFIG.Read(97));
-			UI_Spoof_Spoof = Variable::string_int_(URL_CONFIG.Read(98));
-			UI_Spoof_AimbotTeam = Variable::string_int_(URL_CONFIG.Read(99));
-			UI_Spoof_AimbotTeam_Key = Variable::string_int_(URL_CONFIG.Read(100));
-			UI_Spoof_AimbotTeam_Smooth = Variable::string_float_(URL_CONFIG.Read(101));
-			UI_Spoof_IncreaseRecoil = Variable::string_int_(URL_CONFIG.Read(102));
-			UI_Spoof_IncreaseRecoil_Value = Variable::string_int_(URL_CONFIG.Read(103));
-			UI_Spoof_DropC4 = Variable::string_int_(URL_CONFIG.Read(104));
-			UI_Spoof_FakeAntiAim = Variable::string_int_(URL_CONFIG.Read(105));
-			UI_Spoof_FakeAntiAim_Key = Variable::string_int_(URL_CONFIG.Read(106));
-			UI_Spoof_KillDropSniper = Variable::string_int_(URL_CONFIG.Read(107));
-			UI_Setting_MenuAnimation = Variable::string_float_(URL_CONFIG.Read(108));
-			UI_Visual_HitMark_KillEffect = Variable::string_int_(URL_CONFIG.Read(109));
-			UI_Visual_HitMark_KillEffect_Quantity = Variable::string_int_(URL_CONFIG.Read(110));
-			UI_Visual_HitMark_KillEffect_Range = Variable::string_int_(URL_CONFIG.Read(111));
-			UI_Visual_ESP_Skeleton_Thickness = Variable::string_int_(URL_CONFIG.Read(112));
-			UI_Misc_ByPassOBS = Variable::string_int_(URL_CONFIG.Read(113));
-			UI_Misc_SavePerformance = Variable::string_int_(URL_CONFIG.Read(114));
-			UI_Legit_Aimbot_AutoScope = Variable::string_int_(URL_CONFIG.Read(115));
-			UI_Misc_NightMode = Variable::string_int_(URL_CONFIG.Read(116));
-			UI_Misc_NightMode_Alpha = Variable::string_int_(URL_CONFIG.Read(117));
-			UI_Spoof_LearnPlayer = Variable::string_int_(URL_CONFIG.Read(118));
-			UI_Spoof_LearnPlayer_Key = Variable::string_int_(URL_CONFIG.Read(119));
-			UI_Misc_AutoPeek = Variable::string_int_(URL_CONFIG.Read(120));
-			UI_Misc_AutoPeek_Key = Variable::string_int_(URL_CONFIG.Read(121));
-			UI_Spoof_FakeRageBot = Variable::string_int_(URL_CONFIG.Read(122));
-			UI_Spoof_FakeRageBot_Key = Variable::string_int_(URL_CONFIG.Read(123));
-			UI_Spoof_FakeRageBot_Target = Variable::string_int_(URL_CONFIG.Read(124));
-			UI_Misc_QuickStop = Variable::string_int_(URL_CONFIG.Read(125));
-			UI_Setting_MenuFont = URL_CONFIG.Read(126);
-			UI_Setting_MenuFontSize = Variable::string_int_(URL_CONFIG.Read(127));
-			UI_Misc_AutoKillCeasefire = Variable::string_int_(URL_CONFIG.Read(128));
-			UI_Misc_CursorESP = Variable::string_int_(URL_CONFIG.Read(129));
-			UI_Misc_CursorESP_Key = Variable::string_int_(URL_CONFIG.Read(130));
-			UI_Legit_Armory_HitSiteParser = Variable::string_int_(URL_CONFIG.Read(131));
-			UI_Visual_ESP_DrawAlpha = Variable::string_int_(URL_CONFIG.Read(132));
-			UI_Legit_Armory_BodyAim_SHOTGUN = Variable::string_int_(URL_CONFIG.Read(133));
-			UI_Legit_Armory_Range_SHOTGUN = Variable::string_int_(URL_CONFIG.Read(134));
-			UI_Legit_Armory_Smooth_SHOTGUN = Variable::string_float_(URL_CONFIG.Read(135));
-			UI_Legit_Armory_TriggerDistance_SHOTGUN = Variable::string_int_(URL_CONFIG.Read(136));
-			UI_Legit_MagnetAim_Range = Variable::string_int_(URL_CONFIG.Read(137));
-			UI_Legit_Backtracking_MinimumTime = Variable::string_int_(URL_CONFIG.Read(138));
-			UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(URL_CONFIG.Read(139));
-			UI_Visual_HitMark_CustomColor = Variable::string_int_(URL_CONFIG.Read(140));
-			UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(URL_CONFIG.Read(141));
-			UI_Legit_MagnetAim_OnlyHeadLine = Variable::string_int_(URL_CONFIG.Read(142));
-			UI_Misc_WalkingBot = Variable::string_int_(URL_CONFIG.Read(143));
-			UI_Misc_WalkingBot_Map = Variable::string_int_(URL_CONFIG.Read(144));
-			URL_CONFIG.Release();
+			UI_Legit_Aimbot = Variable::string_int_(URL_PRESET.Read(1));
+			UI_Legit_Aimbot_Key = Variable::string_int_(URL_PRESET.Read(2));
+			UI_Legit_Aimbot_JudgingWall = Variable::string_int_(URL_PRESET.Read(3));
+			UI_Legit_Aimbot_RemoveRecoil = Variable::string_int_(URL_PRESET.Read(4));
+			UI_Legit_Aimbot_TriggerOnAim = Variable::string_int_(URL_PRESET.Read(5));
+			UI_Legit_Aimbot_AutoShoot = Variable::string_int_(URL_PRESET.Read(6));
+			UI_Legit_Aimbot_AutoStop = Variable::string_int_(URL_PRESET.Read(7));
+			UI_Legit_Aimbot_AutoShootDelay = Variable::string_int_(URL_PRESET.Read(8));
+			UI_Legit_AdaptiveAimbot = Variable::string_int_(URL_PRESET.Read(9));
+			UI_Legit_Armory_ShowAimbotRange = Variable::string_int_(URL_PRESET.Read(10));
+			UI_Legit_Armory_BodyAim_PISTOL = Variable::string_int_(URL_PRESET.Read(11));
+			UI_Legit_Armory_Range_PISTOL = Variable::string_int_(URL_PRESET.Read(12));
+			UI_Legit_Armory_Smooth_PISTOL = Variable::string_float_(URL_PRESET.Read(13));
+			UI_Legit_Armory_BodyAim_RIFLE = Variable::string_int_(URL_PRESET.Read(14));
+			UI_Legit_Armory_Range_RIFLE = Variable::string_int_(URL_PRESET.Read(15));
+			UI_Legit_Armory_Smooth_RIFLE = Variable::string_float_(URL_PRESET.Read(16));
+			UI_Legit_Armory_BodyAim_SNIPER = Variable::string_int_(URL_PRESET.Read(17));
+			UI_Legit_Armory_Range_SNIPER = Variable::string_int_(URL_PRESET.Read(18));
+			UI_Legit_Armory_Smooth_SNIPER = Variable::string_float_(URL_PRESET.Read(19));
+			UI_Legit_Triggerbot = Variable::string_int_(URL_PRESET.Read(20));
+			UI_Legit_Triggerbot_Key = Variable::string_int_(URL_PRESET.Read(21));
+			UI_Legit_Triggerbot_AnyTarget = Variable::string_int_(URL_PRESET.Read(22));
+			UI_Legit_Triggerbot_ShootDelay = Variable::string_int_(URL_PRESET.Read(23));
+			UI_Legit_Triggerbot_ShootDuration = Variable::string_int_(URL_PRESET.Read(24));
+			UI_Legit_PreciseAim = Variable::string_int_(URL_PRESET.Read(25));
+			UI_Legit_PreciseAim_DefaultSensitivity = Variable::string_float_(URL_PRESET.Read(26));
+			UI_Legit_PreciseAim_EnableSensitivity = Variable::string_float_(URL_PRESET.Read(27));
+			UI_Legit_RemoveRecoil = Variable::string_int_(URL_PRESET.Read(28));
+			UI_Legit_RemoveRecoil_HorizontalRepair = Variable::string_int_(URL_PRESET.Read(29));
+			UI_Legit_RemoveRecoil_StartBullet = Variable::string_int_(URL_PRESET.Read(30));
+			UI_Legit_Backtracking = Variable::string_int_(URL_PRESET.Read(31));
+			UI_Legit_Backtracking_MaximumTime = Variable::string_int_(URL_PRESET.Read(32));
+			UI_Visual_ESP = Variable::string_int_(URL_PRESET.Read(33));
+			UI_Visual_ESP_Key = Variable::string_int_(URL_PRESET.Read(34));
+			UI_Visual_ESP_Box = Variable::string_int_(URL_PRESET.Read(35));
+			UI_Visual_ESP_Health = Variable::string_int_(URL_PRESET.Read(36));
+			UI_Visual_ESP_ActiveWeapon = Variable::string_int_(URL_PRESET.Read(37));
+			UI_Visual_ESP_Line = Variable::string_int_(URL_PRESET.Read(38));
+			UI_Visual_ESP_Skeleton = Variable::string_int_(URL_PRESET.Read(39));
+			UI_Visual_ESP_HeadDot = Variable::string_int_(URL_PRESET.Read(40));
+			UI_Visual_ESP_State = Variable::string_int_(URL_PRESET.Read(41));
+			UI_Visual_ESP_Name = Variable::string_int_(URL_PRESET.Read(42));
+			UI_Visual_ESP_Drops = Variable::string_int_(URL_PRESET.Read(43));
+			UI_Visual_ESP_OutFOV = Variable::string_int_(URL_PRESET.Read(44));
+			UI_Visual_ESP_OutFOV_Size = Variable::string_int_(URL_PRESET.Read(45));
+			UI_Visual_ESP_OutFOV_Radius = Variable::string_int_(URL_PRESET.Read(46));
+			UI_Visual_ESP_CustomColor = Variable::string_int_(URL_PRESET.Read(47));
+			UI_Visual_ESP_CustomColor_Color = { Variable::string_int_(URL_PRESET.Read(48)),Variable::string_int_(URL_PRESET.Read(49)),Variable::string_int_(URL_PRESET.Read(50)),Variable::string_int_(URL_PRESET.Read(51)) };
+			UI_Visual_ESP_DrawDelay = Variable::string_int_(URL_PRESET.Read(52));
+			UI_Visual_Radar = Variable::string_int_(URL_PRESET.Read(53));
+			UI_Visual_Radar_FollowAngle = Variable::string_int_(URL_PRESET.Read(54));
+			UI_Visual_Radar_Range = Variable::string_float_(URL_PRESET.Read(55));
+			UI_Visual_Radar_Size = Variable::string_int_(URL_PRESET.Read(56));
+			UI_Visual_Radar_Alpha = Variable::string_int_(URL_PRESET.Read(57));
+			UI_Visual_Radar_Pos = { Variable::string_int_(URL_PRESET.Read(58)), Variable::string_int_(URL_PRESET.Read(59)) };
+			UI_Misc_BunnyHop = Variable::string_int_(URL_PRESET.Read(60));
+			UI_Misc_HitSound = Variable::string_int_(URL_PRESET.Read(61));
+			UI_Misc_HitSound_Tone = Variable::string_int_(URL_PRESET.Read(62));
+			UI_Misc_HitSound_Length = Variable::string_int_(URL_PRESET.Read(63));
+			UI_Visual_HitMark = Variable::string_int_(URL_PRESET.Read(64));
+			UI_Visual_HitMark_Damage = Variable::string_int_(URL_PRESET.Read(65));
+			UI_Visual_HitMark_Range = Variable::string_int_(URL_PRESET.Read(66));
+			UI_Visual_HitMark_Length = Variable::string_int_(URL_PRESET.Read(67));
+			UI_Misc_AutoKnife = Variable::string_int_(URL_PRESET.Read(68));
+			UI_Misc_AutoTaser = Variable::string_int_(URL_PRESET.Read(69));
+			UI_Misc_AutoKnife_Key = Variable::string_int_(URL_PRESET.Read(70));
+			UI_Misc_AutoTaser_Key = Variable::string_int_(URL_PRESET.Read(71));
+			UI_Misc_Watermark = Variable::string_int_(URL_PRESET.Read(72));
+			UI_Misc_SniperCrosshair = Variable::string_int_(URL_PRESET.Read(73));
+			UI_Misc_TeamCheck = Variable::string_int_(URL_PRESET.Read(74));
+			UI_Misc_LockGameWindow = Variable::string_int_(URL_PRESET.Read(75));
+			UI_Debug_ShowDebugWindow = Variable::string_int_(URL_PRESET.Read(76));
+			UI_Misc_Sonar = Variable::string_int_(URL_PRESET.Read(77));
+			UI_Misc_Sonar_Key = Variable::string_int_(URL_PRESET.Read(78));
+			UI_Misc_Sonar_Range_Far = Variable::string_int_(URL_PRESET.Read(79));
+			UI_Misc_Sonar_Range_Near = Variable::string_int_(URL_PRESET.Read(80));
+			UI_Setting_MenuKey = Variable::string_int_(URL_PRESET.Read(81));
+			UI_Setting_CustomColor = Variable::string_int_(URL_PRESET.Read(82));
+			UI_Setting_MainColor = { Variable::string_int_(URL_PRESET.Read(83)),Variable::string_int_(URL_PRESET.Read(84)),Variable::string_int_(URL_PRESET.Read(85)),Variable::string_int_(URL_PRESET.Read(86)) };
+			UI_Visual_HitMark_Color = { Variable::string_int_(URL_PRESET.Read(87)) ,Variable::string_int_(URL_PRESET.Read(88)) ,Variable::string_int_(URL_PRESET.Read(89)) };
+			UI_Visual_HitMark_Thickness = Variable::string_int_(URL_PRESET.Read(90));
+			UI_Legit_Triggerbot_ShootWhenAccurate = Variable::string_int_(URL_PRESET.Read(91));
+			UI_Misc_AntiAFKKick = Variable::string_int_(URL_PRESET.Read(92));
+			UI_Legit_MagnetAim = Variable::string_int_(URL_PRESET.Read(93));
+			UI_Legit_MagnetAim_Smooth = Variable::string_float_(URL_PRESET.Read(94));
+			UI_Legit_AdaptiveAimbot_InitialSmooth = Variable::string_float_(URL_PRESET.Read(95));
+			UI_Misc_SniperCrosshair_Size = Variable::string_int_(URL_PRESET.Read(96));
+			UI_Spoof_Spoof = Variable::string_int_(URL_PRESET.Read(97));
+			UI_Spoof_AimbotTeam = Variable::string_int_(URL_PRESET.Read(98));
+			UI_Spoof_AimbotTeam_Key = Variable::string_int_(URL_PRESET.Read(99));
+			UI_Spoof_AimbotTeam_Smooth = Variable::string_float_(URL_PRESET.Read(100));
+			UI_Spoof_IncreaseRecoil = Variable::string_int_(URL_PRESET.Read(101));
+			UI_Spoof_IncreaseRecoil_Value = Variable::string_int_(URL_PRESET.Read(102));
+			UI_Spoof_DropC4 = Variable::string_int_(URL_PRESET.Read(103));
+			UI_Spoof_FakeAntiAim = Variable::string_int_(URL_PRESET.Read(104));
+			UI_Spoof_FakeAntiAim_Key = Variable::string_int_(URL_PRESET.Read(105));
+			UI_Spoof_KillDropSniper = Variable::string_int_(URL_PRESET.Read(106));
+			UI_Setting_MenuAnimation = Variable::string_float_(URL_PRESET.Read(107));
+			UI_Visual_HitMark_KillEffect = Variable::string_int_(URL_PRESET.Read(108));
+			UI_Visual_HitMark_KillEffect_Quantity = Variable::string_int_(URL_PRESET.Read(109));
+			UI_Visual_HitMark_KillEffect_Range = Variable::string_int_(URL_PRESET.Read(110));
+			UI_Visual_ESP_Skeleton_Thickness = Variable::string_int_(URL_PRESET.Read(111));
+			UI_Misc_ByPassOBS = Variable::string_int_(URL_PRESET.Read(112));
+			UI_Misc_SavePerformance = Variable::string_int_(URL_PRESET.Read(113));
+			UI_Legit_Aimbot_AutoScope = Variable::string_int_(URL_PRESET.Read(114));
+			UI_Misc_NightMode = Variable::string_int_(URL_PRESET.Read(115));
+			UI_Misc_NightMode_Alpha = Variable::string_int_(URL_PRESET.Read(116));
+			UI_Spoof_LearnPlayer = Variable::string_int_(URL_PRESET.Read(117));
+			UI_Spoof_LearnPlayer_Key = Variable::string_int_(URL_PRESET.Read(118));
+			UI_Misc_AutoPeek = Variable::string_int_(URL_PRESET.Read(119));
+			UI_Misc_AutoPeek_Key = Variable::string_int_(URL_PRESET.Read(120));
+			UI_Spoof_FakeRageBot = Variable::string_int_(URL_PRESET.Read(121));
+			UI_Spoof_FakeRageBot_Key = Variable::string_int_(URL_PRESET.Read(122));
+			UI_Spoof_FakeRageBot_Target = Variable::string_int_(URL_PRESET.Read(123));
+			UI_Misc_QuickStop = Variable::string_int_(URL_PRESET.Read(124));
+			UI_Setting_MenuFont = URL_PRESET.Read(125);
+			UI_Setting_MenuFontSize = Variable::string_int_(URL_PRESET.Read(126));
+			UI_Misc_AutoKillCeasefire = Variable::string_int_(URL_PRESET.Read(127));
+			UI_Misc_CursorESP = Variable::string_int_(URL_PRESET.Read(128));
+			UI_Misc_CursorESP_Key = Variable::string_int_(URL_PRESET.Read(129));
+			UI_Legit_Armory_HitSiteParser = Variable::string_int_(URL_PRESET.Read(130));
+			UI_Visual_ESP_DrawAlpha = Variable::string_int_(URL_PRESET.Read(131));
+			UI_Legit_Armory_BodyAim_SHOTGUN = Variable::string_int_(URL_PRESET.Read(132));
+			UI_Legit_Armory_Range_SHOTGUN = Variable::string_int_(URL_PRESET.Read(133));
+			UI_Legit_Armory_Smooth_SHOTGUN = Variable::string_float_(URL_PRESET.Read(134));
+			UI_Legit_Armory_TriggerDistance_SHOTGUN = Variable::string_int_(URL_PRESET.Read(135));
+			UI_Legit_MagnetAim_Range = Variable::string_int_(URL_PRESET.Read(136));
+			UI_Legit_Backtracking_MinimumTime = Variable::string_int_(URL_PRESET.Read(137));
+			UI_Legit_RemoveRecoil_Sensitive = Variable::string_int_(URL_PRESET.Read(138));
+			UI_Visual_HitMark_CustomColor = Variable::string_int_(URL_PRESET.Read(139));
+			UI_Legit_Aimbot_AutoShootHitChance = Variable::string_int_(URL_PRESET.Read(140));
+			UI_Legit_MagnetAim_OnlyHeadLine = Variable::string_int_(URL_PRESET.Read(141));
+			UI_Misc_WalkingBot = Variable::string_int_(URL_PRESET.Read(142));
+			UI_Misc_WalkingBot_Map = Variable::string_int_(URL_PRESET.Read(143));
+			URL_PRESET.Release();
 		}
 	}
 	//----------------------------------------------------------------------------------------------
@@ -576,7 +706,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_5>(Block_Hitmark, 9, "范围UTT", 10, 500, UI_Visual_HitMark_KillEffect_Range);
 				const auto Block_Radar = GUI_VAR.GUI_Block(580, 360, 190, "雷达UTT");
 				GUI_VAR.GUI_Checkbox(Block_Radar, 1, "启用UTT", UI_Visual_Radar);
-				GUI_VAR.GUI_Button_Small({ Block_Radar.x + 10,Block_Radar.y }, 2, UI_Visual_Radar_Show);
 				GUI_VAR.GUI_Checkbox({ Block_Radar.x + 20,Block_Radar.y }, 2, "固定朝向角度UTT", UI_Visual_Radar_FollowAngle);
 				GUI_VAR.GUI_Slider<float, class CLASS_Block_Radar_1>(Block_Radar, 3, "范围UTT", 0.2, 40, UI_Visual_Radar_Range);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_2>(Block_Radar, 4, "大小UTT", 150, 500, UI_Visual_Radar_Size, "px");
@@ -615,22 +744,29 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_11>(Block_Misc, 22, UI_Misc_CursorESP_Key);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 23, "自动行走机器人UTT", UI_Misc_WalkingBot);
 				string MapName = "";
-				if (UI_Misc_WalkingBot_Map == 0)MapName = "Dust2";
-				else if (UI_Misc_WalkingBot_Map == 1)MapName = "Mirage";
-				else if (UI_Misc_WalkingBot_Map == 2)MapName = "Inferno";
-				else if (UI_Misc_WalkingBot_Map == 3)MapName = "Ancient";
-				else if (UI_Misc_WalkingBot_Map == 4)MapName = "Anubis";
-				else if (UI_Misc_WalkingBot_Map == 5)MapName = "Overpass";
+				if (UI_Misc_WalkingBot_Map == 0)MapName = "Dust2"; else if (UI_Misc_WalkingBot_Map == 1)MapName = "Mirage";
+				else if (UI_Misc_WalkingBot_Map == 2)MapName = "Inferno"; else if (UI_Misc_WalkingBot_Map == 3)MapName = "Ancient";
+				else if (UI_Misc_WalkingBot_Map == 4)MapName = "Anubis"; else if (UI_Misc_WalkingBot_Map == 5)MapName = "Overpass";
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_12>(Block_Misc, 24, "地图: UTT" + MapName, 0, 5, UI_Misc_WalkingBot_Map);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 25, "判断队友UTT", UI_Misc_TeamCheck, { 200,200,150 });
 				const auto Block_Resolution = GUI_VAR.GUI_Block(580, 30, 160, "屏幕像素UTT");
-				GUI_VAR.GUI_Button(Block_Resolution, 1, "2560 * 1440", UI_Visual_Res_2560, 78);
-				GUI_VAR.GUI_Button(Block_Resolution, 2, "1920 * 1080", UI_Visual_Res_1920, 78);
-				GUI_VAR.GUI_Button(Block_Resolution, 3, "1280 * 1024", UI_Visual_Res_1280, 78);
-				GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", UI_Visual_Res_960, 83);
-				const auto Block_CloudConfig = GUI_VAR.GUI_Block(580, 210, 180, "云端配置UTT");
-				GUI_VAR.GUI_Button(Block_CloudConfig, 1, "加载选定配置UTT", UI_Misc_LoadCloudConfig, 75);
-				GUI_VAR.GUI_List(Block_CloudConfig, 2, { "合法UTT","暴力UTT","合法 - 无视觉UTT","跑图机器人UTT" }, UI_Misc_SelectedConfig);
+				static BOOL Reslution_2560, Reslution_1920, Reslution_1280, Reslution_960;
+				GUI_VAR.GUI_Button(Block_Resolution, 1, "2560 * 1440", Reslution_2560, 78); if (Reslution_2560)Window::Set_Resolution(2560, 1440);
+				GUI_VAR.GUI_Button(Block_Resolution, 2, "1920 * 1080", Reslution_1920, 78); if (Reslution_1920)Window::Set_Resolution(1920, 1080);
+				GUI_VAR.GUI_Button(Block_Resolution, 3, "1280 * 1024", Reslution_1280, 78); if (Reslution_1280)Window::Set_Resolution(1280, 1024);
+				GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", Reslution_960, 83); if (Reslution_960)Window::Set_Resolution(1280, 960);
+				const auto Block_CloudPreset = GUI_VAR.GUI_Block(580, 210, 180, "云端预设UTT");
+				static BOOL Load_CloudPreset; int SelectedCloudPreset; GUI_VAR.GUI_Button(Block_CloudPreset, 1, "加载选定预设UTT", Load_CloudPreset, 70);
+				GUI_VAR.GUI_List(Block_CloudPreset, 2, { "合法UTT","暴力UTT","合法 - 无视觉UTT","跑图机器人UTT" }, SelectedCloudPreset);
+				if (Load_CloudPreset)//加载Github上的云预设
+				{
+					const auto Preset_ID = SelectedCloudPreset;//防止套用的预设套写变量
+					if (SelectedCloudPreset == 0)LoadCloudPreset("Legit");
+					else if (SelectedCloudPreset == 1)LoadCloudPreset("Rage");
+					else if (SelectedCloudPreset == 2)LoadCloudPreset("Legit No Visual");
+					else if (SelectedCloudPreset == 3)LoadCloudPreset("Robot");
+					SelectedCloudPreset = 0;//归位选择
+				}
 				auto Block_Spoof = GUI_VAR.GUI_Block(580, 410, 370, "恶搞UTT");
 				GUI_VAR.GUI_Checkbox(Block_Spoof, 1, "启用UTT", UI_Spoof_Spoof, { 200,200,150 });
 				GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 2, "瞄准队友UTT", UI_Spoof_AimbotTeam);
@@ -659,85 +795,44 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Text(Block_About, 2, "版本: UTT" + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 3, "发布日期: UTT" + Rensen_ReleaseDate, { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 4, "作者: https://github.com/CosllyUTT", { 100,100,100 });
-				GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OpenLinkAuthor);
 				GUI_VAR.GUI_Text(Block_About, 5, "交流QQ群: 486214313UTT", { 100,100,100 });
-				GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 5, UI_Setting_AddQQGroupChat);
 				GUI_VAR.GUI_Text(Block_About, 6, "中国内地用户检查更新时需要使用VPN (确保可以连接Github)UTT", { 100,100,100 });
-				GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
-				const auto Block_Menu = GUI_VAR.GUI_Block(150, 270, 280, "菜单UTT");
+				static BOOL OpenGithubURL, OpenQQGroupChat;
+				GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, OpenGithubURL);
+				GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 5, OpenQQGroupChat);
+				if (OpenGithubURL)System::Open_Website("https://github.com/Coslly");//打开作者Github主题页面
+				if (OpenQQGroupChat)System::Open_Website("https://qm.qq.com/q/67Ed5be1tS");//打开QQ加入群聊链接
+				const auto Block_Menu = GUI_VAR.GUI_Block(150, 270, 250, "菜单UTT");
 				GUI_VAR.GUI_Text(Block_Menu, 1, "菜单按键UTT");
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
 				GUI_VAR.GUI_Checkbox(Block_Menu, 2, "自定义菜单主题色UTT", UI_Setting_CustomColor);
 				GUI_VAR.GUI_ColorSelector_a(Block_Menu, 2, UI_Setting_MainColor);
 				if (UI_Setting_MainColor.a < 100)UI_Setting_MainColor.a = 100;
 				GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "菜单动画平滑度UTT", 1.2, 10, UI_Setting_MenuAnimation);
-				GUI_VAR.GUI_Button(Block_Menu, 4, "保存本地配置UTT", UI_Setting_SaveLocalConfig, 75);
-				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 5, "关闭 CSUTT", UI_Setting_QuitCS, 90);
-				else GUI_VAR.GUI_Button(Block_Menu, 5, "打开 CSUTT", UI_Setting_StartCS, 90);
-				GUI_VAR.GUI_Button(Block_Menu, 6, "Github 项目链接UTT", UI_Setting_GithubRepositories, 70);
-				GUI_VAR.GUI_Button(Block_Menu, 7, "重启菜单UTT", UI_Setting_RestartMenu, 90);
-				GUI_VAR.GUI_Button(Block_Menu, 8, "关闭菜单UTT", UI_Setting_Unload, 90);
-				GUI_WindowSize = { 580,580 };
+				static BOOL StartCS, QuitCS;
+				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 4, "关闭 CSUTT", QuitCS, 90);
+				else GUI_VAR.GUI_Button(Block_Menu, 4, "打开 CSUTT", StartCS, 90);
+				if (StartCS && CS2_MEM.Get_ProcessHWND() == 0)if (CS2_MEM.Get_ProcessHWND() == 0)System::Open_Website("steam://rungameid/730");//启动CS
+				else if (QuitCS && CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());//关闭CS
+				static BOOL GithubRepositories; GUI_VAR.GUI_Button(Block_Menu, 5, "Github 项目链接UTT", GithubRepositories, 70);
+				if (GithubRepositories)System::Open_Website("https://github.com/Coslly/Rensen");//打开Github项目地址
+				static BOOL RestartMenu; GUI_VAR.GUI_Button(Block_Menu, 6, "重启菜单UTT", RestartMenu, 90);
+				if (RestartMenu) { GUI_VAR.Window_SetTitle("Rensen - Restarting"); System::Self_Restart(); }//重启菜单
+				static BOOL UnloadMenu; GUI_VAR.GUI_Button(Block_Menu, 7, "关闭菜单UTT", UnloadMenu, 90);
+				if (UnloadMenu)exit(0);//关闭菜单
+				const auto Block_Presets = GUI_VAR.GUI_Block(580, 30, 490, "本地预设UTT", 320);
+				static int SelectedPresetID = 0; static vector<string> FileList = System::Traversal_FindFile("*", ".cfg", true, "UTT"); static string CreatePresetName; static BOOL Create, Load, Save, Delete;
+				GUI_VAR.GUI_List(Block_Presets, 1, FileList, SelectedPresetID, 11);
+				GUI_VAR.GUI_Button(Block_Presets, 11, "加载UTT", Load, 95); if (Load && SelectedPresetID != -1)LoadPreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
+				GUI_VAR.GUI_Button(Block_Presets, 12, "保存UTT", Save, 95); if (Save && SelectedPresetID != -1)SavePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
+				GUI_VAR.GUI_InputText<class CLASS_Block_Presets_1>(Block_Presets, 13, CreatePresetName, "创建预设名称UTT");
+				GUI_VAR.GUI_Button(Block_Presets, 14, "创建UTT", Create, 95); if (Create) { CreatePreset(CreatePresetName); CreatePresetName = ""; }
+				GUI_VAR.GUI_Button(Block_Presets, 15, "删除UTT", Delete, 95); if (Delete && SelectedPresetID != -1)DeletePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
+				if (Create || Load || Save || Delete)FileList = System::Traversal_FindFile("*", ".cfg", true, "UTT");//刷新文件列表
+				GUI_WindowSize = { 930,550 };
 			}
 			GUI_VAR.Draw_GUI(Debug_Control_Var::Checkbox_2);//最终绘制GUI画板
 			if (UI_Misc_SavePerformance)Sleep(5);//节省电脑占用性能
-			if (true)//按钮事件接收
-			{
-				if (UI_Visual_Res_2560)Window::Set_Resolution(2560, 1440);//设置显示器像素
-				else if (UI_Visual_Res_1920)Window::Set_Resolution(1920, 1080);
-				else if (UI_Visual_Res_1280)Window::Set_Resolution(1280, 1024);
-				else if (UI_Visual_Res_960)Window::Set_Resolution(1280, 960);
-				if (UI_Misc_LoadCloudConfig)//加载Github上的云参数
-				{
-					const auto Config_ID = UI_Misc_SelectedConfig;//防止套用的参数套写变量
-					if (UI_Misc_SelectedConfig == 0)LoadCloudConfig("Legit");
-					else if (UI_Misc_SelectedConfig == 1)LoadCloudConfig("Rage");
-					else if (UI_Misc_SelectedConfig == 2)LoadCloudConfig("Legit No Visual");
-					else if (UI_Misc_SelectedConfig == 3)LoadCloudConfig("Robot");
-					System::Log("Misc: LoadCloudConfig [" + to_string(Config_ID) + "]");
-				}
-				if (UI_Setting_OpenLinkAuthor)//打开作者Github主题页面
-				{
-					System::Open_Website("https://github.com/Coslly");
-					System::Log("Setting: OpenGithubURL");
-				}
-				if (UI_Setting_AddQQGroupChat)//加入QQ群聊
-				{
-					System::Open_Website("https://qm.qq.com/q/67Ed5be1tS");
-					System::Log("Setting: AddQQGroupChat");
-				}
-				if (UI_Setting_SaveLocalConfig || (System::Get_Key(VK_LCONTROL) && System::Get_Key_Onest(0x53)))//保存当前所设置的参数
-				{
-					SaveLocalConfig();
-					System::Log("Setting: SaveConfig");
-				}
-				if (UI_Setting_StartCS)//启动CS
-				{
-					if (!CS2_MEM.Get_ProcessHWND())System::Open_Website("steam://rungameid/730");
-					System::Log("Setting: StartCS");
-				}
-				else if (UI_Setting_QuitCS)//关闭CS
-				{
-					if (CS2_MEM.Get_ProcessHWND())Window::Kill_Window(CS2_MEM.Get_ProcessHWND());
-					System::Log("Setting: QuitCS");
-				}
-				if (UI_Setting_GithubRepositories)//打开Github项目地址
-				{
-					System::Open_Website("https://github.com/Coslly/Rensen");
-					System::Log("Setting: GithubRepositories");
-				}
-				if (UI_Setting_RestartMenu)//重启菜单
-				{
-					System::Log("Setting: RestartMenu");
-					GUI_VAR.Window_SetTitle("Rensen ");//防止被防多开检测到
-					System::Self_Restart();
-				}
-				if (UI_Setting_Unload)//关闭菜单
-				{
-					System::Log("Setting: Unload");
-					exit(0);
-				}
-			}
 		}
 	}
 	while (true)//默认英文版菜单
@@ -860,7 +955,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Hitmark_5>(Block_Hitmark, 9, "Range", 10, 500, UI_Visual_HitMark_KillEffect_Range);
 				const auto Block_Radar = GUI_VAR.GUI_Block(580, 360, 190, "Radar");
 				GUI_VAR.GUI_Checkbox(Block_Radar, 1, "Enabled", UI_Visual_Radar);
-				GUI_VAR.GUI_Button_Small({ Block_Radar.x + 10,Block_Radar.y }, 2, UI_Visual_Radar_Show);
 				GUI_VAR.GUI_Checkbox({ Block_Radar.x + 20,Block_Radar.y }, 2, "Follow angle", UI_Visual_Radar_FollowAngle);
 				GUI_VAR.GUI_Slider<float, class CLASS_Block_Radar_1>(Block_Radar, 3, "Range", 0.2, 40, UI_Visual_Radar_Range);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Radar_2>(Block_Radar, 4, "Size", 150, 500, UI_Visual_Radar_Size, "px");
@@ -903,24 +997,31 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_Misc, 22, "Cursor ESP", UI_Misc_CursorESP);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Misc_11>(Block_Misc, 22, UI_Misc_CursorESP_Key);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 23, "Walking bot", UI_Misc_WalkingBot);
-				string MapName = "";
-				if (UI_Misc_WalkingBot_Map == 0)MapName = "Dust2";
-				else if (UI_Misc_WalkingBot_Map == 1)MapName = "Mirage";
-				else if (UI_Misc_WalkingBot_Map == 2)MapName = "Inferno";
-				else if (UI_Misc_WalkingBot_Map == 3)MapName = "Ancient";
-				else if (UI_Misc_WalkingBot_Map == 4)MapName = "Anubis";
-				else if (UI_Misc_WalkingBot_Map == 5)MapName = "Overpass";
+				static string MapName = "";
+				if (UI_Misc_WalkingBot_Map == 0)MapName = "Dust2"; else if (UI_Misc_WalkingBot_Map == 1)MapName = "Mirage";
+				else if (UI_Misc_WalkingBot_Map == 2)MapName = "Inferno"; else if (UI_Misc_WalkingBot_Map == 3)MapName = "Ancient";
+				else if (UI_Misc_WalkingBot_Map == 4)MapName = "Anubis"; else if (UI_Misc_WalkingBot_Map == 5)MapName = "Overpass";
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Misc_12>(Block_Misc, 24, "Map: " + MapName, 0, 5, UI_Misc_WalkingBot_Map);
 				GUI_VAR.GUI_Checkbox(Block_Misc, 25, "Global team check", UI_Misc_TeamCheck, { 200,200,150 });
 				const auto Block_Resolution = GUI_VAR.GUI_Block(580, 30, 160, "Screen resolution");
-				GUI_VAR.GUI_Button(Block_Resolution, 1, "2560 * 1440", UI_Visual_Res_2560, 78);
-				GUI_VAR.GUI_Button(Block_Resolution, 2, "1920 * 1080", UI_Visual_Res_1920, 78);
-				GUI_VAR.GUI_Button(Block_Resolution, 3, "1280 * 1024", UI_Visual_Res_1280, 78);
-				GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", UI_Visual_Res_960, 83);
-				const auto Block_CloudConfig = GUI_VAR.GUI_Block(580, 210, 180, "Cloud config");
-				GUI_VAR.GUI_Button(Block_CloudConfig, 1, "Load config", UI_Misc_LoadCloudConfig, 80);
-				GUI_VAR.GUI_List(Block_CloudConfig, 2, { "Legit","Rage","Legit - no visual","Robot" }, UI_Misc_SelectedConfig);
-				auto Block_Spoof = GUI_VAR.GUI_Block(580, 410, 370, "Spoof");
+				static BOOL Reslution_2560, Reslution_1920, Reslution_1280, Reslution_960;
+				GUI_VAR.GUI_Button(Block_Resolution, 1, "2560 * 1440", Reslution_2560, 78); if (Reslution_2560)Window::Set_Resolution(2560, 1440);
+				GUI_VAR.GUI_Button(Block_Resolution, 2, "1920 * 1080", Reslution_1920, 78); if (Reslution_1920)Window::Set_Resolution(1920, 1080);
+				GUI_VAR.GUI_Button(Block_Resolution, 3, "1280 * 1024", Reslution_1280, 78); if (Reslution_1280)Window::Set_Resolution(1280, 1024);
+				GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", Reslution_960, 83); if (Reslution_960)Window::Set_Resolution(1280, 960);
+				const auto Block_CloudPreset = GUI_VAR.GUI_Block(580, 210, 180, "Cloud preset");
+				static BOOL Load_CloudPreset; int SelectedCloudPreset; GUI_VAR.GUI_Button(Block_CloudPreset, 1, "Load preset", Load_CloudPreset, 80);
+				GUI_VAR.GUI_List(Block_CloudPreset, 2, { "Legit","Rage","Legit - no visual","Robot" }, SelectedCloudPreset);
+				if (Load_CloudPreset)//加载Github上的云预设
+				{
+					const auto Preset_ID = SelectedCloudPreset;//防止套用的预设套写变量
+					if (SelectedCloudPreset == 0)LoadCloudPreset("Legit");
+					else if (SelectedCloudPreset == 1)LoadCloudPreset("Rage");
+					else if (SelectedCloudPreset == 2)LoadCloudPreset("Legit No Visual");
+					else if (SelectedCloudPreset == 3)LoadCloudPreset("Robot");
+					SelectedCloudPreset = 0;//归位选择
+				}
+				const auto Block_Spoof = GUI_VAR.GUI_Block(580, 410, 370, "Spoof");
 				GUI_VAR.GUI_Checkbox(Block_Spoof, 1, "Enabled", UI_Spoof_Spoof, { 200,200,150 });
 				GUI_VAR.GUI_Checkbox({ Block_Spoof.x + 20,Block_Spoof.y }, 2, "Aim at teammate", UI_Spoof_AimbotTeam);
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Spoof_1>(Block_Spoof, 2, UI_Spoof_AimbotTeam_Key);
@@ -948,7 +1049,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Tips(Block_Misc, 22, "Implement ESP by modifying cursor coordinates.");
 				GUI_VAR.GUI_Tips(Block_Misc, 23, "Automatically walk along the map.");
 				GUI_VAR.GUI_Tips({ Block_Resolution.x + 10,Block_Resolution.y }, 1, "Flexible switching of window resolution. (Do not use screen zoom!!!)");
-				GUI_VAR.GUI_Tips({ Block_CloudConfig.x + 10,Block_CloudConfig.y }, 1, "Load parameter files stored in Github.");
+				GUI_VAR.GUI_Tips({ Block_CloudPreset.x + 10,Block_CloudPreset.y }, 1, "Load parameter files stored in Github.");
 				GUI_VAR.GUI_Tips(Block_Spoof, 1, "Prank local player. (global switch)");
 				GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 2, "Aimbot for teammate.");
 				GUI_VAR.GUI_Tips({ Block_Spoof.x + 10,Block_Spoof.y }, 4, "Enhanced upward deflection of firearms.");
@@ -962,10 +1063,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			else if (UI_Panel == 3)//List
 			{
 				const auto Block_PlayerList = GUI_VAR.GUI_Block(150, 30, GUI_VAR.Window_GetSize().y - 60, "Player list", 330);
-				static BOOL UI_Debug_PlayerList_ReloadList = false; static vector<string> PlayerNameList = {}; static string PlayerName = "";
+				static BOOL ReloadList = false; static vector<string> PlayerNameList = {}; static string PlayerName = "";
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_PlayerList_1>(Block_PlayerList, 1, "Player ID", 0, 64, Debug_Control_Var::SelectPlayer);
-				GUI_VAR.GUI_Button_Small({ Block_PlayerList.x + 10,Block_PlayerList.y }, 1, UI_Debug_PlayerList_ReloadList);
-				if (UI_Debug_PlayerList_ReloadList || System::Sleep_Tick<class CLASS_DEBUG_AUTO_RELOAD_PLAYERLIST_>(5000)) { ReLoad(true); PlayerNameList = {}; for (short i = 0; i <= 64; ++i)PlayerNameList.push_back(Advanced::Player_Name(i)); System::Log("Debug: Reload player list"); }//刷新玩家列表页面
+				GUI_VAR.GUI_Button_Small({ Block_PlayerList.x + 10,Block_PlayerList.y }, 1, ReloadList);
+				if (ReloadList || System::Sleep_Tick<class CLASS_DEBUG_AUTO_RELOAD_PLAYERLIST_>(5000)) { ReLoad(true); PlayerNameList = {}; for (short i = 0; i <= 64; ++i)PlayerNameList.push_back(Advanced::Player_Name(i)); }//刷新玩家列表页面
 				GUI_VAR.GUI_InputText<class CLASS_Block_PlayerList_2>(Block_PlayerList, 2, PlayerName, "Search player name");
 				if (PlayerName != "" && PlayerName != "None") { for (short i = 0; i <= 64; ++i)if (PlayerName == Advanced::Player_Name(i))Debug_Control_Var::SelectPlayer = i; }//人物名称搜索
 				GUI_VAR.GUI_List(Block_PlayerList, 3, PlayerNameList, Debug_Control_Var::SelectPlayer, 27);
@@ -1052,13 +1153,6 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 					}
 					else System::Log("Misc: Invalid command. Please add / in front of.", true);
 				}
-				if (Debug_Control_Var::Button_1 || Debug_Control_Var::Button_2)System::Log("Debug: Click button");
-				if (Debug_Control_Var::Button_1)
-				{
-					System::Log("Username: " + System::Get_UserName());//打印用户名
-					System::Log("Computername: " + System::Get_ComputerName());//打印用户电脑名
-					System::Log("IP V4: " + System::Get_IPv4Address());//打印用户IPV4
-				}
 				GUI_WindowSize = { 1230,850 };
 			}
 			else if (UI_Panel == 4)//Setting
@@ -1069,9 +1163,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Text(Block_About, 2, "Version: " + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 3, "Release date: " + Rensen_ReleaseDate, { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 4, "Author: https://github.com/Coslly", { 100,100,100 });
-				GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, UI_Setting_OpenLinkAuthor);
+				static BOOL OpenGithubURL; GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, OpenGithubURL);
+				if (OpenGithubURL)System::Open_Website("https://github.com/Coslly");//打开作者Github主题页面
 				GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
-				const auto Block_Menu = GUI_VAR.GUI_Block(150, 210, 340, "Menu");
+				const auto Block_Menu = GUI_VAR.GUI_Block(150, 210, 310, "Menu");
 				GUI_VAR.GUI_Text(Block_Menu, 1, "Menu key");
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
 				GUI_VAR.GUI_Checkbox(Block_Menu, 2, "Menu color", UI_Setting_CustomColor);
@@ -1080,84 +1175,41 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "Menu animation smooth", 1.2, 10, UI_Setting_MenuAnimation);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_Menu_3>(Block_Menu, 4, "Menu font size", 0, 40, UI_Setting_MenuFontSize, "px");
 				GUI_VAR.GUI_InputText<class CLASS_Block_Menu_4>(Block_Menu, 5, UI_Setting_MenuFont, "Custom menu font");
-				GUI_VAR.GUI_Button(Block_Menu, 6, "Save local config", UI_Setting_SaveLocalConfig, 65);
-				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 7, "Quit CS", UI_Setting_QuitCS, 90);
-				else GUI_VAR.GUI_Button(Block_Menu, 7, "Start CS", UI_Setting_StartCS, 85);
-				GUI_VAR.GUI_Button(Block_Menu, 8, "Github repositories", UI_Setting_GithubRepositories, 60);
-				GUI_VAR.GUI_Button(Block_Menu, 9, "Restart menu", UI_Setting_RestartMenu, 75);
-				GUI_VAR.GUI_Button(Block_Menu, 10, "Unload", UI_Setting_Unload, 95);
-				GUI_VAR.GUI_Tips({ Block_Menu.x + 10,Block_Menu.y }, 6, "If you want to reset the default config you can delete Rensen.cfg in the same folder.");
-				GUI_WindowSize = { 580,580 };
+				static BOOL StartCS, QuitCS;
+				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 6, "Quit CS", QuitCS, 90);
+				else GUI_VAR.GUI_Button(Block_Menu, 6, "Start CS", StartCS, 85);
+				if (StartCS && CS2_MEM.Get_ProcessHWND() == 0)if (CS2_MEM.Get_ProcessHWND() == 0)System::Open_Website("steam://rungameid/730");//启动CS
+				else if (QuitCS && CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());//关闭CS
+				static BOOL GithubRepositories; GUI_VAR.GUI_Button(Block_Menu, 7, "Github repositories", GithubRepositories, 60);
+				if (GithubRepositories)System::Open_Website("https://github.com/Coslly/Rensen");//打开Github项目地址
+				static BOOL RestartMenu; GUI_VAR.GUI_Button(Block_Menu, 8, "Restart menu", RestartMenu, 75);
+				if (RestartMenu) { GUI_VAR.Window_SetTitle("Rensen - Restarting"); System::Self_Restart(); }//重启菜单
+				static BOOL UnloadMenu; GUI_VAR.GUI_Button(Block_Menu, 9, "Unload", UnloadMenu, 95);
+				if (UnloadMenu)exit(0);//关闭菜单
+				const auto Block_Presets = GUI_VAR.GUI_Block(580, 30, 490, "Local presets", 320);
+				static int SelectedPresetID = 0; static vector<string> FileList = System::Traversal_FindFile("*", ".cfg", true, "UTT"); static string CreatePresetName; static BOOL Create, Load, Save, Delete;
+				GUI_VAR.GUI_List(Block_Presets, 1, FileList, SelectedPresetID, 11);
+				GUI_VAR.GUI_Button(Block_Presets, 11, "Load", Load, 95); if (Load && SelectedPresetID != -1)LoadPreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
+				GUI_VAR.GUI_Button(Block_Presets, 12, "Save", Save, 95); if (Save && SelectedPresetID != -1)SavePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
+				GUI_VAR.GUI_InputText<class CLASS_Block_Presets_1>(Block_Presets, 13, CreatePresetName, "Create preset name");
+				GUI_VAR.GUI_Button(Block_Presets, 14, "Create", Create, 90); if (Create) { CreatePreset(CreatePresetName); CreatePresetName = ""; }
+				GUI_VAR.GUI_Button(Block_Presets, 15, "Delete", Delete, 92); if (Delete && SelectedPresetID != -1)DeletePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
+				if (Create || Load || Save || Delete)FileList = System::Traversal_FindFile("*", ".cfg", true, "UTT");//刷新文件列表
+				GUI_VAR.GUI_Tips({ Block_Presets.x + 10,Block_Presets.y }, 1, "Customize and save your presets.");
+				GUI_WindowSize = { 930,550 };
 			}
 			else if (UI_Panel == 5)//Attach
 			{
 				const auto Block_Size = GUI_VAR.Window_GetSize().y - 60;
 				const auto Block_A = GUI_VAR.GUI_Block(150, 30, Block_Size, "Block_A");
 				//A区块控件代码区域
-				for (int i = 1; i <= Debug_Control_Var::Checkbox_Quantity; ++i)
-				{
-					GUI_VAR.GUI_Checkbox(Block_A, i, "Checkbox " + to_string(i), Debug_Control_Var::Checkbox_Value[i]);
-				}
-
+				for (int i = 1; i <= Debug_Control_Var::Checkbox_Quantity; ++i)GUI_VAR.GUI_Checkbox(Block_A, i, "Checkbox " + to_string(i), Debug_Control_Var::Checkbox_Value[i]);
 				const auto Block_B = GUI_VAR.GUI_Block(580, 30, Block_Size, "Block_B");
 				//B区块控件代码区域
-
 				GUI_WindowSize = { 1010,900 };
 			}
 			GUI_VAR.Draw_GUI(Debug_Control_Var::Checkbox_2);//最终绘制GUI画板
 			if (UI_Misc_SavePerformance)Sleep(5);//节省电脑占用性能
-			if (true)//按钮事件接收
-			{
-				if (UI_Visual_Res_2560)Window::Set_Resolution(2560, 1440);//设置显示器像素
-				else if (UI_Visual_Res_1920)Window::Set_Resolution(1920, 1080);
-				else if (UI_Visual_Res_1280)Window::Set_Resolution(1280, 1024);
-				else if (UI_Visual_Res_960)Window::Set_Resolution(1280, 960);
-				if (UI_Misc_LoadCloudConfig)//加载Github上的云参数
-				{
-					const auto Config_ID = UI_Misc_SelectedConfig;//防止套用的参数套写变量
-					if (UI_Misc_SelectedConfig == 0)LoadCloudConfig("Legit");
-					else if (UI_Misc_SelectedConfig == 1)LoadCloudConfig("Rage");
-					else if (UI_Misc_SelectedConfig == 2)LoadCloudConfig("Legit No Visual");
-					else if (UI_Misc_SelectedConfig == 3)LoadCloudConfig("Robot");
-					System::Log("Misc: LoadCloudConfig [" + to_string(Config_ID) + "]");
-				}
-				if (UI_Setting_OpenLinkAuthor)//打开作者Github主题页面
-				{
-					System::Open_Website("https://github.com/Coslly");
-					System::Log("Setting: OpenGithubURL");
-				}
-				if (UI_Setting_SaveLocalConfig || (System::Get_Key(VK_LCONTROL) && System::Get_Key_Onest(0x53)))//保存当前所设置的参数
-				{
-					SaveLocalConfig();
-					System::Log("Setting: SaveConfig");
-				}
-				if (UI_Setting_StartCS)//启动CS
-				{
-					if (CS2_MEM.Get_ProcessHWND() == 0)System::Open_Website("steam://rungameid/730");
-					System::Log("Setting: StartCS");
-				}
-				else if (UI_Setting_QuitCS)//关闭CS
-				{
-					if (CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());
-					System::Log("Setting: QuitCS");
-				}
-				if (UI_Setting_GithubRepositories)//打开Github项目地址
-				{
-					System::Open_Website("https://github.com/Coslly/Rensen");
-					System::Log("Setting: GithubRepositories");
-				}
-				if (UI_Setting_RestartMenu)//重启菜单
-				{
-					System::Log("Setting: RestartMenu");
-					GUI_VAR.Window_SetTitle("Rensen ");//防止被防多开检测到
-					System::Self_Restart();
-				}
-				if (UI_Setting_Unload)//关闭菜单
-				{
-					System::Log("Setting: Unload");
-					exit(0);
-				}
-			}
 		}
 	}
 }
@@ -1232,7 +1284,6 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 		if (NightMode_Alpha_Ani <= 0)MoveWindow(Window_NightMode.Get_HWND(), 0, 0, 0, 0, true);//透明度等于0的时候隐藏窗口
 		else MoveWindow(Window_NightMode.Get_HWND(), 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y, true);//放大窗口
 		Window_NightMode.Set_WindowAlpha(NightMode_Alpha_Ani);//夜晚模式修改透明度
-		if (!(Variable::String_Find(UI_LocalConfigPath, "Re") && Variable::String_Find(UI_LocalConfigPath, "ens")))CS2_Offsets::dwLocalPlayerPawn = 0;
 		//----------------------------------------------------------------------------------------------------------------------------------------
 		if (CS2_HWND && Global_IsShowWindow && Global_LocalPlayer.Health())//一些杂项功能
 		{
@@ -1981,7 +2032,7 @@ void Thread_Funtion_Radar() noexcept//功能线程: 雷达
 	Sleep(500);//相比菜单后一步创建窗口
 	Window::Windows Radar_Window; Radar_Window.Create_Window(UI_Visual_Radar_Size, UI_Visual_Radar_Size + 15, "Rensen - Radar", true);//创建雷达绘制窗口
 	Window::Render Radar_Paint; Radar_Paint.CreatePaint(Radar_Window.Get_HWND(), 0, 0, 500, 500 + 15);//创建绘制画板
-	Radar_Window.Set_WindowPos(UI_Visual_Radar_Pos.x, UI_Visual_Radar_Pos.y);//套用参数的雷达位置
+	Radar_Window.Set_WindowPos(UI_Visual_Radar_Pos.x, UI_Visual_Radar_Pos.y);//套用预设的雷达位置
 	while (true)
 	{
 		Sleep(5);//降低CPU占用
@@ -2024,12 +2075,8 @@ void Thread_Funtion_Radar() noexcept//功能线程: 雷达
 			}
 		}
 		else Radar_Size_ = 0;
-		if (UI_Visual_Radar_Show)//修复窗口不显示BUG
-		{
-			Radar_Window.Show_Window();
-			Window::Set_Topmost_Status(Radar_Window.Get_HWND(), true);
-		}
 		Radar_Window.Set_WindowSize(RadarSizeAnimation, RadarSizeAnimation + 15);//雷达大小
+
 		if (!UI_Visual_Radar_Alpha)Radar_Window.Set_WindowAttributes({ 0,0,0 }, 0, LWA_COLORKEY);//将黑色像素改为全透明
 		else Radar_Window.Set_WindowAlpha(Variable::Animation<class Class_Radar_Window_Alpha>(UI_Visual_Radar_Alpha, 2));//雷达透明度
 		Radar_Window.Fix_inWhile();//窗口消息循环
@@ -2062,16 +2109,6 @@ void Thread_Funtion_Sonar() noexcept//功能线程: 声呐(距离检测)
 void Thread_Funtion_WalkingBot() noexcept//功能线程: 自动行走机器人(用于刷经验)
 {
 	System::Log("Load Thread: Thread_Funtion_WalkingBot()");
-	while (false)//记录路径工具
-	{
-		const auto Pos = Global_LocalPlayer.Origin();//玩家坐标
-		if (System::Get_Key_Onest(0x10))//Shift按键记录
-		{
-			System::Create_File("MovingPath.txt", "{" + Variable::Float_Precision(Pos.x, 1) + "," + Variable::Float_Precision(Pos.y, 1) + "," + Variable::Float_Precision(Pos.z, 1) + "},\n", true);//写入文件
-			Beep(200, 200);//反馈音效
-		}
-		Sleep(1);
-	}
 	while (true)
 	{
 		if (CS2_HWND && Global_IsShowWindow && Global_LocalPlayer.Health() && UI_Misc_WalkingBot)//当CS窗口在最前端 && 本地人物活着 && 没有在射击时 && 自动行走机器人开关
@@ -2121,7 +2158,6 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 		for (short i = 0; i <= 50000; ++i) { if (System::Get_UserName() == UserID_READ.Read(i) || Variable::String_Upper(UserID_READ.Read(i)) == "BYPASS") { Attest = true; break; } }//遍历检测并修改认证
 		UserID_READ.Release();//释放缓存
 	}
-	//if (!Attest)for (short i = 0; i <= 100; ++i)if (Window::FindWindow_Name(System::Rand_String(30, System::Time()[0] + System::Time()[1]))) { Attest = true; break; }//私人秘钥系统
 	Attest = true;//公开版直接通过验证
 	if (!Attest) { Window::Message_Box("Rensen Attest - " + System::Get_UserName(), "Your identity cannot be passed.\n\nUnable to access from Chinese IP.\n\nAuthor: https://github.com/Coslly\n", MB_ICONSTOP); exit(0); }//未被认证则直接退出
 	//----------------------------------------------------------------------------------------------------------------------------------
@@ -2141,7 +2177,6 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	printf("Welcome to Rensen for Counter-Strike 2 cheat.\nThe Rensen project is a version converted from FreeCS.\nNo team author By: https://github.com/Coslly\nThe following information returned is debugging information.\n");//作者留言
 	System::Log("Load Thread: main()");
 	Sleep(100);//修复重启进程冲突
-	if (!System::Judge_File(UI_LocalConfigPath)) { System::Create_File(UI_LocalConfigPath, UI_DefaultConfig); System::Self_Restart(); }//创建默认参数文件并且重启套用参数 (当未找到参数文件时, 第一次启动时)
 	thread Thread_Menu_ = thread(Thread_Menu);
 	thread Thread_Misc_ = thread(Thread_Misc);
 	Sleep(50);//防止重启卡线程 (以下为功能函数线程)
