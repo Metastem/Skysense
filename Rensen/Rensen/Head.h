@@ -1,4 +1,4 @@
-﻿//2024-09-06 19:50
+﻿//2024-09-07 17:30
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -1435,6 +1435,12 @@ namespace Window//窗口
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
+    HWND FindWindow_Name(string WindowName) noexcept//通过String字符串名称查找窗口
+    {//Window::FindWindow_Name("Windowsaa");
+        return FindWindow(0, wstring(WindowName.begin(), WindowName.end()).c_str());
+    }
+    //-----------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
 }
 namespace System//Windows系统
 {
@@ -1927,10 +1933,10 @@ namespace System//Windows系统
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
-    string Rand_String(int len = 10) noexcept//随机字符串
+    string Rand_String(int len = 10, int Offsets = 0) noexcept//随机字符串 (Offsets一样可以做到多进程同步)
     {//System::Rand_String(20);//生成20个字符的字符串
         string str; char c;
-        srand(GetTickCount64() + time(0) * GetTickCount64() + rand());//修复产生相同的随机字符
+        srand(GetTickCount64() * GetTickCount64() * 1337 + Offsets * GetTickCount64());//修复产生相同的随机字符
         for (short idx = 0; idx < len; idx++)
         {
             const int Rand = rand();
@@ -2613,7 +2619,7 @@ namespace EasyGUI
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
         int Window_FPS() noexcept { return EasyGUI_FPS; }//获取GUI绘制帧数
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
-        BOOL Window_Move(short Draw_Delay = 3, BOOL Limit_Edge = false) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
+        BOOL Window_Move(short Draw_Delay = 3, BOOL Limit_Edge = true) noexcept//移动GUI窗口 (在GUI循环线程内加入此函数不需要添加延时函数来降低CPU占用)
         {
             //--------------------------------消息循环
             MSG MSG = { 0 }; if (GetMessage(&MSG, 0, 0, 0)) { TranslateMessage(&MSG); DispatchMessage(&MSG); }
@@ -2755,14 +2761,14 @@ namespace EasyGUI
             }
         }
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
-        Vector2 GUI_Block(int X, int Y, int Length, string BlockText, int Width = 400) noexcept//绘制按钮的区块
+        Vector2 GUI_Block(int X, int Y, int Length, string BlockText, int Width = 400, BOOL Block_Judgment = true) noexcept//绘制按钮的区块
         {
             In_DrawRect(X, Y, Width, Length, { 0,0,0 });//黑色外边框
             In_DrawRect(X + 1, Y + 1, Width - 2, Length - 2, { 60,60,60 });//白色外边框
             In_DrawGradientRect(X + 2, Y + 2, Width - 4, Length - 4, { 10,10,10 }, Global_EasyGUIColor / 10, true);//渐变背景
             In_DrawString(X + 21, Y - 6, BlockText.c_str(), { 0,0,0 }, "Small Fonts", 14, 700);
             In_DrawString(X + 20, Y - 7, BlockText.c_str(), { 200,200,200 }, "Small Fonts", 14, 700);
-            if ((EasyGUI_MousePos.x - EasyGUI_WindowPos.left >= X && EasyGUI_MousePos.x - EasyGUI_WindowPos.left <= X + Width && EasyGUI_MousePos.y - EasyGUI_WindowPos.top >= Y && EasyGUI_MousePos.y - EasyGUI_WindowPos.top <= Y + Length) || !(EasyGUI_MousePos.x >= EasyGUI_WindowPos.left && EasyGUI_MousePos.x <= EasyGUI_WindowPos.right && EasyGUI_MousePos.y >= EasyGUI_WindowPos.top && EasyGUI_MousePos.y <= EasyGUI_WindowPos.bottom))Mouse_Block_ = true;
+            if (Block_Judgment && ((EasyGUI_MousePos.x - EasyGUI_WindowPos.left >= X && EasyGUI_MousePos.x - EasyGUI_WindowPos.left <= X + Width && EasyGUI_MousePos.y - EasyGUI_WindowPos.top >= Y && EasyGUI_MousePos.y - EasyGUI_WindowPos.top <= Y + Length) || !(EasyGUI_MousePos.x >= EasyGUI_WindowPos.left && EasyGUI_MousePos.x <= EasyGUI_WindowPos.right && EasyGUI_MousePos.y >= EasyGUI_WindowPos.top && EasyGUI_MousePos.y <= EasyGUI_WindowPos.bottom)))Mouse_Block_ = true;
             return { X,Y };
         }
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2866,7 +2872,7 @@ namespace EasyGUI
                     if (ClassValueDetect == 0)m_SliderValue++; else m_SliderValue += 0.05;//检测是否是浮点值
                 }
                 if (In_KeyEvent(VK_LBUTTON) && DetectMousePos && !OutSide)OutSide = true;
-                if (OutSide && In_KeyEvent(VK_LBUTTON)) { m_SliderValue = ((EasyGUI_MousePos.x - BlockPos.x - 54 - EasyGUI_WindowPos.left) * (EndValue - StartValue) / 230) + StartValue; Mouse_Block_ = true; Mouse_Slider_ = true; }
+                if (OutSide && In_KeyEvent(VK_LBUTTON)) { m_SliderValue = ((EasyGUI_MousePos.x - BlockPos.x - EasyGUI_WindowPos.left - 54) * (EndValue - StartValue) / 230) + StartValue; Mouse_Block_ = true; Mouse_Slider_ = true; }
                 else if (!In_KeyEvent(VK_LBUTTON)) { OutSide = false; Mouse_Slider_ = false; }
             }
             int SliderPos = (float)(m_SliderValue - StartValue) / (float)(EndValue - StartValue) * 230;
@@ -2876,7 +2882,8 @@ namespace EasyGUI
             In_DrawRect(BlockPos.x + 54, BlockPos.y + 5 + 30 * LineRow, 232, 7, { 0,0,0 });//黑色外边框
             if (DetectMousePos || OutSide)In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, 230, 5, { 30,30,30 }, Global_EasyGUIColor / 4, true);//滑条背景
             else In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, 230, 5, { 20,20,20 }, Global_EasyGUIColor / 5, true);
-            In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, In_Animation<CreateClassName>(SliderPos, 2, { 0,230 }), 5, Global_EasyGUIColor, Global_EasyGUIColor / 5, true);//滑条 (动画0.8果冻效果)
+            In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, In_Animation<CreateClassName>(SliderPos, 10, { 0,230 }), 5, Global_EasyGUIColor / 2, Global_EasyGUIColor / 10, true);//滑条减退动画 (动画0.8果冻效果)
+            In_DrawGradientRect(BlockPos.x + 55, BlockPos.y + 6 + 30 * LineRow, SliderPos, 5, Global_EasyGUIColor, Global_EasyGUIColor / 5, true);//滑条
             In_DrawString(BlockPos.x + 56, BlockPos.y - 9 + 30 * LineRow, Text, { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
             In_DrawString(BlockPos.x + 55, BlockPos.y - 10 + 30 * LineRow, Text, TextColor, Global_EasyGUIFont, Global_EasyGUIFontSize);
             In_DrawString_Simple(BlockPos.x + 295, BlockPos.y + 2 + 30 * LineRow, ss.str() + Unit, { 150,150,150 });//返回值绘制

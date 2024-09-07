@@ -1,12 +1,12 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.81;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-06 19:50]";//程序发布日期时间
+const float Rensen_Version = 4.82;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-07 17:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
 	const string UI_LocalConfigPath = "Rensen.cfg";
-	const string UI_DefaultConfig = "0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n1\n1\n0\n0\n0\n0\n0\n1\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n20\n0\n0\n0\n0\n0\n255\n1\n0\n0\n0.2\n150\n0\n26\n11\n0\n0\n10\n10\n0\n0\n3\n3\n0\n0\n0\n0\n1\n0\n1\n0\n0\n0\n0\n500\n0\n0\n45\n1\n255\n255\n255\n255\n0\n0\n0\n1\n0\n0\n0\n0.5\n0\n10\n0\n0\n0\n0\n0\n50\n0\n0\n0\n0\n3\n0\n10\n10\n1\n0\n0\n0\n0\n50\n0\n0\n0\n0\n0\n0\n0\n0\n\n13\n0\n0\n0\n0\n255\n0\n0\n0\n100\n0\n0\n0\n0\n0\n0\n0\n0\n";//默认参数
+	const string UI_DefaultConfig = "0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n1\n1\n0\n0\n0\n0\n0\n1\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n20\n0\n0\n0\n0\n0\n255\n1\n0\n0\n0.2\n150\n0\n26\n11\n0\n0\n10\n10\n0\n0\n3\n3\n0\n0\n0\n0\n1\n0\n1\n0\n0\n0\n0\n500\n0\n0\n45\n1\n255\n255\n255\n255\n0\n0\n0\n1\n0\n0\n0\n0.5\n0\n10\n0\n0\n0\n0\n0\n50\n0\n0\n0\n0\n3\n0\n10\n10\n1\n0\n0\n0\n0\n50\n0\n0\n0\n0\n0\n0\n0\n0\n\n0\n0\n0\n0\n0\n255\n0\n0\n0\n100\n0\n0\n0\n0\n0\n0\n0\n0\n";//默认参数
 	//----------------------------------------------------------------------------------------------
 	BOOL UI_Visual_Res_2560, UI_Visual_Res_1920, UI_Visual_Res_1280, UI_Visual_Res_960;
 	BOOL UI_Visual_Radar_Show;
@@ -481,7 +481,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 			}
 			else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-			GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
+			GUI_VAR.GUI_Block(20, 20, 40, "", 110, false); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
 			GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 25);//大体区块选择
 			if (UI_Panel == 0)//Legit
 			{
@@ -655,7 +655,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			{
 				const auto Block_About = GUI_VAR.GUI_Block(150, 30, 220, "关于UTT");
 				GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
-				GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (官匹开源免费外部)UTT", { 100,100,100 });
+				GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2UTT", { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 2, "版本: UTT" + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 3, "发布日期: UTT" + Rensen_ReleaseDate, { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 4, "作者: https://github.com/CosllyUTT", { 100,100,100 });
@@ -755,7 +755,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 			}
 			else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-			GUI_VAR.GUI_Block(20, 20, 40, "", 110); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
+			GUI_VAR.GUI_Block(20, 20, 40, "", 110, false); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
 			GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);//大体区块选择
 			if (UI_Panel == 0)//Legit
 			{
@@ -1065,7 +1065,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			{
 				const auto Block_About = GUI_VAR.GUI_Block(150, 30, 160, "About");
 				GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
-				GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2 (External Free)", { 100,100,100 });
+				GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2", { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 2, "Version: " + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 3, "Release date: " + Rensen_ReleaseDate, { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 4, "Author: https://github.com/Coslly", { 100,100,100 });
@@ -1078,7 +1078,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_ColorSelector_a(Block_Menu, 2, UI_Setting_MainColor);
 				if (UI_Setting_MainColor.a < 100)UI_Setting_MainColor.a = 100;
 				GUI_VAR.GUI_Slider<float, class CLASS_Block_Menu_2>(Block_Menu, 3, "Menu animation smooth", 1.2, 10, UI_Setting_MenuAnimation);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_Menu_3>(Block_Menu, 4, "Menu font size", 0, 30, UI_Setting_MenuFontSize, "px");
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_Menu_3>(Block_Menu, 4, "Menu font size", 0, 40, UI_Setting_MenuFontSize, "px");
 				GUI_VAR.GUI_InputText<class CLASS_Block_Menu_4>(Block_Menu, 5, UI_Setting_MenuFont, "Custom menu font");
 				GUI_VAR.GUI_Button(Block_Menu, 6, "Save local config", UI_Setting_SaveLocalConfig, 65);
 				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 7, "Quit CS", UI_Setting_QuitCS, 90);
@@ -2121,7 +2121,8 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 		for (short i = 0; i <= 50000; ++i) { if (System::Get_UserName() == UserID_READ.Read(i) || Variable::String_Upper(UserID_READ.Read(i)) == "BYPASS") { Attest = true; break; } }//遍历检测并修改认证
 		UserID_READ.Release();//释放缓存
 	}
-	Attest = true;//通过验证 (公开版)
+	//if (!Attest)for (short i = 0; i <= 100; ++i)if (Window::FindWindow_Name(System::Rand_String(30, System::Time()[0] + System::Time()[1]))) { Attest = true; break; }//私人秘钥系统
+	Attest = true;//公开版直接通过验证
 	if (!Attest) { Window::Message_Box("Rensen Attest - " + System::Get_UserName(), "Your identity cannot be passed.\n\nUnable to access from Chinese IP.\n\nAuthor: https://github.com/Coslly\n", MB_ICONSTOP); exit(0); }//未被认证则直接退出
 	//----------------------------------------------------------------------------------------------------------------------------------
 	System::URL_READ AutoUpdate = { "Cache_Update" };//自动更新系统 (中国IP用户需要挂梯子)
@@ -2158,7 +2159,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	System::Set_ProcessPriority();//将Rensen程序优先级设置为高(防止崩溃)
 	while (true)//菜单动画和关闭快捷键
 	{
-		if (!Attest) { exit(0); return 0; }//过滤未认证用户 (防止被HOOK初始化函数)
+		if (!Attest)exit(0);//过滤未认证用户
 		if (System::Get_Key(VK_INSERT) && System::Get_Key(VK_DELETE)) { Beep(50, 50); exit(0); }//快速关闭键 (防止卡线程)
 		static short MenuWindowAlpha = 0;
 		if (Menu_Open)MenuWindowAlpha = MenuWindowAlpha + UI_Setting_MainColor.a / UI_Setting_MenuAnimation / 2.5;//窗体透明度动画
@@ -2170,9 +2171,10 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 		else { if (MenuWindowAlpha == 0)GUI_VAR.Window_Hide(); Menu_Open = false; }
 		GUI_IO = GUI_VAR.Get_IO();//刷新GUI状态数据
 		if (!UI_Setting_CustomColor)GUI_IO.GUIColor = { GUI_IO.GUIColor_Rainbow[3],GUI_IO.GUIColor_Rainbow[4],GUI_IO.GUIColor_Rainbow[5] };//GUI主题颜色到功能函数
+		if (UI_Setting_MenuFontSize == 0)GUI_VAR.Global_Set_EasyGUI_FontSize(13);//自定义GUI字体大小 (默认字体大小为13)
+		else GUI_VAR.Global_Set_EasyGUI_FontSize(UI_Setting_MenuFontSize);
 		if (UI_Setting_MenuFont == "")GUI_VAR.Global_Set_EasyGUI_Font("Verdana");//自定义GUI字体 (默认字体为Verdana)
 		else GUI_VAR.Global_Set_EasyGUI_Font(UI_Setting_MenuFont);
-		GUI_VAR.Global_Set_EasyGUI_FontSize(UI_Setting_MenuFontSize);//自定义GUI字体大小
 		if (UI_Misc_SavePerformance)Sleep(3);//降低CPU占用
 		else Sleep(1);
 	}
