@@ -1,10 +1,10 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.84;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-08 00:50]";//程序发布日期时间
+const float Rensen_Version = 4.85;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-08 10:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
-	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true;//菜单初始化变量
+	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true; string Preset_Folder = "RPr";//菜单初始化变量
 	//----------------------------------------------------------------------------------------------
 	BOOL UI_Legit_Aimbot = 0;
 	int UI_Legit_Aimbot_Key = 0;
@@ -53,13 +53,13 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	int UI_Visual_ESP_OutFOV_Size = 20;
 	int UI_Visual_ESP_OutFOV_Radius = 0;
 	BOOL UI_Visual_ESP_CustomColor = 0;
-	Variable::Vector4 UI_Visual_ESP_CustomColor_Color = { 0,0,0,255 };
+	Variable::Vector4 UI_Visual_ESP_CustomColor_Color = { 255,255,255,255 };
 	int UI_Visual_ESP_DrawDelay = 1;
 	BOOL UI_Visual_Radar = 0;
 	BOOL UI_Visual_Radar_FollowAngle = 0;
 	float UI_Visual_Radar_Range = 0.2;
 	int UI_Visual_Radar_Size = 150;
-	int UI_Visual_Radar_Alpha = 0;
+	int UI_Visual_Radar_Alpha = 255;
 	Variable::Vector2 UI_Visual_Radar_Pos = { 30, 30 };
 	BOOL UI_Misc_BunnyHop = 0;
 	BOOL UI_Misc_HitSound = 0;
@@ -112,7 +112,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	BOOL UI_Misc_SavePerformance = 0;
 	BOOL UI_Legit_Aimbot_AutoScope = 0;
 	BOOL UI_Misc_NightMode = 0;
-	int UI_Misc_NightMode_Alpha = 30;
+	int UI_Misc_NightMode_Alpha = 100;
 	BOOL UI_Spoof_LearnPlayer = 0;
 	int UI_Spoof_LearnPlayer_Key = 0;
 	BOOL UI_Misc_AutoPeek = 0;
@@ -141,17 +141,11 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	BOOL UI_Misc_WalkingBot = 0;
 	int UI_Misc_WalkingBot_Map = 0;
 	//----------------------------------------------------------------------------------------------
-	void CreatePreset(string FileName = "") noexcept//创建特定预设
-	{
-		if (FileName != "")System::Create_File(FileName + ".cfg");
-	}
-	void DeletePreset(string FileName = "") noexcept//删除特定预设
-	{
-		System::Delete_File(FileName + ".cfg");
-	}
+	void CreatePreset(string FileName = "") noexcept { if (FileName != "")System::Create_File(Preset_Folder + "\\" + FileName + ".cfg"); }//创建特定预设
+	void DeletePreset(string FileName = "") noexcept { System::Delete_File(Preset_Folder + "\\" + FileName + ".cfg"); }//删除特定预设
 	void SavePreset(string FileName = "") noexcept//保存特定预设
 	{
-		System::Set_File(FileName + ".cfg",
+		System::Set_File(Preset_Folder + "\\" + FileName + ".cfg",
 			to_string(UI_Legit_Aimbot) + "\n" +
 			to_string(UI_Legit_Aimbot_Key) + "\n" +
 			to_string(UI_Legit_Aimbot_JudgingWall) + "\n" +
@@ -299,7 +293,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	}
 	void LoadPreset(string FileName = "") noexcept//加载特定预设
 	{
-		FileName += ".cfg"; if (System::Get_File(FileName, 1) == "")return;//不加载空配置
+		FileName = Preset_Folder + "\\" + FileName + ".cfg"; if (System::Get_File(FileName, 1) == "")return;//不加载空配置
 		UI_Legit_Aimbot = Variable::string_int_(System::Get_File(FileName, 1));
 		UI_Legit_Aimbot_Key = Variable::string_int_(System::Get_File(FileName, 2));
 		UI_Legit_Aimbot_JudgingWall = Variable::string_int_(System::Get_File(FileName, 3));
@@ -659,7 +653,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Checkbox(Block_RemoveRecoil, 1, "启用UTT", UI_Legit_RemoveRecoil);
 				GUI_VAR.GUI_Checkbox({ Block_RemoveRecoil.x + 20,Block_RemoveRecoil.y }, 2, "只进行水平修复UTT", UI_Legit_RemoveRecoil_HorizontalRepair);
 				GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_1>(Block_RemoveRecoil, 3, "开始子弹UTT", 1, 15, UI_Legit_RemoveRecoil_StartBullet);
-				GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_2>(Block_RemoveRecoil, 4, "灵敏度UTT", 0, 100, UI_Legit_RemoveRecoil_Sensitive, "%");
+				GUI_VAR.GUI_Slider<int, class CLASS_Block_RemoveRecoil_2>(Block_RemoveRecoil, 4, "对应的游戏灵敏度UTT", 0, 100, UI_Legit_RemoveRecoil_Sensitive, "%");
 				const auto Block_MagnetAim = GUI_VAR.GUI_Block(580, 570, 160, "磁吸瞄准UTT");
 				GUI_VAR.GUI_Checkbox(Block_MagnetAim, 1, "启用UTT", UI_Legit_MagnetAim);
 				GUI_VAR.GUI_Checkbox({ Block_MagnetAim.x + 20,Block_MagnetAim.y }, 2, "只磁吸头线UTT", UI_Legit_MagnetAim_OnlyHeadLine);
@@ -821,14 +815,14 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				static BOOL UnloadMenu; GUI_VAR.GUI_Button(Block_Menu, 7, "关闭菜单UTT", UnloadMenu, 90);
 				if (UnloadMenu)exit(0);//关闭菜单
 				const auto Block_Presets = GUI_VAR.GUI_Block(580, 30, 490, "本地预设UTT", 320);
-				static int SelectedPresetID = 0; static vector<string> FileList = System::Traversal_FindFile("*", ".cfg", true, "UTT"); static string CreatePresetName; static BOOL Create, Load, Save, Delete;
+				static int SelectedPresetID = 0; static vector<string> FileList = System::Traversal_FindFile(Preset_Folder + "\\*", ".cfg", true, "UTT"); static string CreatePresetName; static BOOL Create, Load, Save, Delete;
 				GUI_VAR.GUI_List(Block_Presets, 1, FileList, SelectedPresetID, 11);
 				GUI_VAR.GUI_Button(Block_Presets, 11, "加载UTT", Load, 95); if (Load && SelectedPresetID != -1)LoadPreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
 				GUI_VAR.GUI_Button(Block_Presets, 12, "保存UTT", Save, 95); if (Save && SelectedPresetID != -1)SavePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
 				GUI_VAR.GUI_InputText<class CLASS_Block_Presets_1>(Block_Presets, 13, CreatePresetName, "创建预设名称UTT");
 				GUI_VAR.GUI_Button(Block_Presets, 14, "创建UTT", Create, 95); if (Create) { CreatePreset(CreatePresetName); CreatePresetName = ""; }
 				GUI_VAR.GUI_Button(Block_Presets, 15, "删除UTT", Delete, 95); if (Delete && SelectedPresetID != -1)DeletePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
-				if (Create || Load || Save || Delete)FileList = System::Traversal_FindFile("*", ".cfg", true, "UTT");//刷新文件列表
+				if (Create || Load || Save || Delete)FileList = System::Traversal_FindFile(Preset_Folder + "\\*", ".cfg", true, "UTT");//刷新文件列表
 				GUI_WindowSize = { 930,550 };
 			}
 			GUI_VAR.Draw_GUI(Debug_Control_Var::Checkbox_2);//最终绘制GUI画板
@@ -1187,14 +1181,14 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				static BOOL UnloadMenu; GUI_VAR.GUI_Button(Block_Menu, 9, "Unload", UnloadMenu, 95);
 				if (UnloadMenu)exit(0);//关闭菜单
 				const auto Block_Presets = GUI_VAR.GUI_Block(580, 30, 490, "Local presets", 320);
-				static int SelectedPresetID = 0; static vector<string> FileList = System::Traversal_FindFile("*", ".cfg", true, "UTT"); static string CreatePresetName; static BOOL Create, Load, Save, Delete;
+				static int SelectedPresetID = 0; static vector<string> FileList = System::Traversal_FindFile(Preset_Folder + "\\*", ".cfg", true, "UTT"); static string CreatePresetName; static BOOL Create, Load, Save, Delete;
 				GUI_VAR.GUI_List(Block_Presets, 1, FileList, SelectedPresetID, 11);
 				GUI_VAR.GUI_Button(Block_Presets, 11, "Load", Load, 95); if (Load && SelectedPresetID != -1)LoadPreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
 				GUI_VAR.GUI_Button(Block_Presets, 12, "Save", Save, 95); if (Save && SelectedPresetID != -1)SavePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
 				GUI_VAR.GUI_InputText<class CLASS_Block_Presets_1>(Block_Presets, 13, CreatePresetName, "Create preset name");
 				GUI_VAR.GUI_Button(Block_Presets, 14, "Create", Create, 90); if (Create) { CreatePreset(CreatePresetName); CreatePresetName = ""; }
 				GUI_VAR.GUI_Button(Block_Presets, 15, "Delete", Delete, 92); if (Delete && SelectedPresetID != -1)DeletePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
-				if (Create || Load || Save || Delete)FileList = System::Traversal_FindFile("*", ".cfg", true, "UTT");//刷新文件列表
+				if (Create || Load || Save || Delete)FileList = System::Traversal_FindFile(Preset_Folder + "\\*", ".cfg", true, "UTT");//刷新文件列表
 				GUI_VAR.GUI_Tips({ Block_Presets.x + 10,Block_Presets.y }, 1, "Customize and save your presets.");
 				GUI_WindowSize = { 930,550 };
 			}
@@ -1738,9 +1732,9 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 			for (short i = 0; i < Global_ValidClassID.size(); ++i)//遍历所有有效人物
 			{
 				const auto PlayerPawn = Advanced::Traverse_Player(Global_ValidClassID[i]);
-				if (PlayerPawn.ShotsFired() != 0)ESP_DrawAlpha = 200;//刷新显示
+				if (PlayerPawn.ShotsFired() != 0)ESP_DrawAlpha = 230;//刷新显示
 			}
-			if (!Global_LocalPlayer.Health())ESP_DrawAlpha = 200;//本地人物死亡时一直显示
+			if (!Global_LocalPlayer.Health())ESP_DrawAlpha = 230;//本地人物死亡时一直显示
 			Window::Set_WindowLayeredColor(RenderWindow.Get_HWND(), { 0,0,0 }, ESP_DrawAlpha, LWA_ALPHA);//窗口透明度设置
 		}
 		else Window::Set_WindowLayeredColor(RenderWindow.Get_HWND(), { 0,0,0 }, Variable::Animation<class CLASS_PlayerESP_Alpha_Animation_>(UI_Visual_ESP_DrawAlpha, 2), LWA_ALPHA);//窗口透明度设置
@@ -2192,6 +2186,7 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 	thread Thread_Funtion_Sonar_ = thread(Thread_Funtion_Sonar);
 	thread Thread_Funtion_WalkingBot_ = thread(Thread_Funtion_WalkingBot);
 	System::Set_ProcessPriority();//将Rensen程序优先级设置为高(防止崩溃)
+	if (!System::Judge_File(Preset_Folder))System::Create_Folder(Preset_Folder);//没有参数文件夹时创建参数文件夹
 	while (true)//菜单动画和关闭快捷键
 	{
 		if (!Attest)exit(0);//过滤未认证用户
