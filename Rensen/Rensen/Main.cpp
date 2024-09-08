@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
 const float Rensen_Version = 4.85;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-08 10:30]";//程序发布日期时间
+const string Rensen_ReleaseDate = "KR[2024-09-08 11:20]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true; string Preset_Folder = "RPr";//菜单初始化变量
@@ -103,7 +103,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 	BOOL UI_Spoof_FakeAntiAim = 0;
 	int UI_Spoof_FakeAntiAim_Key = 0;
 	BOOL UI_Spoof_KillDropSniper = 0;
-	float UI_Setting_MenuAnimation = 5;
+	float UI_Setting_MenuAnimation = 3;
 	BOOL UI_Visual_HitMark_KillEffect = 0;
 	int UI_Visual_HitMark_KillEffect_Quantity = 10;
 	int UI_Visual_HitMark_KillEffect_Range = 10;
@@ -807,7 +807,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 4, "关闭 CSUTT", QuitCS, 90);
 				else GUI_VAR.GUI_Button(Block_Menu, 4, "打开 CSUTT", StartCS, 90);
 				if (StartCS && CS2_MEM.Get_ProcessHWND() == 0)if (CS2_MEM.Get_ProcessHWND() == 0)System::Open_Website("steam://rungameid/730");//启动CS
-				else if (QuitCS && CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());//关闭CS
+				if (QuitCS && CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());//关闭CS
 				static BOOL GithubRepositories; GUI_VAR.GUI_Button(Block_Menu, 5, "Github 项目链接UTT", GithubRepositories, 70);
 				if (GithubRepositories)System::Open_Website("https://github.com/Coslly/Rensen");//打开Github项目地址
 				static BOOL RestartMenu; GUI_VAR.GUI_Button(Block_Menu, 6, "重启菜单UTT", RestartMenu, 90);
@@ -1173,7 +1173,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				if (CS2_HWND)GUI_VAR.GUI_Button(Block_Menu, 6, "Quit CS", QuitCS, 90);
 				else GUI_VAR.GUI_Button(Block_Menu, 6, "Start CS", StartCS, 85);
 				if (StartCS && CS2_MEM.Get_ProcessHWND() == 0)if (CS2_MEM.Get_ProcessHWND() == 0)System::Open_Website("steam://rungameid/730");//启动CS
-				else if (QuitCS && CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());//关闭CS
+				if (QuitCS && CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());//关闭CS
 				static BOOL GithubRepositories; GUI_VAR.GUI_Button(Block_Menu, 7, "Github repositories", GithubRepositories, 60);
 				if (GithubRepositories)System::Open_Website("https://github.com/Coslly/Rensen");//打开Github项目地址
 				static BOOL RestartMenu; GUI_VAR.GUI_Button(Block_Menu, 8, "Restart menu", RestartMenu, 75);

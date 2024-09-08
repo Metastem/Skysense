@@ -265,9 +265,9 @@ namespace CS2_SDK//开发者工具库(防止和基础函数冲突)
 		}
 		string LocalPlayer_Name() noexcept//本地人物名称
 		{
-			const auto ReturnValue = CS2_MEM.Read_str(Base::LocalPlayerController() + CS2_Offsets::m_iszPlayerName);
-			if (ReturnValue == "")return "None";
-			else return ReturnValue;
+			const auto LocalPlayerName = CS2_MEM.Read_str(Base::LocalPlayerController() + CS2_Offsets::m_iszPlayerName);
+			static string ReturnValue = "None"; if (LocalPlayerName != "")ReturnValue = LocalPlayerName;
+			return ReturnValue;
 		}
 		string Player_Name(short i) noexcept//通过ClassID获取名称
 		{
