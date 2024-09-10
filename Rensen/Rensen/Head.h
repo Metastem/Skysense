@@ -1,4 +1,4 @@
-﻿//2024-09-08 00:50
+﻿//2024-09-10 16:30
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -50,7 +50,7 @@
 #pragma comment(lib, "sapi.lib")
 #pragma comment(lib, "ole32.lib")
 using namespace std;
-namespace Variable//变量转换
+namespace Variable//变量
 {
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -220,6 +220,7 @@ namespace Variable//变量转换
     template<class CreateClassName>
     Vector2 Animation_Vec2(Vector2 To_VAlue, float Speed = 10) noexcept//Vector2坐标动画
     {
+        if (Speed == 1)return To_VAlue;//无动画时直接返回
         static Vector2 ReturnValue = To_VAlue;
         if (To_VAlue.x > ReturnValue.x)ReturnValue.x += (To_VAlue.x - ReturnValue.x) / Speed;
         else if (To_VAlue.x < ReturnValue.x)ReturnValue.x -= (ReturnValue.x - To_VAlue.x) / Speed;
@@ -230,6 +231,7 @@ namespace Variable//变量转换
     template<class CreateClassName>
     Vector3 Animation_Vec3(Vector3 To_VAlue, float Speed = 10) noexcept//Vector3坐标动画
     {
+        if (Speed == 1)return To_VAlue;//无动画时直接返回
         static Vector3 ReturnValue = To_VAlue;
         if (To_VAlue.x > ReturnValue.x)ReturnValue.x += (To_VAlue.x - ReturnValue.x) / Speed;
         else if (To_VAlue.x < ReturnValue.x)ReturnValue.x -= (ReturnValue.x - To_VAlue.x) / Speed;
@@ -242,6 +244,7 @@ namespace Variable//变量转换
     template<class CreateClassName>
     Vector4 Animation_Vec4(Vector4 To_VAlue, float Speed = 10) noexcept//Vector4颜色动画
     {
+        if (Speed == 1)return To_VAlue;//无动画时直接返回
         if (Speed < 1)Speed = 1;//防止过量
         static Vector4 ReturnValue = To_VAlue;
         if (To_VAlue.r > ReturnValue.r)ReturnValue.r += (To_VAlue.r - ReturnValue.r) / Speed;
@@ -390,10 +393,10 @@ namespace Window//窗口
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
     template<class A>//防止同窗口冲突  不同的窗口改不同的类
-    HDC GetDC(HWND Window_HWND, BOOL Change = false) noexcept//无内存泄漏的窗口HDC获取
+    HDC GetDC(HWND Window_HWND, BOOL Reload = false) noexcept//无内存泄漏的窗口HDC获取
     {//Window::GetDC(NULL);
         static auto Window_HDC = GetDC(Window_HWND);
-        if (Change) { Window_HDC = GetDC(Window_HWND); Change = false; }
+        if (Reload) { Window_HDC = GetDC(Window_HWND); Reload = false; }
         return Window_HDC;
     }
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -1441,8 +1444,46 @@ namespace Window//窗口
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
+    namespace ScreenEffects//特殊屏幕抽象效果
+    {
+        const auto w = GetSystemMetrics(0), h = GetSystemMetrics(1);//显示器像素
+        void PixelOffset(int Size = 300, int Distance = 10) noexcept//区块像素偏移
+        {
+            static const auto Scr_DC = GetWindowDC(0);
+            srand(GetTickCount64()); auto size = rand() % Size; auto wsrc = rand() % w; auto hsrc = rand() % h;
+            BitBlt(Scr_DC, wsrc + rand() % Distance, hsrc + rand() % Distance, size, size, Scr_DC, wsrc, hsrc, SRCCOPY);
+            size = rand() % Size; wsrc = rand() % w; hsrc = rand() % h;
+            BitBlt(Scr_DC, wsrc - rand() % Distance, hsrc - rand() % Distance, size, size, Scr_DC, wsrc, hsrc, SRCCOPY);
+        }
+        void Shake(int Amplitude = 30) noexcept//屏幕整体震动
+        {
+            static const auto Scr_DC = GetWindowDC(0); static const auto dcCopy = CreateCompatibleDC(Scr_DC); srand(GetTickCount64());
+            SelectObject(dcCopy, CreateCompatibleBitmap(Scr_DC, w, h));
+            StretchBlt(dcCopy, rand() % Amplitude, rand() % Amplitude, w, h, Scr_DC, rand() % Amplitude, rand() % Amplitude, w, h, SRCCOPY);
+            StretchBlt(Scr_DC, 0, 0, w, h, dcCopy, 0, 0, w, h, SRCCOPY);
+        }
+        void ReloadScreen(int RowPixel = 10) noexcept//老式显示器刷新屏幕效果
+        {
+            static const auto Scr_DC = GetWindowDC(0); srand(GetTickCount64());
+            for (int y = 0; y < h; y += RowPixel)
+            {
+                const auto zx = 10 * sin(2 * 3.1415 * y * (rand() % 70 - 40) / h);
+                BitBlt(Scr_DC, 0, y, w - zx, RowPixel, Scr_DC, zx, y, SRCCOPY);
+            }
+        }
+        void Blur(int Alpha = 150) noexcept//渐渐模糊
+        {
+            static const auto Scr_DC = GetWindowDC(0); static const auto dcCopy = CreateCompatibleDC(Scr_DC);
+            srand(GetTickCount64()); SelectObject(dcCopy, CreateCompatibleBitmap(Scr_DC, w, h));
+            BLENDFUNCTION blur = { 0 }; blur.BlendOp = AC_SRC_OVER; blur.BlendFlags = 0; blur.AlphaFormat = 0; blur.SourceConstantAlpha = Alpha;
+            StretchBlt(dcCopy, rand() % 10, rand() % 10, w, h, Scr_DC, rand() % -10, rand() % -10, w, h, SRCCOPY);
+            AlphaBlend(Scr_DC, 0, 0, w, h, dcCopy, 0, 0, w, h, blur);
+        }
+    }
+    //-----------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
 }
-namespace System//Windows系统
+namespace System//系统
 {
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -1462,6 +1503,12 @@ namespace System//Windows系统
     {//System::Source_ExecuteCommand("kill");
         COPYDATASTRUCT m_cData; m_cData.cbData = strlen(String.c_str()) + 1; m_cData.dwData = 0; m_cData.lpData = (void*)String.c_str();
         SendMessage(m_hEngine, WM_COPYDATA, 0, (LPARAM)&m_cData);
+    }
+    //-----------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
+    int Get_SystemMetrics(int Index = 0) noexcept//获取鼠标指针状态 https://learn.microsoft.com/ko-kr/windows/win32/api/winuser/nf-winuser-getsystemmetrics
+    {//System::Get_SystemMetrics();
+        return GetSystemMetrics(Index);
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
@@ -2227,7 +2274,7 @@ namespace System//Windows系统
     //-----------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
 }
-namespace EasyGUI
+namespace EasyGUI//控件
 {
     /*
     int main()
@@ -2536,6 +2583,7 @@ namespace EasyGUI
         template<class CreateClassName>//防止同函数同步
         float In_Animation(float Value, float Speed = 1.3, Vector2 Limit = { 0,0 }) noexcept//快到慢动画
         {
+            if (Speed == 1)return Value;//无动画时直接返回
             static float ReturnValue = Value;
             if (Value > ReturnValue)ReturnValue += (Value - ReturnValue) / Speed; else if (Value < ReturnValue)ReturnValue -= (ReturnValue - Value) / Speed;
             if (Limit.x != 0 || Limit.y != 0) { if (Limit.x > ReturnValue)ReturnValue = Limit.x; else if (Limit.y < ReturnValue)ReturnValue = Limit.y; }
@@ -2680,8 +2728,7 @@ namespace EasyGUI
                         MoveWindow(EasyGUI_WindowHWND, Move.x, Move.y, Size.x, Size.y, true);//移动窗口
                     }
                     else MoveWindow(EasyGUI_WindowHWND, EasyGUI_MousePos.x - OldPos.x, EasyGUI_MousePos.y - OldPos.y, EasyGUI_WindowPos.right - EasyGUI_WindowPos.left, EasyGUI_WindowPos.bottom - EasyGUI_WindowPos.top, true);//移动窗口到鼠标坐标
-                    if (In_TickSleep<class CLASS_EasyGUI_WindowMove_FPS_Delay_>(100))return false;//定时返回false (用来刷新面板)
-                    else return true;
+                    if (In_TickSleep<class CLASS_EasyGUI_WindowMove_FPS_Delay_>(100))return false; else return true;//定时返回false (用来刷新面板)
                 }
                 else {//闲置时
                     防止脱离 = false; 保存鼠标坐标 = true; Mouse_Block_ = false; Mouse_Move_ = false;
@@ -2806,6 +2853,7 @@ namespace EasyGUI
             return { X,Y };
         }
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
+        template<class CreateClassName>
         int GUI_Block_Panel(int X, int Y, int Width, int Length, string BlockText, vector<string>BlockText_, int& m_In_Block, short TextPos_X = 20) noexcept//区块_大区块选择器
         {
             if (m_In_Block < 0)m_In_Block = 0; else if (m_In_Block >= BlockText_.size())m_In_Block = BlockText_.size() - 1;//范围限制
@@ -2817,15 +2865,16 @@ namespace EasyGUI
             for (short i = 0; i < BlockText_.size(); ++i)//遍历坐标
             {
                 const BOOL DetectMousePos = In_MouseEventJudgment(X, Y + 14 + 30 * i, Width, 23);
-                if (m_In_Block == i)
-                {
-                    In_DrawGradientRect(X + 2, Y + 15 + 30 * i, Width - 4, 25, { 20,20,20 }, Global_EasyGUIColor / 4);
-                    In_DrawGradientRect(X + 2, Y + 16 + 30 * i, Width - 4, 23, Global_EasyGUIColor / 4, { 20,20,20 });
-                }
-                else if (DetectMousePos)
+                if (DetectMousePos)
                 {
                     In_DrawGradientRect(X + 2, Y + 16 + 30 * i, Width - 4, 23, Global_EasyGUIColor / 5, { 20,20,20 });
                     if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_ && In_KeyEvent(VK_LBUTTON, true))m_In_Block = i;
+                }
+                if (m_In_Block == i)
+                {
+                    const auto SelPos = In_Animation<CreateClassName>(Y + 16 + 30 * i, 2);
+                    In_DrawGradientRect(X + 2, SelPos, Width - 4, 25, { 20,20,20 }, Global_EasyGUIColor / 4);
+                    In_DrawGradientRect(X + 2, SelPos + 1, Width - 4, 23, Global_EasyGUIColor / 4, { 20,20,20 });
                 }
                 In_DrawString(X + TextPos_X + 1, Y + 21 + 30 * i, BlockText_[i], { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize + 2);
                 In_DrawString(X + TextPos_X, Y + 20 + 30 * i, BlockText_[i], { 220,220,220 }, Global_EasyGUIFont, Global_EasyGUIFontSize + 2);
@@ -3222,6 +3271,7 @@ namespace EasyGUI
             return m_PosValue;
         }
         //---------------------------------------------------------------------------------------------------------------------------------------------------------
+        template<class CreateClassName>
         int GUI_List(Vector2 BlockPos, short StartLineRow, vector<string>LineString, int& m_InLine, short LimitLine = 0) noexcept//选择列表(缩小版 Panel)
         {
             if (BlockPos.x == 0 && BlockPos.y == 0)return false;//当无block则不进行绘制
@@ -3233,19 +3283,23 @@ namespace EasyGUI
             {
                 if (i >= LimitLine)continue;//限制行数
                 const BOOL DetectMousePos = In_MouseEventJudgment(BlockPos.x + 54, BlockPos.y + StartLineRow * 30 + i * 25 - 5, 232, 20);//光标检测范围
-                if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_ && DetectMousePos)
+                if (DetectMousePos)//当光标选择时(在上方时)
                 {
-                    if (In_KeyEvent(VK_LBUTTON, true))m_InLine = i;//赋值选择
-                    if (In_KeyEvent(VK_UP, true))--m_InLine; else if (In_KeyEvent(VK_DOWN, true))++m_InLine;
+                    if (GetForegroundWindow() == EasyGUI_WindowHWND && !Mouse_Slider_ && !Mouse_Move_)
+                    {
+                        if (In_KeyEvent(VK_LBUTTON, true))m_InLine = i;//赋值选择
+                        if (In_KeyEvent(VK_UP, true))--m_InLine; else if (In_KeyEvent(VK_DOWN, true))++m_InLine;
+                    }
+                    In_DrawGradientRect(BlockPos.x + 54, BlockPos.y + StartLineRow * 30 + i * 25 - 5, 232, 20, Global_EasyGUIColor / 7, { 15,15,15 });
                 }
                 if (m_InLine == i)
                 {
-                    In_DrawGradientRect(BlockPos.x + 54, BlockPos.y + StartLineRow * 30 + i * 25 - 5, 232, 20, Global_EasyGUIColor / 6, { 15,15,15 });
-                    In_DrawString(BlockPos.x + 66, BlockPos.y + StartLineRow * 30 + i * 25, LineString[i], { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize, 600);
-                    In_DrawString(BlockPos.x + 65, BlockPos.y + StartLineRow * 30 + i * 25 - 1, LineString[i], Global_EasyGUIColor, Global_EasyGUIFont, Global_EasyGUIFontSize, 600);
+                    const auto SelPos = In_Animation<CreateClassName>(BlockPos.y + StartLineRow * 30 + i * 25, 2);
+                    In_DrawGradientRect(BlockPos.x + 54, SelPos - 5, 232, 20, Global_EasyGUIColor / 6, { 15,15,15 });
+                    In_DrawString(BlockPos.x + 66, SelPos, LineString[i], { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize, 600);
+                    In_DrawString(BlockPos.x + 65, SelPos - 1, LineString[i], Global_EasyGUIColor, Global_EasyGUIFont, Global_EasyGUIFontSize, 600);
                 }
                 else {
-                    if (DetectMousePos)In_DrawGradientRect(BlockPos.x + 54, BlockPos.y + StartLineRow * 30 + i * 25 - 5, 232, 20, Global_EasyGUIColor / 7, { 15,15,15 });//当光标选择时视觉反馈 (在上方时)
                     In_DrawString(BlockPos.x + 66, BlockPos.y + StartLineRow * 30 + i * 25, LineString[i], { 0,0,0 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
                     if (LineString[i] == "None" || LineString[i] == "none" || LineString[i] == "NONE" || LineString[i] == "NULL")In_DrawString(BlockPos.x + 65, BlockPos.y + StartLineRow * 30 + i * 25 - 1, LineString[i], { 80,80,80 }, Global_EasyGUIFont, Global_EasyGUIFontSize);
                     else In_DrawString(BlockPos.x + 65, BlockPos.y + StartLineRow * 30 + i * 25 - 1, LineString[i], { 200,200,200 }, Global_EasyGUIFont, Global_EasyGUIFontSize);

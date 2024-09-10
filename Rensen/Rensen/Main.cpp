@@ -1,7 +1,7 @@
 ﻿#include "Head.h"
 #include "CS2_SDK.h"
-const float Rensen_Version = 4.85;//程序版本
-const string Rensen_ReleaseDate = "KR[2024-09-08 11:20]";//程序发布日期时间
+const float Rensen_Version = 4.86;//程序版本
+const string Rensen_ReleaseDate = "KR[2024-09-10 16:30]";//程序发布日期时间
 namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 {
 	EasyGUI::EasyGUI GUI_VAR; EasyGUI::EasyGUI_IO GUI_IO; BOOL Menu_Open = true; string Preset_Folder = "RPr";//菜单初始化变量
@@ -606,7 +606,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			}
 			else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
 			GUI_VAR.GUI_Block(20, 20, 40, "", 110, false); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
-			GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 25);//大体区块选择
+			GUI_VAR.GUI_Block_Panel<class CLASS_Block_Panel>(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 25);//大体区块选择
 			if (UI_Panel == 0)//Legit
 			{
 				const auto Block_Aimbot = GUI_VAR.GUI_Block(150, 30, 370, "瞄准机器人UTT");
@@ -751,7 +751,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", Reslution_960, 83); if (Reslution_960)Window::Set_Resolution(1280, 960);
 				const auto Block_CloudPreset = GUI_VAR.GUI_Block(580, 210, 180, "云端预设UTT");
 				static BOOL Load_CloudPreset; int SelectedCloudPreset; GUI_VAR.GUI_Button(Block_CloudPreset, 1, "加载选定预设UTT", Load_CloudPreset, 70);
-				GUI_VAR.GUI_List(Block_CloudPreset, 2, { "合法UTT","暴力UTT","合法 - 无视觉UTT","跑图机器人UTT" }, SelectedCloudPreset);
+				GUI_VAR.GUI_List<class CLASS_Block_CloudPreset_1>(Block_CloudPreset, 2, { "合法UTT","暴力UTT","合法 - 无视觉UTT","跑图机器人UTT" }, SelectedCloudPreset);
 				if (Load_CloudPreset)//加载Github上的云预设
 				{
 					const auto Preset_ID = SelectedCloudPreset;//防止套用的预设套写变量
@@ -816,10 +816,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				if (UnloadMenu)exit(0);//关闭菜单
 				const auto Block_Presets = GUI_VAR.GUI_Block(580, 30, 490, "本地预设UTT", 320);
 				static int SelectedPresetID = 0; static vector<string> FileList = System::Traversal_FindFile(Preset_Folder + "\\*", ".cfg", true, "UTT"); static string CreatePresetName; static BOOL Create, Load, Save, Delete;
-				GUI_VAR.GUI_List(Block_Presets, 1, FileList, SelectedPresetID, 11);
+				GUI_VAR.GUI_List<class CLASS_Block_Presets_1>(Block_Presets, 1, FileList, SelectedPresetID, 11);
 				GUI_VAR.GUI_Button(Block_Presets, 11, "加载UTT", Load, 95); if (Load && SelectedPresetID != -1)LoadPreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
 				GUI_VAR.GUI_Button(Block_Presets, 12, "保存UTT", Save, 95); if (Save && SelectedPresetID != -1)SavePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
-				GUI_VAR.GUI_InputText<class CLASS_Block_Presets_1>(Block_Presets, 13, CreatePresetName, "创建预设名称UTT");
+				GUI_VAR.GUI_InputText<class CLASS_Block_Presets_2>(Block_Presets, 13, CreatePresetName, "创建预设名称UTT");
 				GUI_VAR.GUI_Button(Block_Presets, 14, "创建UTT", Create, 95); if (Create) { CreatePreset(CreatePresetName); CreatePresetName = ""; }
 				GUI_VAR.GUI_Button(Block_Presets, 15, "删除UTT", Delete, 95); if (Delete && SelectedPresetID != -1)DeletePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
 				if (Create || Load || Save || Delete)FileList = System::Traversal_FindFile(Preset_Folder + "\\*", ".cfg", true, "UTT");//刷新文件列表
@@ -845,7 +845,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			}
 			else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
 			GUI_VAR.GUI_Block(20, 20, 40, "", 110, false); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
-			GUI_VAR.GUI_Block_Panel(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);//大体区块选择
+			GUI_VAR.GUI_Block_Panel<class CLASS_Block_Panel>(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);//大体区块选择
 			if (UI_Panel == 0)//Legit
 			{
 				const auto Block_Aimbot = GUI_VAR.GUI_Block(150, 30, 370, "Aim bot");
@@ -1005,7 +1005,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_Button(Block_Resolution, 4, "1280 * 960", Reslution_960, 83); if (Reslution_960)Window::Set_Resolution(1280, 960);
 				const auto Block_CloudPreset = GUI_VAR.GUI_Block(580, 210, 180, "Cloud preset");
 				static BOOL Load_CloudPreset; int SelectedCloudPreset; GUI_VAR.GUI_Button(Block_CloudPreset, 1, "Load preset", Load_CloudPreset, 80);
-				GUI_VAR.GUI_List(Block_CloudPreset, 2, { "Legit","Rage","Legit - no visual","Robot" }, SelectedCloudPreset);
+				GUI_VAR.GUI_List<class CLASS_Block_CloudPreset_1>(Block_CloudPreset, 2, { "Legit","Rage","Legit - no visual","Robot" }, SelectedCloudPreset);
 				if (Load_CloudPreset)//加载Github上的云预设
 				{
 					const auto Preset_ID = SelectedCloudPreset;//防止套用的预设套写变量
@@ -1063,7 +1063,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				if (ReloadList || System::Sleep_Tick<class CLASS_DEBUG_AUTO_RELOAD_PLAYERLIST_>(5000)) { ReLoad(true); PlayerNameList = {}; for (short i = 0; i <= 64; ++i)PlayerNameList.push_back(Advanced::Player_Name(i)); }//刷新玩家列表页面
 				GUI_VAR.GUI_InputText<class CLASS_Block_PlayerList_2>(Block_PlayerList, 2, PlayerName, "Search player name");
 				if (PlayerName != "" && PlayerName != "None") { for (short i = 0; i <= 64; ++i)if (PlayerName == Advanced::Player_Name(i))Debug_Control_Var::SelectPlayer = i; }//人物名称搜索
-				GUI_VAR.GUI_List(Block_PlayerList, 3, PlayerNameList, Debug_Control_Var::SelectPlayer, 27);
+				GUI_VAR.GUI_List<class CLASS_Block_PlayerList_3>(Block_PlayerList, 3, PlayerNameList, Debug_Control_Var::SelectPlayer, 27);
 				GUI_VAR.GUI_Tips({ Block_PlayerList.x + 12,Block_PlayerList.y }, 1, "Reload player list.");
 				GUI_VAR.GUI_Tips({ Block_PlayerList.x + 12,Block_PlayerList.y }, 2, "Search player name.");
 				const auto Block_Info = GUI_VAR.GUI_Block(510, 30, 490, "Info", 330);
@@ -1182,10 +1182,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				if (UnloadMenu)exit(0);//关闭菜单
 				const auto Block_Presets = GUI_VAR.GUI_Block(580, 30, 490, "Local presets", 320);
 				static int SelectedPresetID = 0; static vector<string> FileList = System::Traversal_FindFile(Preset_Folder + "\\*", ".cfg", true, "UTT"); static string CreatePresetName; static BOOL Create, Load, Save, Delete;
-				GUI_VAR.GUI_List(Block_Presets, 1, FileList, SelectedPresetID, 11);
+				GUI_VAR.GUI_List<class CLASS_Block_Presets_1>(Block_Presets, 1, FileList, SelectedPresetID, 11);
 				GUI_VAR.GUI_Button(Block_Presets, 11, "Load", Load, 95); if (Load && SelectedPresetID != -1)LoadPreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
 				GUI_VAR.GUI_Button(Block_Presets, 12, "Save", Save, 95); if (Save && SelectedPresetID != -1)SavePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
-				GUI_VAR.GUI_InputText<class CLASS_Block_Presets_1>(Block_Presets, 13, CreatePresetName, "Create preset name");
+				GUI_VAR.GUI_InputText<class CLASS_Block_Presets_2>(Block_Presets, 13, CreatePresetName, "Create preset name");
 				GUI_VAR.GUI_Button(Block_Presets, 14, "Create", Create, 90); if (Create) { CreatePreset(CreatePresetName); CreatePresetName = ""; }
 				GUI_VAR.GUI_Button(Block_Presets, 15, "Delete", Delete, 92); if (Delete && SelectedPresetID != -1)DeletePreset(Variable::String_Delete(FileList[SelectedPresetID], "UTT"));
 				if (Create || Load || Save || Delete)FileList = System::Traversal_FindFile(Preset_Folder + "\\*", ".cfg", true, "UTT");//刷新文件列表
