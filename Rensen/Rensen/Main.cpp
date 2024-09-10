@@ -1,4 +1,4 @@
-﻿#include "Head.h"
+#include "Head.h"
 #include "CS2_SDK.h"
 const float Rensen_Version = 4.86;//程序版本
 const string Rensen_ReleaseDate = "KR[2024-09-10 16:30]";//程序发布日期时间
@@ -429,7 +429,7 @@ namespace Control_Var//套用到菜单的调试变量 (例如功能开关)
 		UI_Misc_WalkingBot = Variable::string_int_(System::Get_File(FileName, 142));
 		UI_Misc_WalkingBot_Map = Variable::string_int_(System::Get_File(FileName, 143));
 	}
-	void LoadCloudPreset(string FileName = "", string NormalURL = "https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/") noexcept//加载特定Github云预设
+	void LoadCloudPreset(string FileName = "", string NormalURL = "https://github.com/Metastem/Skysense/blob/main/Cloud%20Files/") noexcept//加载特定Github云预设
 	{
 		System::URL_READ URL_PRESET = { "Cache_CloudPreset" };
 		if (URL_PRESET.StoreMem(NormalURL + FileName + (string)".cfg?raw=true"))
@@ -586,7 +586,7 @@ using namespace Control_Var;
 void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义选项)
 {
 	System::Log("Load Thread: Thread_Menu()");
-	GUI_VAR.Window_Create(1200, 1000, "Rensen - Menu", true);//创建置顶GUI绘制窗口
+	GUI_VAR.Window_Create(1200, 1000, "Skysense - Menu", true);//创建置顶GUI绘制窗口
 	const auto LanguageID = System::Get_DefaultLanguage();//获取系统默认语言
 	while (LanguageID == 0x804 || LanguageID == 0x404 || LanguageID == 0xC04)//中文版菜单 (字符串一定要加上UTT不然会乱码)
 	{
@@ -605,7 +605,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 			}
 			else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-			GUI_VAR.GUI_Block(20, 20, 40, "", 110, false); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
+			GUI_VAR.GUI_Block(20, 20, 40, "", 110, false); GUI_VAR.In_DrawString(36, 35, "Skysense", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
 			GUI_VAR.GUI_Block_Panel<class CLASS_Block_Panel>(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "合法UTT","视觉UTT","杂项UTT","设置UTT" }, UI_Panel, 25);//大体区块选择
 			if (UI_Panel == 0)//Legit
 			{
@@ -784,18 +784,18 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			else if (UI_Panel == 3)//Setting
 			{
 				const auto Block_About = GUI_VAR.GUI_Block(150, 30, 220, "关于UTT");
-				GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
+				GUI_VAR.GUI_Text(Block_About, 1, "Skysense", GUI_IO.GUIColor);
 				GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2UTT", { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 2, "版本: UTT" + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 3, "发布日期: UTT" + Rensen_ReleaseDate, { 100,100,100 });
-				GUI_VAR.GUI_Text(Block_About, 4, "作者: https://github.com/CosllyUTT", { 100,100,100 });
-				GUI_VAR.GUI_Text(Block_About, 5, "交流QQ群: 486214313UTT", { 100,100,100 });
+				GUI_VAR.GUI_Text(Block_About, 4, "官方论坛: Metastem.suUTT", { 100,100,100 });
+				GUI_VAR.GUI_Text(Block_About, 5, "电报群: @chinahvhUTT", { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 6, "中国内地用户检查更新时需要使用VPN (确保可以连接Github)UTT", { 100,100,100 });
 				static BOOL OpenGithubURL, OpenQQGroupChat;
 				GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, OpenGithubURL);
 				GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 5, OpenQQGroupChat);
-				if (OpenGithubURL)System::Open_Website("https://github.com/Coslly");//打开作者Github主题页面
-				if (OpenQQGroupChat)System::Open_Website("https://qm.qq.com/q/67Ed5be1tS");//打开QQ加入群聊链接
+				if (OpenGithubURL)System::Open_Website("https://metastem.su");//打开作者Github主题页面
+				if (OpenQQGroupChat)System::Open_Website("https://t.me/chinahvh");//打开QQ加入群聊链接
 				const auto Block_Menu = GUI_VAR.GUI_Block(150, 270, 250, "菜单UTT");
 				GUI_VAR.GUI_Text(Block_Menu, 1, "菜单按键UTT");
 				GUI_VAR.GUI_KeySelector<class CLASS_Block_Menu_1>(Block_Menu, 1, UI_Setting_MenuKey);
@@ -808,10 +808,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				else GUI_VAR.GUI_Button(Block_Menu, 4, "打开 CSUTT", StartCS, 90);
 				if (StartCS && CS2_MEM.Get_ProcessHWND() == 0)if (CS2_MEM.Get_ProcessHWND() == 0)System::Open_Website("steam://rungameid/730");//启动CS
 				if (QuitCS && CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());//关闭CS
-				static BOOL GithubRepositories; GUI_VAR.GUI_Button(Block_Menu, 5, "Github 项目链接UTT", GithubRepositories, 70);
-				if (GithubRepositories)System::Open_Website("https://github.com/Coslly/Rensen");//打开Github项目地址
+				static BOOL GithubRepositories; GUI_VAR.GUI_Button(Block_Menu, 5, "超元联邦UTT", GithubRepositories, 70);
+				if (GithubRepositories)System::Open_Website("https://chaosmos.io");//打开Github项目地址
 				static BOOL RestartMenu; GUI_VAR.GUI_Button(Block_Menu, 6, "重启菜单UTT", RestartMenu, 90);
-				if (RestartMenu) { GUI_VAR.Window_SetTitle("Rensen - Restarting"); System::Self_Restart(); }//重启菜单
+				if (RestartMenu) { GUI_VAR.Window_SetTitle("Skysense - Restarting"); System::Self_Restart(); }//重启菜单
 				static BOOL UnloadMenu; GUI_VAR.GUI_Button(Block_Menu, 7, "关闭菜单UTT", UnloadMenu, 90);
 				if (UnloadMenu)exit(0);//关闭菜单
 				const auto Block_Presets = GUI_VAR.GUI_Block(580, 30, 490, "本地预设UTT", 320);
@@ -844,7 +844,7 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				GUI_VAR.GUI_BackGround(4);//自定义颜色背景主题
 			}
 			else GUI_VAR.GUI_BackGround(3);//默认(彩虹)
-			GUI_VAR.GUI_Block(20, 20, 40, "", 110, false); GUI_VAR.In_DrawString(36, 35, "Rensen", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
+			GUI_VAR.GUI_Block(20, 20, 40, "", 110, false); GUI_VAR.In_DrawString(36, 35, "Skysense", GUI_IO.GUIColor.Min_Bri(200), "Verdana", 25);//Rensen标志
 			GUI_VAR.GUI_Block_Panel<class CLASS_Block_Panel>(20, 70, 110, GUI_VAR.Window_GetSize().y - 90, "", { "Legit","Visual","Misc","Infolist","Setting","Attach" }, UI_Panel, 25);//大体区块选择
 			if (UI_Panel == 0)//Legit
 			{
@@ -1152,13 +1152,13 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 			else if (UI_Panel == 4)//Setting
 			{
 				const auto Block_About = GUI_VAR.GUI_Block(150, 30, 160, "About");
-				GUI_VAR.GUI_Text(Block_About, 1, "Rensen", GUI_IO.GUIColor);
+				GUI_VAR.GUI_Text(Block_About, 1, "Skysense", GUI_IO.GUIColor);
 				GUI_VAR.GUI_Text({ Block_About.x + 47,Block_About.y }, 1, "for Counter-Strike 2", { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 2, "Version: " + Variable::Float_Precision(Rensen_Version), { 100,100,100 });
 				GUI_VAR.GUI_Text(Block_About, 3, "Release date: " + Rensen_ReleaseDate, { 100,100,100 });
-				GUI_VAR.GUI_Text(Block_About, 4, "Author: https://github.com/Coslly", { 100,100,100 });
+				GUI_VAR.GUI_Text(Block_About, 4, "Forum: Metastem.su", { 100,100,100 });
 				static BOOL OpenGithubURL; GUI_VAR.GUI_Button_Small({ Block_About.x + 10,Block_About.y }, 4, OpenGithubURL);
-				if (OpenGithubURL)System::Open_Website("https://github.com/Coslly");//打开作者Github主题页面
+				if (OpenGithubURL)System::Open_Website("https://metastem.su");//打开作者Github主题页面
 				GUI_VAR.GUI_Tips({ Block_About.x + 10,Block_About.y }, 1, "No ban record so far in 2020!!!", 0, GUI_IO.GUIColor);
 				const auto Block_Menu = GUI_VAR.GUI_Block(150, 210, 310, "Menu");
 				GUI_VAR.GUI_Text(Block_Menu, 1, "Menu key");
@@ -1174,10 +1174,10 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 				else GUI_VAR.GUI_Button(Block_Menu, 6, "Start CS", StartCS, 85);
 				if (StartCS && CS2_MEM.Get_ProcessHWND() == 0)if (CS2_MEM.Get_ProcessHWND() == 0)System::Open_Website("steam://rungameid/730");//启动CS
 				if (QuitCS && CS2_MEM.Get_ProcessHWND() != 0)Window::Kill_Window(CS2_MEM.Get_ProcessHWND());//关闭CS
-				static BOOL GithubRepositories; GUI_VAR.GUI_Button(Block_Menu, 7, "Github repositories", GithubRepositories, 60);
-				if (GithubRepositories)System::Open_Website("https://github.com/Coslly/Rensen");//打开Github项目地址
+				static BOOL GithubRepositories; GUI_VAR.GUI_Button(Block_Menu, 7, "Telegram groups", GithubRepositories, 60);
+				if (GithubRepositories)System::Open_Website("https://t.me/chinahvh");//打开Github项目地址
 				static BOOL RestartMenu; GUI_VAR.GUI_Button(Block_Menu, 8, "Restart menu", RestartMenu, 75);
-				if (RestartMenu) { GUI_VAR.Window_SetTitle("Rensen - Restarting"); System::Self_Restart(); }//重启菜单
+				if (RestartMenu) { GUI_VAR.Window_SetTitle("Skysense - Restarting"); System::Self_Restart(); }//重启菜单
 				static BOOL UnloadMenu; GUI_VAR.GUI_Button(Block_Menu, 9, "Unload", UnloadMenu, 95);
 				if (UnloadMenu)exit(0);//关闭菜单
 				const auto Block_Presets = GUI_VAR.GUI_Block(580, 30, 490, "Local presets", 320);
@@ -1210,9 +1210,9 @@ void Thread_Menu() noexcept//菜单线程 (提供给使用者丰富的自定义�
 void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功能)
 {
 	System::Log("Load Thread: Thread_Misc()");
-	Window::Windows Window_Watermark; Window_Watermark.Create_RenderBlock_Alpha(Window::Get_Resolution().x, 50, "Rensen - Watermark");//创建水印透明窗口
+	Window::Windows Window_Watermark; Window_Watermark.Create_RenderBlock_Alpha(Window::Get_Resolution().x, 50, "Skysense - Watermark");//创建水印透明窗口
 	Window::Render Window_Watermark_Render; Window_Watermark_Render.CreatePaint(Window_Watermark.Get_HWND(), 0, 0, Window::Get_Resolution().x, 50);//创建水印绘制画板
-	Window::Windows Window_NightMode; Window_NightMode.Create_RenderBlock(Window::Get_Resolution().x, Window::Get_Resolution().y, "Rensen - NightMode");//夜晚模式窗口
+	Window::Windows Window_NightMode; Window_NightMode.Create_RenderBlock(Window::Get_Resolution().x, Window::Get_Resolution().y, "Skysense - NightMode");//夜晚模式窗口
 	Window_Watermark.Show_Window();//将水印修改为最前端绘制覆盖窗口
 	ReLoad(true);//刷新CS2_SDK内存数据 (快速初始化)
 	while (true)
@@ -1236,8 +1236,8 @@ void Thread_Misc() noexcept//杂项线程 (一些菜单事件处理和杂项功�
 				Window_Watermark.Set_WindowTitle(System::Rand_String(10));//随机水印窗口标题
 				static string WaterMark_String = "";
 				short WaterMark_String_Size = strlen(WaterMark_String.c_str()) * 4.85;
-				if (!CS2_HWND)WaterMark_String = "Rensen | CS not found | " + System::Get_UserName() + " | " + System::Time_String();
-				else { WaterMark_String = "Rensen | " + Advanced::LocalPlayer_Name() + " | " + System::Time_String(); WaterMark_String_Size = strlen(WaterMark_String.c_str()) * 5.2; }
+				if (!CS2_HWND)WaterMark_String = "Skysense | CS not found | " + System::Get_UserName() + " | " + System::Time_String();
+				else { WaterMark_String = "Skysense | " + Advanced::LocalPlayer_Name() + " | " + System::Time_String(); WaterMark_String_Size = strlen(WaterMark_String.c_str()) * 5.2; }
 				const Variable::Vector2 Watermark_Pos = { Window::Get_Resolution().x - WaterMark_String_Size - 10,10 };
 				Window_Watermark_Render.Render_SolidRect(0, 0, 9999, 9999, { 0,0,0 });
 				Window_Watermark_Render.RenderA_SolidRect(Watermark_Pos.x, Watermark_Pos.y, WaterMark_String_Size, 15, { 1,1,1,130 });
@@ -1716,7 +1716,7 @@ void Thread_Funtion_RemoveRecoil() noexcept//功能线程: 移除后坐力
 void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂项
 {
 	System::Log("Load Thread: Thread_Funtion_PlayerESP()");
-	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock_Alpha(Window::Get_Resolution().x, Window::Get_Resolution().y, "Rensen - PlayerESP");//创建绘制覆盖窗口
+	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock_Alpha(Window::Get_Resolution().x, Window::Get_Resolution().y, "Skysense - PlayerESP");//创建绘制覆盖窗口
 	Window::Render ESP_Paint; ESP_Paint.CreatePaint(RenderWindow.Get_HWND(), 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y);//创建内存画板
 	while (true)
 	{
@@ -1942,7 +1942,7 @@ void Thread_Funtion_PlayerESP() noexcept//功能线程: 透视和一些视觉杂
 void Thread_Funtion_EntityESP() noexcept//功能线程: 实体透视
 {
 	System::Log("Load Thread: Thread_Funtion_EntityESP()");
-	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock(Window::Get_Resolution().x, Window::Get_Resolution().y, "Rensen - EntityESP");
+	Window::Windows RenderWindow; RenderWindow.Create_RenderBlock(Window::Get_Resolution().x, Window::Get_Resolution().y, "Skysense - EntityESP");
 	Window::Render WEP_Render; WEP_Render.CreatePaint(RenderWindow.Get_HWND(), 0, 0, Window::Get_Resolution().x, Window::Get_Resolution().y);
 	while (true)
 	{
@@ -2024,7 +2024,7 @@ void Thread_Funtion_Radar() noexcept//功能线程: 雷达
 {
 	System::Log("Load Thread: Thread_Funtion_Radar()");
 	Sleep(500);//相比菜单后一步创建窗口
-	Window::Windows Radar_Window; Radar_Window.Create_Window(UI_Visual_Radar_Size, UI_Visual_Radar_Size + 15, "Rensen - Radar", true);//创建雷达绘制窗口
+	Window::Windows Radar_Window; Radar_Window.Create_Window(UI_Visual_Radar_Size, UI_Visual_Radar_Size + 15, "Skysense - Radar", true);//创建雷达绘制窗口
 	Window::Render Radar_Paint; Radar_Paint.CreatePaint(Radar_Window.Get_HWND(), 0, 0, 500, 500 + 15);//创建绘制画板
 	Radar_Window.Set_WindowPos(UI_Visual_Radar_Pos.x, UI_Visual_Radar_Pos.y);//套用预设的雷达位置
 	while (true)
@@ -2063,8 +2063,8 @@ void Thread_Funtion_Radar() noexcept//功能线程: 雷达
 				}
 				Radar_Paint.Render_GradientRect(0, 0, Radar_Window.Get_WindowSize().x, 14, GUI_IO.GUIColor / 2, GUI_IO.GUIColor / 4, false);
 				Radar_Paint.Render_GradientRect(0, 14, Radar_Window.Get_WindowSize().x, 1, GUI_IO.GUIColor / 4, GUI_IO.GUIColor / 2, false);//标题背景
-				Radar_Paint.Render_String(3 + 1, 1 + 1, "Rensen - Radar", "Small Fonts", 12, { 0,0,1 }, false);//标题阴影
-				Radar_Paint.Render_String(3, 1, "Rensen - Radar", "Small Fonts", 12, GUI_IO.GUIColor, false);//标题
+				Radar_Paint.Render_String(3 + 1, 1 + 1, "Skysense - Radar", "Small Fonts", 12, { 0,0,1 }, false);//标题阴影
+				Radar_Paint.Render_String(3, 1, "Skysense - Radar", "Small Fonts", 12, GUI_IO.GUIColor, false);//标题
 				Radar_Paint.DrawPaint();//最终绘制雷达画板
 			}
 		}
@@ -2130,7 +2130,7 @@ void Thread_Funtion_WalkingBot() noexcept//功能线程: 自动行走机器人(�
 					if ((Advanced::Check_Enemy(Global_LocalPlayer.IDEntIndex_Pawn()) || IsHasPlayerInFov) && UI_Legit_Aimbot)Advanced::Stop_Move();//发现到目标时停止移动坐标和移动视角
 					else {
 						if (Advanced::Move_to_Pos(MovingPath[Pos_ID], 25))break;//移动到坐标
-						const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), MovingPath[Pos_ID + 3] + Variable::Vector3{0, 0, 60}, Base::ViewAngles());
+						const auto Angle = Variable::CalculateAngle(Global_LocalPlayer.Origin() + Global_LocalPlayer.ViewOffset(), MovingPath[Pos_ID + 3] + Variable::Vector3{ 0, 0, 60 }, Base::ViewAngles());
 						System::Mouse_Move(-Angle.y * 20, Angle.x * 5);
 					}
 					Sleep(1);//降低CPU占用
@@ -2144,31 +2144,31 @@ int main() noexcept//主线程 (加载多线程, 一些杂项功能)
 {
 	System::Anti_Debugger("Debugging is disabled after compilation is completed.", true);//防止逆向破解
 	//----------------------------------------------------------------------------------------------------------------------------------
-	if (FindWindow(0, L"Rensen - Menu")) { Window::Message_Box("Rensen Error", "The program is already running.", MB_ICONSTOP); exit(0); }//防止多开程序
+	if (FindWindow(0, L"Skysense - Menu")) { Window::Message_Box("Skysense Error", "The program is already running.", MB_ICONSTOP); exit(0); }//防止多开程序
 	//----------------------------------------------------------------------------------------------------------------------------------
 	System::URL_READ UserID_READ = { "Cache_UserID" }; BOOL Attest = false;//认证变量
-	if (UserID_READ.StoreMem("https://github.com/Coslly/Rensen/blob/main/Cloud%20Files/UserID.uid?raw=true"))//Github读取有效用户ID
+	if (UserID_READ.StoreMem("https://github.com/Metastem/Skysense/blob/main/Cloud%20Files/UserID.uid?raw=true"))//Github读取有效用户ID
 	{
 		for (short i = 0; i <= 50000; ++i) { if (System::Get_UserName() == UserID_READ.Read(i) || Variable::String_Upper(UserID_READ.Read(i)) == "BYPASS") { Attest = true; break; } }//遍历检测并修改认证
 		UserID_READ.Release();//释放缓存
 	}
 	Attest = true;//公开版直接通过验证
-	if (!Attest) { Window::Message_Box("Rensen Attest - " + System::Get_UserName(), "Your identity cannot be passed.\n\nUnable to access from Chinese IP.\n\nAuthor: https://github.com/Coslly\n", MB_ICONSTOP); exit(0); }//未被认证则直接退出
+	if (!Attest) { Window::Message_Box("Skysense Attest - " + System::Get_UserName(), "Your identity cannot be passed.\n\nUnable to access from Chinese IP.\n\nAuthor: https://github.com/Coslly\n", MB_ICONSTOP); exit(0); }//未被认证则直接退出
 	//----------------------------------------------------------------------------------------------------------------------------------
 	System::URL_READ AutoUpdate = { "Cache_Update" };//自动更新系统 (中国IP用户需要挂梯子)
-	if (AutoUpdate.StoreMem("https://github.com/Coslly/Rensen/blob/main/Rensen/Rensen/Main.cpp?raw=true"))//版本号更新检查
+	if (AutoUpdate.StoreMem("https://github.com/Metastem/Skusense/blob/main/Rensen/Rensen/Main.cpp?raw=true"))//版本号更新检查
 	{
 		auto Version = AutoUpdate.Read(3); if (Version != "") { Version.erase(0, 29); Version.erase(Version.size() - 15, 100); }//擦除无用字符只获取版本号
 		AutoUpdate.Release();//释放缓存
-		if (Variable::string_float_(Version) > Rensen_Version && Window::Message_Box("Rensen Update", "A new version has been released.\nDo you want to update now?\nIt may take tens of seconds.\n\nYou will be updated to Ver[" + Version + "]", MB_YESNO | MB_ICONASTERISK) == 6)
+		if (Variable::string_float_(Version) > Rensen_Version && Window::Message_Box("Skysense Update", "A new version has been released.\nDo you want to update now?\nIt may take tens of seconds.\n\nYou will be updated to Ver[" + Version + "]", MB_YESNO | MB_ICONASTERISK) == 6)
 		{
-			System::Open_Website("https://github.com/Coslly/Rensen/releases/download/Release/Rensen.exe"); exit(0);//打开下载链接并且关闭程序
+			System::Open_Website("https://github.com/Metastem/Skysense/releases/download/Release/Skysense.exe"); exit(0);//打开下载链接并且关闭程序
 		}
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------
 	Window::Hide_ConsoleWindow();//隐藏控制台
 	Window::Initialization_ConsoleWindow();//初始化控制台窗口 (初始化窗口大小, 清除字符)
-	printf("Welcome to Rensen for Counter-Strike 2 cheat.\nThe Rensen project is a version converted from FreeCS.\nNo team author By: https://github.com/Coslly\nThe following information returned is debugging information.\n");//作者留言
+	printf("Welcome to Skysense for Counter-Strike 2 cheat.\nThe Skysense project is a version converted from FreeCS.\nOfficial Forum: https://metastem.su\nThe following information returned is debugging information.\n");//作者留言
 	System::Log("Load Thread: main()");
 	Sleep(100);//修复重启进程冲突
 	thread Thread_Menu_ = thread(Thread_Menu);
